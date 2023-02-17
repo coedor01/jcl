@@ -38,7 +38,7 @@ jobs:
               uses: manyuanrong/setup-ossutil@v2.0
               with:
                   endpoint: "oss-cn-hangzhou.aliyuncs.com"
-                  access-key-id: ${{secrets.ACCESSKEY_ID}}
-                  access-key-secret: ${{secrets.ACCESS_KEY_SECRET}}
+                  access-key-id: ${{secrets.AccessKey_ID}}
+                  access-key-secret: ${{secrets.Access_Key_Secret}}
             # TODO:配置oss路径
-            - run: ossutil cp -rf dist oss://$bucket/$path-to
+            - run: ossutil cp -rf dist oss://jx3box/static/jcl

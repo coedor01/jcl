@@ -1,12 +1,12 @@
 // 1.Dependency
-import { createStore } from "vuex";
+import { defineStore } from "pinia";
 
-// 2.Store
-const store = {
-    state: {},
-    mutations: {},
+// 2.Create Store
+export const useStore = defineStore({
+    id: "store",
+    state: () => ({
+        client: location.pathname.includes("origin") ? "origin" : "std",
+    }),
     getters: {},
     actions: {},
-};
-
-export default createStore(store);
+});

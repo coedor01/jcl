@@ -1,21 +1,24 @@
 {
-    "name": "project",
-    "version": "0.1.0",
+    "name": "jcl",
+    "version": "0.0.1",
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
-        "dev": "env DEV_SERVER=true vue-cli-service serve",
+        "dev": "cross-env DEV_SERVER=true vue-cli-service serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "update": "npm --registry https://registry.npmjs.org install @jx3box/jx3box-common@latest"
     },
     "dependencies": {
+        "@jx3box/jx3box-common": "^7.6.8",
         "@vueuse/head": "^0.7.6",
         "core-js": "^3.8.3",
         "element-plus": "^2.2.5",
+        "lodash": "^4.17.21",
+        "pinia": "^2.0.30",
         "vue": "^3.2.13",
-        "vue-router": "^4.0.16",
-        "vuex": "^4.0.2"
+        "vue-router": "^4.0.16"
     },
     "devDependencies": {
         "@babel/core": "^7.12.16",
@@ -24,6 +27,7 @@
         "@vue/cli-plugin-babel": "~5.0.0",
         "@vue/cli-plugin-eslint": "~5.0.0",
         "@vue/cli-service": "~5.0.0",
+        "cross-env": "^7.0.3",
         "csslab": "^4.0.3",
         "eslint": "^7.32.0",
         "eslint-plugin-vue": "^8.0.3",

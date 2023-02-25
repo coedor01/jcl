@@ -75,7 +75,6 @@ onMounted(async () => {
 </script>
 
 <style lang="less">
-@import url("@/assets/css/app.less");
 p {
     margin: 0;
 }

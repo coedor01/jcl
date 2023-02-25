@@ -68,7 +68,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "@/assets/css/app.less";
 .c-header {
     background-color: black;
     width: 100%;

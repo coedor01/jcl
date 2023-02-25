@@ -1,7 +1,7 @@
 <template>
-    <div class="m-file-select">
+    <div class="m-subject-list">
         <div class="m-cards">
-            <div v-for="(item, index) in types" :key="index" class="u-card">
+            <div v-for="(item, index) in types" :key="index" class="u-card" @click="open(item.subject)">
                 <img class="u-card__bg" :src="item.icon" draggable="false" />
                 <div class="u-card__inner">
                     <img class="u-icon" svg-inline :src="item.icon" draggable="false" />
@@ -31,12 +31,17 @@
                 </p>
             </div>
         </div>
+        <file-select ref="fileSelect"></file-select>
     </div>
 </template>
 
 <script>
+import FileSelect from "@/components/common/file_select";
 export default {
-    name: "FileSelect",
+    name: "SubjectList",
+    components: {
+        FileSelect,
+    },
     data: () => ({
         current: "team",
         types: [
@@ -61,13 +66,16 @@ export default {
         ],
     }),
     mounted() {},
-    methods: {},
+    methods: {
+        open(subject) {
+            this.$refs.fileSelect.open(subject);
+        },
+    },
 };
 </script>
 
 <style lang="less" scoped>
-@import url("@/assets/css/app.less");
-.m-file-select {
+.m-subject-list {
     p {
         margin: 0;
     }

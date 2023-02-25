@@ -61,7 +61,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "@/assets/css/app.less";
 .font {
     font-family: "Inter";
     font-style: normal;

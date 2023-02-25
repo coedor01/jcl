@@ -20,9 +20,12 @@ module.exports = {
     //⚛️ Proxy ~
     devServer: {
         proxy: {
-            // "/api/cms": {
-            //     target: process.env["DEV_SERVER"] == "true" ? "localhost" : "remote",
-            // },
+            "/api/team": {
+                target: "https://team.api.jx3box.com",
+                onProxyReq: function (request) {
+                    request.setHeader("origin", "");
+                },
+            },
         },
     },
 
@@ -56,12 +59,26 @@ module.exports = {
         //💖 import common less var * mixin ~
         const types = ["vue-modules", "vue", "normal-modules", "normal"];
         types.forEach((type) => addStyleResource(config.module.rule("less").oneOf(type)));
+
+        //💖 worker loader
+        config.module
+            .rule("worker-loader")
+            .test(/\.worker\.js$/)
+            .use({
+                loader: "worker-loader",
+                options: {
+                    inline: true,
+                },
+            })
+            .loader("worker-loader")
+            .end();
     },
 };
 
 function addStyleResource(rule) {
     var preload_styles = [];
     preload_styles.push(
+        path.resolve(__dirname, "./node_modules/@jx3box/jx3box-common/css/common.less"),
         path.resolve(__dirname, "./node_modules/csslab/base.less"),
         path.resolve(__dirname, "./src/assets/css/var.less")
     );

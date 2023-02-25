@@ -1,12 +1,14 @@
 <template>
+    <jcl-header></jcl-header>
     <router-view />
 </template>
 
 <script>
+import JclHeader from "./components/common/jcl_header.vue";
 export default {
     name: "App",
     props: [],
-    components: {},
+    components: { JclHeader },
     data: function () {
         return {};
     },

@@ -1,6 +1,8 @@
 <template>
-    <jcl-header></jcl-header>
-    <router-view />
+    <el-scrollbar height="100vh">
+        <jcl-header></jcl-header>
+        <router-view />
+    </el-scrollbar>
 </template>
 
 <script>

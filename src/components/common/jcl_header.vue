@@ -70,12 +70,10 @@ export default {
 <style lang="less" scoped>
 @import "@/assets/css/app.less";
 .c-header {
-    padding: 0px 5px;
     background-color: black;
     width: 100%;
     height: 100px;
 
-    border-radius: 5px;
     .c-header-inner {
         .flex-center;
         justify-content: space-between;

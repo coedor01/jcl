@@ -14,11 +14,35 @@
             <div class="u-data">
                 <div class="u-empty" v-if="data.total === 0">暂无数据，上传一个吧 😘</div>
                 <div class="u-li" v-for="(item, index) in data.list" :key="index">
-                    <span class="u-badge" :class="`u-badge-${item.subject}`">{{ subjectName(item.subject) }}</span>
+                    <!-- 数据类型 -->
+                    <span class="u-type" :class="`u-type-${item.subject}`">{{ subjectName(item.subject) }}</span>
+                    <!-- 私有、天梯榜等 -->
+                    <i class="u-badge u-private" v-if="item.visible != 0"
+                        ><img svg-inline src="@/assets/img/works/draft.svg" alt=""
+                    /></i>
+                    <i class="u-badge u-star" v-if="item.rank_id"><i>★</i>天梯榜</i>
+                    <i class="u-badge u-checked" v-if="item.is_checked"
+                        ><img svg-inline src="@/assets/img/works/checked.svg"
+                    /></i>
+                    <!-- 名称 -->
                     <span class="u-name">{{ item.title }}</span>
-                    <span class="u-opr">
-                        <el-button link :icon="Edit" />
-                        <el-button link :icon="Delete" />
+                    <span class="u-opr" v-if="active == 'mine'">
+                        <!-- 编辑 -->
+                        <el-button link :icon="Edit" @click="edit(item)" />
+                        <!-- 删除 -->
+                        <el-popconfirm
+                            width="220"
+                            confirm-button-text="确定"
+                            title="😱此操作将永久删除数据, 是否继续?"
+                            effect="dark"
+                            popper-class="m-del-confirm"
+                            :icon="null"
+                            @confirm="del(item)"
+                        >
+                            <template #reference>
+                                <el-button link :icon="Delete" />
+                            </template>
+                        </el-popconfirm>
                     </span>
                     <span class="u-update">
                         <span>更新：</span>
@@ -38,16 +62,21 @@
                 />
             </div>
         </div>
+        <EditDialog ref="editDialog" @updated="getList"></EditDialog>
     </div>
 </template>
 
 <script setup>
-import { getPublicList, getMyList } from "@/services/team";
+import EditDialog from "./edit_dialog.vue";
+
+import { getPublicList, getMyList, deleteBattle } from "@/services/team";
+
 import { Delete, Edit } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { ref, reactive, watch } from "vue";
 
 const active = ref("mine");
+const editDialog = ref(null);
 const tabs = [
     {
         name: "mine",
@@ -109,6 +138,20 @@ const getList = () => {
         });
     }
 };
+const del = (item) => {
+    deleteBattle(item.id).then((res) => {
+        if (res.data?.code === 0) {
+            ElMessage.success("删除成功");
+            getList();
+        } else {
+            ElMessage.error(res.data.msg ?? "删除失败");
+        }
+    });
+};
+const edit = (item) => {
+    editDialog.value.open(item);
+};
+
 const toggle = (name) => {
     active.value = name;
 };
@@ -131,7 +174,10 @@ watch(
 );
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
+.m-del-confirm {
+    padding: 16px;
+}
 .m-data-list {
     display: flex;
     flex-direction: column;
@@ -165,11 +211,11 @@ watch(
         }
     }
     .u-search {
-        :deep(.el-input__inner) {
+        .el-input__inner {
             color: #bfb0ff;
         }
 
-        :deep(.el-input__wrapper) {
+        .el-input__wrapper {
             background: #121019;
             box-shadow: none;
             border: 3px dashed #554d77;
@@ -208,7 +254,7 @@ watch(
                 border-bottom: 1px solid rgba(191, 176, 255, 0.2);
             }
 
-            .u-badge {
+            .u-type {
                 color: white;
                 background: #24a4cc;
                 border-radius: 10px;
@@ -227,6 +273,34 @@ watch(
                     background: #812e13;
                 }
             }
+            .u-badge {
+                .mr(4px);
+                .db;
+                &.u-private {
+                    .mt(4px);
+                }
+
+                &.u-star {
+                    i {
+                        .mr(1px);
+                        color: #fbc224;
+                    }
+                    border: 1px solid #fbc224;
+                    color: #edaf05;
+                    padding: 0 3px;
+                    font-style: normal;
+                    font-size: 12px;
+                    border-radius: 2px;
+                    transform: scale(0.8);
+                    flex-shrink: 0;
+                }
+
+                &.u-checked svg {
+                    .size(16px);
+                    .pr;
+                    top: 1px;
+                }
+            }
             .u-name {
                 flex-grow: 1;
             }
@@ -234,6 +308,7 @@ watch(
                 padding: 0 14px;
 
                 .el-button {
+                    color: #bfb0ff;
                     transition: all 0.2s ease-in-out;
                     &:hover {
                         transform: scale(1.05);
@@ -243,7 +318,7 @@ watch(
         }
 
         .u-pagination {
-            :deep(.el-pagination) {
+            .el-pagination {
                 justify-content: center;
 
                 li,

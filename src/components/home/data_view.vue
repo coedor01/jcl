@@ -16,8 +16,13 @@
                 <p class="u-card-title">绑定魔盒助手</p>
                 <p>*此令牌用于魔盒助手身份校验，切勿泄漏。</p>
                 <div class="u-jba-token">
-                    <p v-if="!jbaToken">点击获取并复制临时令牌</p>
-                    <p v-else>{{ jbaToken }}</p>
+                    <p v-if="!jbaToken" @click="getJbaToken" class="u-jba-tip">点击获取并复制临时令牌</p>
+                    <template v-else>
+                        <el-scrollbar>
+                            <p>{{ jbaToken }}</p>
+                        </el-scrollbar>
+                        <el-button link :icon="DocumentCopy" @click="copyToken()"></el-button>
+                    </template>
                 </div>
                 <p class="u-jba-help">
                     <el-icon><WarningFilled /></el-icon>使用教程
@@ -29,13 +34,39 @@
 </template>
 
 <script setup>
-import DataList from "./data_list.vue";
-import { WarningFilled } from "@element-plus/icons-vue";
+import DataList from "@/components/list/data_list.vue";
+import { WarningFilled, DocumentCopy } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
+import { getNewToken } from "@/services/team";
 import { getBattleAc } from "@/services/helper";
 import { ref, onMounted } from "vue";
 
 const ac = ref("loading...");
 const jbaToken = ref(null);
+const getJbaToken = () => {
+    getNewToken()
+        .then((res) => {
+            let {
+                code,
+                data: { token },
+            } = res.data;
+            if (code == 0) jbaToken.value = token;
+        })
+        .catch(() => {
+            jbaToken.value = "QAQ";
+            ElMessage.error("获取失败");
+        });
+};
+const copyToken = () => {
+    navigator.clipboard
+        .writeText(jbaToken.value)
+        .then(() => {
+            ElMessage.success("复制成功");
+        })
+        .catch(() => {
+            ElMessage.error("复制失败");
+        });
+};
 
 onMounted(async () => {
     const res = (await getBattleAc()).data;
@@ -95,18 +126,28 @@ p {
         }
         .u-jba {
             .u-jba-token {
+                .flex-center;
                 cursor: pointer;
                 background: #554d77;
                 border-radius: 10px;
                 color: #b29fff;
-                padding: 16px 0;
                 margin: 8px 0;
+                padding: 0 6px;
                 .bold;
                 .fz(20px, 26px);
                 .x(center);
 
-                & > p {
+                p {
                     margin: 0;
+                    padding: 16px 6px;
+                    white-space: nowrap;
+                }
+
+                .el-button {
+                    margin-left: 8px;
+                }
+                .el-scrollbar {
+                    flex-grow: 1;
                 }
             }
 

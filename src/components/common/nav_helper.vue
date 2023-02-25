@@ -71,7 +71,7 @@ export default {
 }
 .m-nav-helper {
     position: fixed;
-    right: 0;
+    right: 10px;
     background: #1a1825;
     border-radius: 10px 0px 0px 10px;
     z-index: 8;

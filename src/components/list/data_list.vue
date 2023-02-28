@@ -10,7 +10,7 @@
         <div class="u-search">
             <el-input v-model="search" />
         </div>
-        <div class="u-list">
+        <div class="u-list" v-loading="data.loading">
             <div class="u-data">
                 <div class="u-empty" v-if="data.total === 0">暂无数据，上传一个吧 😘</div>
                 <div class="u-li" v-for="(item, index) in data.list" :key="index">
@@ -105,10 +105,12 @@ const data = reactive({
     list: [],
     total: 0,
     page: 1,
+    loading: false,
 });
 // methods
 const getList = () => {
     let res;
+    data.loading = true;
     if (active.value === "mine") {
         res = getMyList({
             page: data.page,
@@ -132,10 +134,14 @@ const getList = () => {
             } else {
                 ElMessage.error(res.data.msg ?? "获取数据失败");
             }
-        }).catch((e) => {
-            console.warn(e);
-            ElMessage.error("获取数据失败");
-        });
+        })
+            .catch((e) => {
+                console.warn(e);
+                ElMessage.error("获取数据失败");
+            })
+            .finally(() => {
+                data.loading = false;
+            });
     }
 };
 const del = (item) => {

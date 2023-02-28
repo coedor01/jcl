@@ -4,9 +4,8 @@
 // 所以这里直接用axios搓一个$node，api访问的方法。
 
 import axios from "axios";
-
-import { __node } from "@jx3box/jx3box-common/data/jx3box.json";
-
+import jx3box from "@jx3box/jx3box-common/data/jx3box.json";
+const { __node } = jx3box;
 // const $ = axios.create({
 //     baseURL: "http://localhost:7002",
 // });

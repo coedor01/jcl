@@ -30,7 +30,7 @@
     0% {
         transform: translateY(0);
     }
-    80% {
+    90% {
         transform: translateY(-20px);
     }
     100% {
@@ -121,7 +121,7 @@
             bottom: 5px;
             transition: all 0.5s ease-in-out;
             &:hover {
-                animation: move 0.25s ease-in-out infinite;
+                animation: move 1s ease-in-out infinite;
             }
         }
         .u-bg {

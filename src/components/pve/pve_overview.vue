@@ -2,7 +2,7 @@
     <div class="m-pve-overview">
         <div class="u-overview-charts">
             <div class="u-left">
-                <overview-tabs></overview-tabs>
+                <type-tabs></type-tabs>
                 <overview-chart></overview-chart>
             </div>
             <overview-pie></overview-pie>
@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import OverviewTabs from "./overview_tabs.vue";
+import TypeTabs from "./type_tabs.vue";
 import OverviewChart from "./overview_chart.vue";
 import OverviewPie from "./overview_pie.vue";
 import OverviewList from "./overview_list.vue";

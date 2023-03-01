@@ -30,7 +30,7 @@
             <el-table-column prop="criticalCount" label="会心数" width="100"></el-table-column>
             <el-table-column prop="min" label="单次最小" width="100"></el-table-column>
             <el-table-column prop="max" label="单次最大" width="100"></el-table-column>
-            <el-table-column label="占比" width="164">
+            <el-table-column label="占比" width="175">
                 <template #default="{ row }">
                     <div class="u-rate-wrapper">
                         <div class="u-rate-value">{{ displayPercent(row.rate) }}</div>
@@ -201,7 +201,7 @@ watch(
                 text-align: right;
             }
             .u-rate-outer {
-                flex-grow: 1;
+                flex-grow: 0.8;
                 height: 4px;
                 background: transparent;
                 border-radius: 2px;

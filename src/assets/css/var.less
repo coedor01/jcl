@@ -2,6 +2,41 @@
 GLOBAL DEFINITION 项目本地全局定义
 🚫 WARNING : 不可删除！
 ***/
+.w-card {
+    background: #131517;
+    border-radius: 20px;
+    padding: 20px;
+
+    .w-card-title {
+        .fz(14px, 18px);
+        color: #b3b3b3;
+        margin: 0;
+    }
+}
+.w-tabs {
+    .u-tab {
+        .x(center);
+        .fz(14px, 40px);
+        cursor: pointer;
+        padding: 0 12.5px;
+        height: 40px;
+        display: inline-block;
+        border-radius: 20px;
+        color: #fff;
+        background-color: #24292e;
+        opacity: 0.5;
+        transition: all 0.3s ease-in-out;
+
+        &:not(:last-of-type) {
+            margin-right: 20px;
+        }
+        &.is-active {
+            opacity: 1;
+            color: #fff;
+            background-color: #7650f8;
+        }
+    }
+}
 
 .flex-center {
     display: flex;
@@ -91,10 +126,13 @@ GLOBAL DEFINITION 项目本地全局定义
     }
     .el-table__cell {
         padding: 0;
+
+        &:not(.is-left) {
+            .x(center);
+        }
     }
     div.cell {
         padding: 3px 2px;
-        .x(center);
         .fz(14px, 18px);
         .ellipsis;
         transition: all 0.1s ease-in-out;
@@ -106,7 +144,7 @@ GLOBAL DEFINITION 项目本地全局定义
     .el-table__row.is-focus {
         .el-table__cell:not(:first-of-type) {
             div.cell {
-                background: #3e4afa;
+                background: #7650f8;
                 color: white;
             }
             &:nth-of-type(2) {

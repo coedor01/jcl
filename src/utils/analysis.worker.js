@@ -1,5 +1,6 @@
 import { Analyzer } from "./analyzer";
 import { getResource as _getResourceFromApi } from "@/services/resource.js";
+import { uniq } from "lodash-es";
 
 const updateResult = (msg, data) => {
     postMessage({ msg, data });
@@ -10,13 +11,13 @@ async function getResourceFromApi(resourceList, client = "std") {
     let buff_res = await _getResourceFromApi({
         client,
         type: "buff",
-        ids: resourceList.buff,
+        ids: uniq(resourceList.buff),
         fields: ["BuffID", "Level", "IconID", "Name", "BuffName", "Desc"],
     });
     let skill_res = await _getResourceFromApi({
         client,
         type: "skill",
-        ids: resourceList.skill,
+        ids: uniq(resourceList.skill),
         fields: ["SkillID", "Level", "MaxLevel", "IconID", "Name", "SkillName", "Desc"],
     });
     if (buff_res.data) {

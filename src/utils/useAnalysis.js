@@ -6,6 +6,7 @@ import analysisWorker from "./analysis.worker.js";
 export function useAnalysis() {
     const store = useStore();
     const progress = ref(0);
+    const ready = ref(false);
 
     const startAnalysis = (promise) => {
         promise
@@ -37,7 +38,9 @@ export function useAnalysis() {
                         }
                         // 返回结果
                         window.$store = data;
-                        store.result = data;
+                        store.result = Object.freeze(data);
+                        console.log("Analysis finished.");
+                        ready.value = true;
                         worker.terminate();
                     }
                 };
@@ -45,5 +48,5 @@ export function useAnalysis() {
             });
     };
 
-    return { progress, startAnalysis };
+    return { progress, ready, startAnalysis };
 }

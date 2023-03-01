@@ -82,6 +82,7 @@ const statusCode = {
     loading: 2,
     ready: 3,
 };
+const { startAnalysis, progress, ready } = useAnalysis();
 
 const status = computed(() => {
     // 害没选文件
@@ -89,17 +90,18 @@ const status = computed(() => {
     // 选了文件，还没开始分析
     if (progress.value === 0) return statusCode.default;
     // 正在分析
-    if (progress.value < 100) return statusCode.loading;
+    if (!ready.value) return statusCode.loading;
     // 分析完毕
     return statusCode.ready;
 });
-const { startAnalysis, progress } = useAnalysis();
 // event
 const fileChange = (file) => {
     store.file = file.raw;
     progress.value = 0;
+    ready.value = false;
 };
 const start = () => {
+    store.result = {};
     const promise = new Promise((resolve) => {
         let reader = new FileReader();
         reader.onload = (e) => {

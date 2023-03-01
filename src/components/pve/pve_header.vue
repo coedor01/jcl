@@ -22,7 +22,7 @@
                 class="u-tab"
                 v-for="(tab, index) in tabList"
                 :key="index"
-                :class="{ 'is-active': current === tab.name }"
+                :class="{ 'is-active': mainTab === tab.name }"
                 @click="switchTab(tab.name, tab)"
             >
                 <img class="u-tab-icon" :src="tab.icon" :draggable="false" />
@@ -33,13 +33,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, inject } from "vue";
 import { useStore } from "@/store";
 import { moment } from "@jx3box/jx3box-common/js/moment";
 import { getMaps } from "@/services/img";
 import { padStart } from "lodash";
 
 const store = useStore();
+// inject
+const mainTab = inject("mainTab");
 
 // data
 const tabList = [
@@ -65,7 +67,6 @@ const tabList = [
     },
 ];
 const mapNames = ref({});
-const current = ref("overview");
 
 // computed
 const displayTitle = computed(() => {
@@ -137,11 +138,9 @@ const displayOverview = computed(() => {
 });
 
 // event
-const emits = defineEmits(["switchTab"]);
 const switchTab = (tab) => {
-    if (current.value == tab) return;
-    current.value = tab;
-    emits("switchTab", tab);
+    if (mainTab.value == tab) return;
+    mainTab.value = tab;
 };
 
 onMounted(() => {

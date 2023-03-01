@@ -62,10 +62,13 @@ const updateData = () => {
     syncSelected();
 };
 // 同步选中状态相关
-const syncing = ref(true);
+const syncing = ref(false);
 const syncSelected = () => {
     syncing.value = true;
-    if (!echart.value) return;
+    if (!echart.value) {
+        syncing.value = false;
+        return;
+    }
     for (let d of data.value) {
         if (focusEntities.value.includes(d.id)) {
             echart.value.dispatchAction({
@@ -102,6 +105,7 @@ watch(
 watch(
     () => focusEntities.value,
     () => {
+        if (syncing.value) return;
         syncSelected();
     },
     { immediate: true, deep: true }

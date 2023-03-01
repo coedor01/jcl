@@ -5,7 +5,7 @@
             <div class="u-entity-name">{{ getEntityName(entityID) }}</div>
         </div>
         <el-table class="u-table" :data="data" :border="false">
-            <el-table-column label="招式" width="100">
+            <el-table-column label="招式" width="100" :align="'left'">
                 <template #default="{ row }">{{ row.name }}</template>
             </el-table-column>
             <el-table-column prop="count" label="命中" width="80"></el-table-column>

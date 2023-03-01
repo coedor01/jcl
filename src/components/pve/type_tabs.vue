@@ -52,12 +52,14 @@ const switchType = (tab) => {
         cursor: pointer;
         border-radius: 20px;
         color: #fff;
-        background-color: #0c759e;
+        background-color: #252525;
         opacity: 0.5;
         transition: all 0.3s ease-in-out;
 
         &.is-active {
             opacity: 1;
+            color: #fff;
+            background-color: #0c759e;
         }
     }
 }

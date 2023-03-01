@@ -1,6 +1,6 @@
 <template>
     <div class="m-pve-result">
-        <pve-header @switch="switchTab"></pve-header>
+        <pve-header></pve-header>
         <div class="m-pve-content">
             <keep-alive>
                 <component :is="mainComponents[mainTab]"></component>
@@ -10,19 +10,18 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, provide } from "vue";
 
 import PveHeader from "@/components/pve/pve_header.vue";
 import PveOverview from "@/components/pve/pve_overview.vue";
+import PveEntity from "@/components/pve/pve_entity.vue";
 // data
 const mainTab = ref("overview");
 const mainComponents = {
     overview: PveOverview,
+    detail: PveEntity,
 };
-//methods
-const switchTab = (tab) => {
-    mainTab.value = tab;
-};
+provide("mainTab", mainTab);
 </script>
 
 <style lang="less" scoped>
@@ -31,7 +30,7 @@ const switchTab = (tab) => {
     flex-direction: column;
 
     .m-pve-content {
-        padding-bottom: 40px;
+        .mb(80px);
     }
 }
 </style>

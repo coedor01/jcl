@@ -8,7 +8,8 @@ export function useAnalysis() {
 
     const startAnalysis = (promise) => {
         promise
-            .then((raw) => {
+            .then(() => {
+                const raw = store.raw;
                 // 创建一个worker并初始化
                 store.worker = new analysisWorker();
                 const worker = store.worker;
@@ -27,7 +28,8 @@ export function useAnalysis() {
                         progress.value = data * 100;
                     } else if (msg == "all") {
                         // 返回结果
-                        window.$store = data;
+                        store.result = Object.freeze(data);
+                        console.log(store.result);
                         worker.terminate();
                     }
                 };

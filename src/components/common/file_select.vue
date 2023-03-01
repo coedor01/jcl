@@ -23,7 +23,7 @@
             >
                 <upload-filled class="u-upload-icon" />
                 <div class="u-upload-title">{{ subjectName[subject] }}</div>
-                <div class="u-upload-filename">{{ file.name ?? "(✪ω✪)" }}</div>
+                <div class="u-upload-filename">{{ store.file.name ?? "(✪ω✪)" }}</div>
                 <template #tip>
                     <div class="u-upload-tip">请将<em>JCL文件</em>拖至框内，或<em>点击上传</em></div>
                     <div class="u-upload-help">
@@ -43,6 +43,7 @@
                     class="u-view"
                     :class="{ ready: status == statusCode.ready }"
                     :disabled="status != statusCode.ready"
+                    @click="view"
                     >查看分析</el-button
                 >
             </div>
@@ -54,9 +55,14 @@
 <script setup>
 import { UploadFilled, WarningFilled } from "@element-plus/icons-vue";
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import { decode } from "iconv-lite";
 import { useAnalysis } from "@/utils/useAnalysis";
+import { useStore } from "@/store";
 import { Buffer } from "buffer";
+
+const store = useStore();
+const router = useRouter();
 // data
 const dialogVisible = ref(true);
 const subject = ref("team");
@@ -77,10 +83,9 @@ const statusCode = {
     ready: 3,
 };
 
-const file = ref({});
 const status = computed(() => {
     // 害没选文件
-    if (!file.value.name) return statusCode.upload;
+    if (!store.file.name) return statusCode.upload;
     // 选了文件，还没开始分析
     if (progress.value === 0) return statusCode.default;
     // 正在分析
@@ -90,8 +95,8 @@ const status = computed(() => {
 });
 const { startAnalysis, progress } = useAnalysis();
 // event
-const fileChange = (_file) => {
-    file.value = _file.raw;
+const fileChange = (file) => {
+    store.file = file.raw;
     progress.value = 0;
 };
 const start = () => {
@@ -100,12 +105,20 @@ const start = () => {
         reader.onload = (e) => {
             resolve(e.target.result);
         };
-        reader.readAsArrayBuffer(file.value);
+        reader.readAsArrayBuffer(store.file);
     }).then((buffer) => {
         const raw = decode(Buffer.from(buffer), "gbk");
-        return new Promise((resolve) => resolve(raw));
+        store.raw = raw;
+        return new Promise((resolve) => resolve(true));
     });
     startAnalysis(promise);
+};
+const view = () => {
+    if (subject.value === "pvp") {
+        router.push({ name: "pvp" });
+    } else {
+        router.push({ name: "pve" });
+    }
 };
 
 // methods

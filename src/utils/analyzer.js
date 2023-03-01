@@ -63,10 +63,22 @@ const defaultResult = {
     end: {},
     client: "std",
     map: null,
+    server: null,
 
     rows: [],
-    entities: {},
-    stats: {},
+    entities: {
+        0: {
+            id: 0,
+            name: "未知目标",
+            type: "npc",
+        },
+    },
+    stats: {
+        damage: {},
+        treat: {},
+        beDamaged: {},
+        beTreated: {},
+    },
     buff: {},
     skill: {},
     say: {},
@@ -157,6 +169,7 @@ export class Analyzer {
         this.updateDeath();
         this.updateSay();
         this.updateTeam();
+        this.updateStat();
     }
 
     // 更新JCL文件元信息
@@ -175,7 +188,7 @@ export class Analyzer {
         }
         // type=1,是战斗全局信息，可以用来更新各种
         if (this.current.type === 1) {
-            let { start, client, map } = this.current.detail;
+            let { start, client, map, server } = this.current.detail;
             // JCL文件所属的客户端
             if (["classic_yq", "classic_exp"].includes(client)) this.result.client = client;
             // 战斗结束时间
@@ -192,6 +205,7 @@ export class Analyzer {
             }
             // 地图
             this.result.map = map;
+            this.result.server = server.split("_")[1];
         }
         return true;
     }
@@ -323,6 +337,28 @@ export class Analyzer {
                 }
             }
         }
+    }
+    updateEntityBuff(entity) {
+        const { micro } = this.current;
+        if (!this.result.buff[entity]) return;
+        for (let bid in this.result.buff[entity]) {
+            let buff = this.result.buff[entity][bid];
+            if (buff.cur && buff.cur.end < micro) {
+                buff.logs.push(buff.cur);
+                buff.cur = null;
+            }
+        }
+    }
+    // 获取单位的buff
+    getBuff(entity) {
+        if (!this.result.buff[entity]) return [];
+        this.updateEntityBuff(entity);
+        let result = [];
+        for (let bid in this.result.buff[entity]) {
+            let buff = this.result.buff[entity][bid];
+            if (buff.cur) result.push(`${bid}*$${buff.cur.stack}`);
+        }
+        return result;
     }
     // 技能数统计
     updateSkillCount() {
@@ -458,5 +494,100 @@ export class Analyzer {
                 target.team = !caster.team;
             }
         }
+    }
+    // 更新数据统计/DPS统计等
+    updateStat() {
+        const { type, detail } = this.current;
+        if (type !== 21) return;
+        const { caster, target, values } = detail;
+        if (values[13]) {
+            this.updateStatItem("damage", caster);
+            this.updateStatItem("beDamaged", target);
+        }
+        if (values[6]) {
+            this.updateStatItem("treat", caster);
+            if (values[14]) {
+                this.updateStatItem("beTreated", target);
+            }
+        }
+    }
+    updateStatItem(type, entity) {
+        const stat = this.result.stats[type];
+        if (!stat[entity]) {
+            stat[entity] = {
+                all: {
+                    value: 0,
+                    count: 0,
+                    criticalCount: 0,
+                    time: 0,
+                    max: Number.MIN_SAFE_INTEGER,
+                    min: Number.MAX_SAFE_INTEGER,
+                    details: [],
+                },
+                windows: {},
+            };
+            if (type == "treat") {
+                stat[entity].all.total = 0;
+            }
+        }
+        // ========= 先准备好要用的数据，避免后面重复计算 ==========
+        const {
+            micro,
+            detail: { caster, target, eventType, id, skill, values, isCritical },
+        } = this.current;
+        let value = 0;
+        let total = 0;
+        if (["damage", "beDamaged"].includes(type)) {
+            value = values[13];
+        } else if (["treat", "beTreated"].includes(type)) {
+            value = values[14];
+            total = values[6];
+        }
+        // 技能效果id
+        const effectID = `${eventType === 1 ? "skill" : "buff"}:${id}_${skill}`;
+        // 统计细节
+        let log = {
+            caster,
+            target,
+            value: value,
+            buffs: this.getBuff(entity),
+            micro,
+            isCritical: isCritical,
+            effect: effectID,
+        };
+        if (type == "treat") log.T = total;
+        // ========= 更新统计
+        let all = stat[entity].all;
+        all.value += value;
+        all.count += 1;
+        all.time = micro;
+        all.max = Math.max(all.max, value);
+        all.min = Math.min(all.min, value);
+        all.details.push(log);
+        if (isCritical) all.criticalCount += 1;
+        if (type == "treat") all.total += total;
+        // ========= 更新窗口统计
+        let windowId = Math.ceil(micro / 5000) * 5;
+        if (!stat[entity].windows[windowId]) {
+            stat[entity].windows[windowId] = {
+                value: 0,
+                count: 0,
+                criticalCount: 0,
+                max: Number.MIN_SAFE_INTEGER,
+                min: Number.MAX_SAFE_INTEGER,
+                details: [],
+            };
+            if (type == "treat") {
+                stat[entity].windows[windowId].total = 0;
+            }
+        }
+        let window = stat[entity].windows[windowId];
+        window.value += value;
+        window.count += 1;
+        window.max = Math.max(window.max, value);
+        window.min = Math.min(window.min, value);
+        window.details.push(log);
+        if (isCritical) window.criticalCount += 1;
+        if (type == "treat") window.total += total;
     }
 }

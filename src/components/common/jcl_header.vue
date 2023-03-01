@@ -69,7 +69,6 @@ export default {
 
 <style lang="less" scoped>
 .c-header {
-    background-color: black;
     width: 100%;
     height: 100px;
 

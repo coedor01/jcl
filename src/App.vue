@@ -1,5 +1,5 @@
 <template>
-    <el-scrollbar height="100vh">
+    <el-scrollbar height="100vh" class="v-app">
         <jcl-header></jcl-header>
         <router-view />
     </el-scrollbar>

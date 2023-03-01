@@ -25,8 +25,6 @@ import DataView from "@/components/home/data_view.vue";
 @import "@/assets/css/app.less";
 
 .v-home {
-    background-image: url("@/assets/img/home/bg.jpg");
-
     .m-home {
         width: 1440px;
         margin: auto;

@@ -2,10 +2,17 @@
 GLOBAL DEFINITION 项目本地全局定义
 🚫 WARNING : 不可删除！
 ***/
+
 .flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 :root {
@@ -54,4 +61,64 @@ GLOBAL DEFINITION 项目本地全局定义
 
 .el-dialog {
     --el-dialog-bg-color: #3b3652;
+}
+
+.el-table {
+    --el-table-border: none;
+    --el-table-bg-color: transparent;
+    --el-table-tr-bg-color: transparent;
+    --el-table-header-bg-color: transparent;
+    --el-table-row-hover-bg-color: transparent;
+
+    .el-table__inner-wrapper::before {
+        height: 0;
+    }
+    .el-table__header-wrapper {
+        .mb(6px);
+        background-color: #3e4afa;
+        border-radius: 20px;
+        height: 26px;
+    }
+    th.el-table__cell {
+        color: white;
+    }
+    .el-table__header {
+        padding-left: 16px;
+        height: 26px;
+    }
+    .el-table__body {
+        padding-left: 16px;
+    }
+    .el-table__cell {
+        padding: 0;
+    }
+    div.cell {
+        padding: 3px 2px;
+        .x(center);
+        .fz(14px, 18px);
+        .ellipsis;
+        transition: all 0.1s ease-in-out;
+    }
+    .el-table__row {
+        color: #b3b3b3;
+    }
+
+    .el-table__row.is-focus {
+        .el-table__cell:not(:first-of-type) {
+            div.cell {
+                background: #3e4afa;
+                color: white;
+            }
+            &:nth-of-type(2) {
+                div.cell {
+                    border-radius: 6px 0 0 6px;
+                }
+            }
+            &:last-of-type {
+                div.cell {
+                    border-radius: 0 6px 6px 0;
+                }
+            }
+        }
+    }
 }

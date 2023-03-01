@@ -23,7 +23,7 @@
                 v-for="(tab, index) in tabList"
                 :key="index"
                 :class="{ 'is-active': current === tab.name }"
-                @click="switchTab(tab.name)"
+                @click="switchTab(tab.name, tab)"
             >
                 <img class="u-tab-icon" :src="tab.icon" :draggable="false" />
                 <div class="u-tab-title">{{ tab.title }}</div>
@@ -39,6 +39,14 @@ import { moment } from "@jx3box/jx3box-common/js/moment";
 import { getMaps } from "@/services/img";
 import { padStart } from "lodash";
 
+const store = useStore();
+const {
+    file,
+    info,
+    result: { start, end, server, map },
+} = store;
+
+// data
 const tabList = [
     {
         name: "overview",
@@ -61,13 +69,10 @@ const tabList = [
         title: "全部记录",
     },
 ];
+const mapNames = ref({});
+const current = ref("overview");
 
-const store = useStore();
-const {
-    file,
-    info,
-    result: { start, end, server, map },
-} = store;
+// computed
 const displayTitle = computed(() => {
     return info.title || file.name || "这是一个标题！这是一个标题！这是一个标题！这是一个标题！";
 });
@@ -131,10 +136,8 @@ const displayOverview = computed(() => {
         },
     ];
 });
-const mapNames = ref({});
 
-const current = ref("overview");
-
+// event
 const emits = defineEmits(["switchTab"]);
 const switchTab = (tab) => {
     if (current.value == tab) return;

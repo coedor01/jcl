@@ -356,7 +356,7 @@ export class Analyzer {
         let result = [];
         for (let bid in this.result.buff[entity]) {
             let buff = this.result.buff[entity][bid];
-            if (buff.cur) result.push(`${bid}*$${buff.cur.stack}`);
+            if (buff.cur) result.push(`${bid}*${buff.cur.stack}`);
         }
         return result;
     }
@@ -533,7 +533,7 @@ export class Analyzer {
         // ========= 先准备好要用的数据，避免后面重复计算 ==========
         const {
             micro,
-            detail: { caster, target, eventType, id, skill, values, isCritical },
+            detail: { caster, target, eventType, id, level, values, isCritical },
         } = this.current;
         let value = 0;
         let total = 0;
@@ -544,7 +544,7 @@ export class Analyzer {
             total = values[6];
         }
         // 技能效果id
-        const effectID = `${eventType === 1 ? "skill" : "buff"}:${id}_${skill}`;
+        const effectID = `${eventType === 1 ? "skill" : "buff"}:${id}_${level}`;
         // 统计细节
         let log = {
             caster,

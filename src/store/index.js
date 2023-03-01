@@ -16,9 +16,10 @@ export const useStore = defineStore({
         // 数据库信息
         info: "",
 
-        // worker
+        // 分析结果相关
         worker: "",
         result: "",
+        // UI相关
     }),
     getters: {},
     actions: {},

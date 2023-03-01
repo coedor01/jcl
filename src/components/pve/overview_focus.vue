@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref, toRefs, onMounted } from "vue";
+import { ref, toRefs, watch } from "vue";
 import { getMountIcon, getEntityName, getResource, displayPercent } from "@/utils/common";
 import { useStore } from "@/store";
 const store = useStore();
@@ -37,35 +37,39 @@ const { entityID, statType } = toRefs(props);
 
 const data = ref([]);
 
-onMounted(() => {
-    const source = store.result.stats?.[statType.value]?.[entityID.value]?.all?.details;
-    if (!source) return [];
-    let result = {};
-    let total = 0;
-    for (let log of source) {
-        const key = log.effect;
-        if (!result[key]) {
-            const resource = getResource(key);
-            const name = resource.name ?? resource.remark ?? key;
-            result[key] = {
-                name,
-                value: 0,
-                count: 0,
-                criticalCount: 0,
-                rate: 0,
-            };
+watch(
+    [() => statType.value, () => entityID.value],
+    () => {
+        const source = store.result.stats?.[statType.value]?.[entityID.value]?.all?.details;
+        if (!source) return [];
+        let result = {};
+        let total = 0;
+        for (let log of source) {
+            const key = log.effect;
+            if (!result[key]) {
+                const resource = getResource(key);
+                const name = resource.name ?? resource.remark ?? key;
+                result[key] = {
+                    name,
+                    value: 0,
+                    count: 0,
+                    criticalCount: 0,
+                    rate: 0,
+                };
+            }
+            total += log.value;
+            result[key].count += 1;
+            result[key].value += log.value;
+            result[key].criticalCount += log.isCritical ? 1 : 0;
         }
-        total += log.value;
-        result[key].count += 1;
-        result[key].value += log.value;
-        result[key].criticalCount += log.isCritical ? 1 : 0;
-    }
-    for (let key in result) {
-        result[key].rate = (result[key].value / total) * 100;
-    }
-    data.value = Object.values(result);
-    data.value.sort((a, b) => b.value - a.value);
-});
+        for (let key in result) {
+            result[key].rate = (result[key].value / total) * 100;
+        }
+        data.value = Object.values(result);
+        data.value.sort((a, b) => b.value - a.value);
+    },
+    { immediate: true }
+);
 </script>
 
 <style lang="less" scoped>

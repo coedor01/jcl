@@ -11,7 +11,7 @@
             <div>
                 <span>开始时间：{{ displayStart }}</span>
                 <span>结束时间：{{ displayEnd }}</span>
-                <span>服务器：{{ server }} - {{ displayMap }}</span>
+                <span>服务器：{{ displayServer }}</span>
             </div>
             <div>
                 <span>数据类型：JCL - JX3 Combat Log</span>
@@ -40,11 +40,6 @@ import { getMaps } from "@/services/img";
 import { padStart } from "lodash";
 
 const store = useStore();
-const {
-    file,
-    info,
-    result: { start, end, server, map },
-} = store;
 
 // data
 const tabList = [
@@ -74,18 +69,22 @@ const current = ref("overview");
 
 // computed
 const displayTitle = computed(() => {
+    const { info, file } = store;
     return info.title || file.name || "这是一个标题！这是一个标题！这是一个标题！这是一个标题！";
 });
 const displayStart = computed(() => {
+    const { start } = store.result;
     if (!start) return "-";
     return moment(start.sec * 1000).format("YYYY-MM-DD HH:mm:ss");
 });
 const displayEnd = computed(() => {
+    const { start, end } = store.result;
     if (!start) return "-";
     return moment((start.sec + end.sec) * 1000).format("YYYY-MM-DD HH:mm:ss");
 });
-const displayMap = computed(() => {
-    return mapNames.value[map] || `(${map})`;
+const displayServer = computed(() => {
+    const { server, map } = store.result;
+    return server + " - " + mapNames.value[map] || `(${map})`;
 });
 const displayOverview = computed(() => {
     const { stats, entities, end } = store.result;

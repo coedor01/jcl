@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { useStore } from "@/store/index.js";
+import { getRandomColor } from "./common.js";
 import analysisWorker from "./analysis.worker.js";
 
 export function useAnalysis() {
@@ -27,9 +28,16 @@ export function useAnalysis() {
                         // 进度更新
                         progress.value = data * 100;
                     } else if (msg == "all") {
+                        // 进行一些轻量化的处理
+                        let { entities } = data;
+                        const colors = getRandomColor();
+                        for (let id in entities) {
+                            const { value } = colors.next();
+                            entities[id].color = value;
+                        }
                         // 返回结果
-                        store.result = Object.freeze(data);
-                        console.log(store.result);
+                        window.$store = data;
+                        store.result = data;
                         worker.terminate();
                     }
                 };

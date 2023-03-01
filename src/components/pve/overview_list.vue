@@ -30,7 +30,7 @@
             <el-table-column prop="criticalCount" label="会心数" width="100"></el-table-column>
             <el-table-column prop="min" label="单次最小" width="100"></el-table-column>
             <el-table-column prop="max" label="单次最大" width="100"></el-table-column>
-            <el-table-column label="团队总伤害占比" width="164">
+            <el-table-column label="占比" width="164">
                 <template #default="{ row }">
                     <div class="u-rate-wrapper">
                         <div class="u-rate-value">{{ displayPercent(row.rate) }}</div>
@@ -59,24 +59,17 @@
 import { useStore } from "@/store";
 import { getMountIcon, getEntityName, displayDigits, displayPercent } from "@/utils/common";
 
-import { computed, ref, toRefs, watch, inject } from "vue";
+import { computed, ref, watch, inject } from "vue";
 import { pick, sortBy } from "lodash-es";
-// props
-const props = defineProps({
-    statType: {
-        type: String,
-        default: "damage",
-    },
-});
-const { statType } = toRefs(props);
 // inject
 const focusEntities = inject("focusEntities");
+const statType = inject("statType");
 // 数据
 const store = useStore();
 const data = ref([]);
 const pageData = computed(() => {
     return data.value.slice((currentPage.value - 1) * 25, currentPage.value * 25);
-});
+}, [data]);
 // 分页
 const currentPage = ref(1);
 const total = computed(() => {
@@ -143,6 +136,7 @@ watch(
         }
         data.value = result;
         sort({ prop: "value", order: "descending" });
+        currentPage.value = 1;
     },
     { immediate: true }
 );

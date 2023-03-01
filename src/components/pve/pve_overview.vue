@@ -1,7 +1,10 @@
 <template>
     <div class="m-pve-overview">
         <div class="u-overview-charts">
-            <overview-chart></overview-chart>
+            <div class="u-left">
+                <overview-tabs></overview-tabs>
+                <overview-chart></overview-chart>
+            </div>
             <overview-pie></overview-pie>
         </div>
         <div class="u-overview-tables">
@@ -20,6 +23,7 @@
 </template>
 
 <script setup>
+import OverviewTabs from "./overview_tabs.vue";
 import OverviewChart from "./overview_chart.vue";
 import OverviewPie from "./overview_pie.vue";
 import OverviewList from "./overview_list.vue";
@@ -46,6 +50,14 @@ provide("focusEntities", focusEntities);
     }
 
     .u-overview-charts {
+        .u-left {
+            display: flex;
+            flex-direction: column;
+            background: #131517;
+            border-radius: 20px;
+            padding: 20px;
+            .size(1000px, 420px);
+        }
         height: 420px;
     }
     .u-overview-tables {

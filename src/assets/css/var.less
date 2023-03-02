@@ -2,7 +2,25 @@
 GLOBAL DEFINITION 项目本地全局定义
 🚫 WARNING : 不可删除！
 ***/
+.w-pagination {
+    justify-content: flex-end;
+
+    .el-pager li.number,
+    .el-pager li.more {
+        background: #2b2b42;
+        color: #b3b3b3;
+
+        &.is-active {
+            background: #7650f8;
+            color: #ffffff;
+        }
+    }
+}
 .w-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
     background: #131517;
     border-radius: 20px;
     padding: 20px;
@@ -24,14 +42,12 @@ GLOBAL DEFINITION 项目本地全局定义
         border-radius: 20px;
         color: #fff;
         background-color: #24292e;
-        opacity: 0.5;
         transition: all 0.3s ease-in-out;
 
         &:not(:last-of-type) {
             margin-right: 20px;
         }
         &.is-active {
-            opacity: 1;
             color: #fff;
             background-color: #7650f8;
         }
@@ -118,18 +134,10 @@ GLOBAL DEFINITION 项目本地全局定义
         color: white;
     }
     .el-table__header {
-        padding-left: 16px;
         height: 26px;
-    }
-    .el-table__body {
-        padding-left: 16px;
     }
     .el-table__cell {
         padding: 0;
-
-        &:not(.is-left) {
-            .x(center);
-        }
     }
     div.cell {
         padding: 3px 2px;
@@ -142,12 +150,12 @@ GLOBAL DEFINITION 项目本地全局定义
     }
 
     .el-table__row.is-focus {
-        .el-table__cell:not(:first-of-type) {
+        .el-table__cell {
             div.cell {
                 background: #7650f8;
                 color: white;
             }
-            &:nth-of-type(2) {
+            &:first-of-type {
                 div.cell {
                     border-radius: 6px 0 0 6px;
                 }

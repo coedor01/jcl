@@ -32,6 +32,14 @@
         & > div {
             flex-grow: 1;
         }
+
+        & > .u-right {
+            height: 100%;
+
+            .w-card {
+                height: 100%;
+            }
+        }
     }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="m-overview-tabs">
+    <div class="m-type-tabs">
         <div
             class="u-tab"
             v-for="(tab, index) in tabs"
@@ -41,7 +41,7 @@ const switchType = (tab) => {
 </script>
 
 <style lang="less" scoped>
-.m-overview-tabs {
+.m-type-tabs {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -53,11 +53,9 @@ const switchType = (tab) => {
         border-radius: 20px;
         color: #fff;
         background-color: #252525;
-        opacity: 0.5;
         transition: all 0.3s ease-in-out;
 
         &.is-active {
-            opacity: 1;
             color: #fff;
             background-color: #0c759e;
         }

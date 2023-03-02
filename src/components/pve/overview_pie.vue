@@ -95,7 +95,7 @@ const handleSelect = ({ selected }) => {
 };
 // 统计类型变化，分析结果变化时更新数据
 watch(
-    [() => store.result, () => statType.value],
+    [() => store.result, statType],
     () => {
         updateData();
     },

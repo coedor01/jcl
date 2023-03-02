@@ -2,9 +2,7 @@
     <div class="m-pve-result">
         <pve-header></pve-header>
         <div class="m-pve-content">
-            <keep-alive>
-                <component :is="mainComponents[mainTab]"></component>
-            </keep-alive>
+            <component :is="mainComponents[mainTab]"></component>
         </div>
     </div>
 </template>

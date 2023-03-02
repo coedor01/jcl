@@ -57,7 +57,7 @@ import { UploadFilled, WarningFilled } from "@element-plus/icons-vue";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { decode } from "iconv-lite";
-import { useAnalysis } from "@/utils/useAnalysis";
+import { useAnalysis } from "@/utils/uses/useAnalysis";
 import { useStore } from "@/store";
 import { Buffer } from "buffer";
 

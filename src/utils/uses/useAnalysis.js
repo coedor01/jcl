@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useStore } from "@/store/index.js";
-import { getRandomColor } from "./common.js";
-import analysisWorker from "./analysis.worker.js";
+import { getRandomColor } from "../common.js";
+import analysisWorker from "../analysis.worker.js";
 
 export function useAnalysis() {
     const store = useStore();

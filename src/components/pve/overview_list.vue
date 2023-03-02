@@ -3,14 +3,14 @@
         <p class="u-title">单位详情</p>
         <el-table
             class="u-table"
-            :data="pageData"
+            :data="currentData"
             :border="false"
             :fit="false"
             @sort-change="sort"
             @row-click="click"
             :row-class-name="rowClass"
         >
-            <el-table-column label="职业" width="32">
+            <el-table-column label="职业" width="48" :align="'right'">
                 <template #default="{ row }">
                     <img class="u-mount-icon" :src="getMountIcon(row.id)" alt="" />
                 </template>
@@ -42,7 +42,7 @@
             </el-table-column>
         </el-table>
         <el-pagination
-            class="u-pagination"
+            class="w-pagination"
             small
             background
             layout="pager"
@@ -58,8 +58,9 @@
 <script setup>
 import { useStore } from "@/store";
 import { getMountIcon, getEntityName, displayDigits, displayPercent } from "@/utils/common";
+import { usePaginate } from "@/utils/uses/usePaginate";
 
-import { computed, ref, watch, inject } from "vue";
+import { ref, watch, inject } from "vue";
 import { pick, sortBy } from "lodash-es";
 // inject
 const focusEntities = inject("focusEntities");
@@ -67,16 +68,7 @@ const statType = inject("statType");
 // 数据
 const store = useStore();
 const data = ref([]);
-const pageData = computed(() => {
-    return data.value.slice((currentPage.value - 1) * 25, currentPage.value * 25);
-}, [data]);
-// 分页
-const currentPage = ref(1);
-const total = computed(() => {
-    const { stats } = store.result;
-    if (!stats) return 0;
-    return Object.keys(stats[statType.value]).length;
-});
+const { currentPage, currentData, total } = usePaginate(data, { pageSize: 25 });
 // methods
 const sort = ({ prop, order }) => {
     data.value = data.value.sort((a, b) => {
@@ -104,7 +96,7 @@ const rowClass = ({ row }) => {
 };
 // watch
 watch(
-    [() => store.result, () => statType.value],
+    [() => store.result, statType],
     () => {
         const { entities, stats, end } = store.result;
         if (!stats) return [];
@@ -168,6 +160,20 @@ watch(
         .el-table__row {
             cursor: pointer;
         }
+
+        .el-table__row.is-focus {
+            .el-table__cell:first-of-type {
+                div.cell {
+                    background: transparent;
+                }
+            }
+            .el-table__cell:nth-of-type(2) {
+                div.cell {
+                    border-radius: 6px 0 0 6px;
+                }
+            }
+        }
+
         .el-table__row:not(.is-focus):hover {
             .el-table__cell:not(:first-of-type) {
                 div.cell {
@@ -211,20 +217,6 @@ watch(
                     background: #ffffff;
                     border-radius: 2px;
                 }
-            }
-        }
-    }
-
-    .u-pagination {
-        justify-content: flex-end;
-
-        .el-pager .number {
-            background: #2b2b42;
-            color: #b3b3b3;
-
-            &.is-active {
-                background: #7650f8;
-                color: #ffffff;
             }
         }
     }

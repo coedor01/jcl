@@ -69,8 +69,9 @@ const defaultResult = {
     entities: {
         0: {
             id: 0,
-            name: "未知目标",
+            name: "天外来客",
             type: "npc",
+            templateID: -1,
         },
     },
     stats: {

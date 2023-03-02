@@ -38,7 +38,7 @@ const { entityID, statType } = toRefs(props);
 const data = ref([]);
 
 watch(
-    [() => statType.value, () => entityID.value],
+    [statType, entityID],
     () => {
         const source = store.result.stats?.[statType.value]?.[entityID.value]?.all?.details;
         if (!source) return [];

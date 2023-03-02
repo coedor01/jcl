@@ -3,12 +3,13 @@ import xfId from "@jx3box/jx3box-data/data/xf/xfid.json";
 import { showMountIcon, iconLink } from "@jx3box/jx3box-common/js/utils";
 import { cloneDeep, padStart } from "lodash";
 import { useStore } from "@/store";
+import { moment } from "@jx3box/jx3box-common/js/moment";
 const store = useStore();
 
 export function getEntityColor(entityID) {
     const defaultColor = "#ee6666";
-    let entity = window?.$store.entities[entityID];
-    if (!entity) return defaultColor;
+    const { entities } = store.result;
+    const entity = entities[entityID];
     if (!entity || !entity.mount) return defaultColor;
     let mountName = xfId[entity.mount];
     let color = colors.colors_by_mount_name[mountName];
@@ -54,6 +55,20 @@ export function getResource(_key) {
     }
 }
 
+export function getResourceIcon(key) {
+    const resource = getResource(key);
+    if (!resource) return iconLink(13);
+    return iconLink(resource.icon);
+}
+
+export function getResourceName(key, { showID = false } = {}) {
+    const resource = getResource(key);
+    if (!resource) return "未知招式";
+    let ret = resource.name || resource.remark;
+    if (showID) ret += `(${key})`;
+    return ret;
+}
+
 export function getMountIcon(id) {
     const { entities } = store.result;
     const entity = entities[id];
@@ -79,4 +94,9 @@ export function displayPercent(value) {
 export function displayDigits(value) {
     if (!value) return " - ";
     return value.toFixed(2);
+}
+
+export function displayDuration(value) {
+    const duration = moment.duration(value, "seconds");
+    return duration.isValid() ? `${padStart(duration.minutes(), 2, 0)}:${padStart(duration.seconds(), 2, 0)}` : "--:--";
 }

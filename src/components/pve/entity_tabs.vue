@@ -2,33 +2,31 @@
     <div class="m-entity-tabs">
         <el-scrollbar width="100%">
             <div class="w-tabs">
-                <div class="u-tab is-active">秀秀不咕</div>
-                <div class="u-tab">学废了嘛</div>
-                <div class="u-tab">对看忘忧</div>
-                <div class="u-tab is-active">秀秀不咕</div>
-                <div class="u-tab">学废了嘛</div>
-                <div class="u-tab">对看忘忧</div>
-                <div class="u-tab is-active">秀秀不咕</div>
-                <div class="u-tab">学废了嘛</div>
-                <div class="u-tab">对看忘忧</div>
-                <div class="u-tab is-active">秀秀不咕</div>
-                <div class="u-tab">学废了嘛</div>
-                <div class="u-tab">对看忘忧</div>
-                <div class="u-tab is-active">秀秀不咕</div>
-                <div class="u-tab">学废了嘛</div>
-                <div class="u-tab">对看忘忧</div>
-                <div class="u-tab is-active">秀秀不咕</div>
-                <div class="u-tab">学废了嘛</div>
-                <div class="u-tab">对看忘忧</div>
-                <div class="u-tab is-active">秀秀不咕</div>
-                <div class="u-tab">学废了嘛</div>
-                <div class="u-tab">对看忘忧</div>
+                <div
+                    class="u-tab"
+                    v-for="(id, index) in entityList"
+                    :key="index"
+                    :class="{ 'is-active': id === entity }"
+                    @click="switchEntity(id)"
+                >
+                    {{ getEntityName(id) }}
+                </div>
             </div>
         </el-scrollbar>
     </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { getEntityName } from "@/utils/common";
+import { inject } from "vue";
+
+const entityList = inject("entityList");
+const entity = inject("entity");
+const switchEntity = (id) => {
+    if (entity.value === id) return;
+    entity.value = id;
+};
+</script>
 
 <style lang="less" scoped>
 .m-entity-tabs {

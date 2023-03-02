@@ -35,9 +35,9 @@
 <script setup>
 import { ref, computed, onMounted, inject } from "vue";
 import { useStore } from "@/store";
-import { moment } from "@jx3box/jx3box-common/js/moment";
 import { getMaps } from "@/services/img";
-import { padStart } from "lodash";
+import { displayDuration } from "@/utils/common";
+import { moment } from "@jx3box/jx3box-common/js/moment";
 
 const store = useStore();
 // inject
@@ -110,10 +110,7 @@ const displayOverview = computed(() => {
     }
     const displayTotalDamage = (totalDamage / 10000).toFixed(2) + "万";
     // 求战斗时长
-    const duration = moment.duration(end.sec, "seconds");
-    const displayDuration = duration.isValid()
-        ? `${padStart(duration.minutes(), 2, 0)}:${padStart(duration.seconds(), 2, 0)}`
-        : "--:--";
+    const duration = displayDuration(end.sec);
     // 团队秒伤
     const teamDamage = (totalDamage / end.sec / 10000).toFixed(2) + "万";
 
@@ -128,7 +125,7 @@ const displayOverview = computed(() => {
         },
         {
             title: "总时长",
-            value: displayDuration,
+            value: duration,
         },
         {
             title: "团队秒伤",
@@ -237,6 +234,7 @@ onMounted(() => {
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            transition: all 0.2s ease-in-out;
 
             &:not(.is-active) {
                 filter: brightness(1.5) grayscale(1);

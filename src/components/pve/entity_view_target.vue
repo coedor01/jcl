@@ -67,8 +67,9 @@
 </template>
 
 <script setup>
-import { provide, inject, ref, watch, computed } from "vue";
+import { ref, watch, computed, toRefs } from "vue";
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { getMountIcon, getEntityName, displayDigits, displayPercent } from "@/utils/common";
 
@@ -77,9 +78,7 @@ import EntitySkillLogDetail from "./entity_skill_log_detail.vue";
 
 // 注入的属性
 const store = useStore();
-const statType = inject("statType");
-const entity = inject("entity");
-const currentWindow = inject("currentWindow");
+const { statType, entity, currentWindow, target, logs, log: detail } = toRefs(useGlobal());
 
 // computed
 const targetLabel = computed(() => {
@@ -91,14 +90,6 @@ const skipNoNameTarget = ref(false);
 const data = ref([]);
 const pageSize = ref(9);
 const { currentPage, currentData, total } = usePaginate(data, { pageSize: pageSize.value });
-
-// data & provide
-const target = ref(null); // 选中的目标
-const logs = ref(null); // 选中的日志
-const detail = ref(null); // 选中的日志详情
-provide("target", target);
-provide("logs", logs);
-provide("detail", detail);
 
 // 行点击事件
 const click = (row) => {

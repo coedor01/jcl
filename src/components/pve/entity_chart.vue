@@ -22,17 +22,17 @@ import { LineChart } from "echarts/charts";
 import { TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 
-import { inject, computed, provide } from "vue";
+import { computed, provide, toRefs } from "vue";
 import { displayDuration, displayDigits, displayPercent, getEntityColor } from "@/utils/common";
 import { pick } from "lodash-es";
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
+const store = useStore();
+
+const { entity, statType } = toRefs(useGlobal());
 use([CanvasRenderer, LineChart, TooltipComponent, LegendComponent, GridComponent]);
 provide(THEME_KEY, "dark");
 
-const store = useStore();
-
-const entity = inject("entity");
-const statType = inject("statType");
 const overview = computed(() => {
     const { entities, stats, end } = store.result;
     const entityObj = entities[entity.value];

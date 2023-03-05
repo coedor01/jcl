@@ -1,5 +1,5 @@
 <template>
-    <div class="m-entity-view-skill">
+    <div class="m-entity-view-effect">
         <div class="u-left w-card">
             <div class="w-card-title">技能列表</div>
             <el-table
@@ -58,15 +58,16 @@
             ></el-pagination>
         </div>
         <div class="u-right">
-            <entity-skill-log></entity-skill-log>
+            <entity-skill-log :logs="logs"></entity-skill-log>
             <entity-skill-log-detail></entity-skill-log-detail>
         </div>
     </div>
 </template>
 
 <script setup>
-import { provide, inject, ref, watch } from "vue";
+import { ref, watch, toRefs } from "vue";
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { displayDigits, displayPercent, getResourceIcon, getResourceName } from "@/utils/common";
 
@@ -75,22 +76,12 @@ import EntitySkillLogDetail from "./entity_skill_log_detail.vue";
 
 // 注入的属性
 const store = useStore();
-const statType = inject("statType");
-const entity = inject("entity");
-const currentWindow = inject("currentWindow");
+const { statType, entity, currentWindow, effect, logs, log: detail } = toRefs(useGlobal());
 
 // data
 const data = ref([]);
 const pageSize = ref(22);
 const { currentPage, currentData, total } = usePaginate(data, { pageSize: pageSize.value });
-
-// data & provide
-const effect = ref(null); // 选中的目标
-const logs = ref(null); // 选中的日志
-const detail = ref(null); // 选中的日志详情
-provide("effect", effect);
-provide("logs", logs);
-provide("detail", detail);
 
 // 行点击事件
 const click = (row) => {
@@ -168,7 +159,7 @@ watch(
 </script>
 
 <style lang="less">
-.m-entity-view-skill {
+.m-entity-view-effect {
     display: flex;
     gap: 20px;
     .size(1440px, 800px);

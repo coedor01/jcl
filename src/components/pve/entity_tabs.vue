@@ -17,11 +17,12 @@
 </template>
 
 <script setup>
+import { useGlobal } from "@/store/global";
 import { getEntityName } from "@/utils/common";
-import { inject } from "vue";
+import { toRefs } from "vue";
 
-const entityList = inject("entityList");
-const entity = inject("entity");
+const { entityList, entity } = toRefs(useGlobal());
+
 const switchEntity = (id) => {
     if (entity.value === id) return;
     entity.value = id;

@@ -13,7 +13,7 @@
                 <div class="u-focus-list">
                     <TransitionGroup name="u-focus" tag="div">
                         <div class="u-focus" v-for="(entity, index) in focusEntities" :key="index">
-                            <overview-focus :stat-type="statType" :entityID="entity"></overview-focus>
+                            <overview-focus :entityID="entity"></overview-focus>
                         </div>
                     </TransitionGroup>
                 </div>
@@ -29,12 +29,11 @@ import OverviewPie from "./overview_pie.vue";
 import OverviewList from "./overview_list.vue";
 import OverviewFocus from "./overview_focus.vue";
 
-import { ref, provide } from "vue";
-const statType = ref("damage");
-const focusEntities = ref([]);
+import { toRefs } from "vue";
+import { useGlobal } from "@/store/global";
+const global = useGlobal();
 
-provide("statType", statType);
-provide("focusEntities", focusEntities);
+const { focusEntities } = toRefs(global);
 </script>
 
 <style lang="less">

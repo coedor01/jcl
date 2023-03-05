@@ -11,16 +11,17 @@ import { PieChart } from "echarts/charts";
 import { TooltipComponent } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 
-import { ref, provide, inject, watch } from "vue";
+import { ref, provide, watch, toRefs } from "vue";
 import { pick } from "lodash-es";
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
 
 const store = useStore();
+const global = useGlobal();
 use([CanvasRenderer, PieChart, TooltipComponent]);
 provide(THEME_KEY, "dark");
 
-const statType = inject("statType");
-const focusEntities = inject("focusEntities");
+const { statType, focusEntities } = toRefs(global);
 
 // data
 const data = ref([]);
@@ -103,7 +104,7 @@ watch(
 );
 // focusEntities变化时同步选中状态
 watch(
-    () => focusEntities.value,
+    focusEntities,
     () => {
         if (syncing.value) return;
         syncSelected();

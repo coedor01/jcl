@@ -8,7 +8,7 @@
                 <entity-tabs></entity-tabs>
                 <div class="w-card">
                     <!-- 切换伤害/治疗组件 -->
-                    <type-tabs></type-tabs>
+                    <type-tabs :extra="true"></type-tabs>
                     <!-- 单位图表以及总览 -->
                     <entity-chart></entity-chart>
                 </div>
@@ -17,7 +17,7 @@
         <div class="u-second-section">
             <!-- 技能详情统计方式切换 -->
             <div class="w-tabs">
-                <div class="u-tab" :class="{ 'is-active': viewType == 'skill' }" @click="viewType = 'skill'">
+                <div class="u-tab" :class="{ 'is-active': viewType == 'effect' }" @click="viewType = 'effect'">
                     按技能显示
                 </div>
                 <div class="u-tab" :class="{ 'is-active': viewType == 'target' }" @click="viewType = 'target'">
@@ -25,36 +25,29 @@
                 </div>
             </div>
             <!-- 下面的面板 -->
-            <component :is="typeComponent[viewType]"></component>
+            <keep-alive>
+                <component :is="typeComponent[viewType]"></component>
+            </keep-alive>
         </div>
     </div>
 </template>
 
 <script setup>
-import { provide, ref } from "vue";
+import { toRefs } from "vue";
+import { useGlobal } from "@/store/global";
 
 import TypeTabs from "./type_tabs.vue";
 import EntityTabs from "./entity_tabs.vue";
 import EntitySelect from "./entity_select.vue";
 import EntityChart from "./entity_chart.vue";
-import EntityViewSkill from "./entity_view_skill.vue";
+import EntityViewSkill from "./entity_view_effect.vue";
 import EntityViewTarget from "./entity_view_target.vue";
 
 const typeComponent = {
-    skill: EntityViewSkill,
+    effect: EntityViewSkill,
     target: EntityViewTarget,
 };
-const statType = ref("damage"); // 统计类型，伤害/承疗啥的
-const viewType = ref("skill"); // 按技能统计还是按目标统计
-const entityList = ref([]); // 候选单位列表
-const entity = ref(null); // 当前选中的单位
-const currentWindow = ref(null); // 当前时间窗口
-
-provide("statType", statType);
-provide("viewType", viewType);
-provide("entityList", entityList);
-provide("entity", entity);
-provide("currentWindow", currentWindow);
+const { viewType } = toRefs(useGlobal());
 </script>
 
 <style lang="less">

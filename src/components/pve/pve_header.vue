@@ -33,15 +33,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, inject } from "vue";
+import { ref, computed, onMounted, toRefs } from "vue";
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
 import { getMaps } from "@/services/img";
 import { displayDuration } from "@/utils/common";
 import { moment } from "@jx3box/jx3box-common/js/moment";
 
 const store = useStore();
-// inject
-const mainTab = inject("mainTab");
+const { mainTab } = toRefs(useGlobal());
 
 // data
 const tabList = [

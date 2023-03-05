@@ -20,20 +20,20 @@
 <script setup>
 import { ref, toRefs, watch } from "vue";
 import { getMountIcon, getEntityName, getResource, displayPercent } from "@/utils/common";
-import { useStore } from "@/store";
+import { useStore } from "@/store/index";
+import { useGlobal } from "@/store/global";
+
 const store = useStore();
+const global = useGlobal();
 // props
 const props = defineProps({
     entityID: {
         type: Number,
         required: true,
     },
-    statType: {
-        type: String,
-        required: true,
-    },
 });
-const { entityID, statType } = toRefs(props);
+const { entityID } = toRefs(props);
+const { statType } = toRefs(global);
 
 const data = ref([]);
 

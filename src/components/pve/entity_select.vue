@@ -64,8 +64,9 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from "vue";
+import { ref, computed, toRefs } from "vue";
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { displayDigits, getEntityName } from "@/utils/common";
 const store = useStore();
@@ -102,8 +103,7 @@ const switchFilter = (filter) => {
     }
 };
 // 数据相关
-const entityList = inject("entityList");
-const entity = inject("entity");
+const { entityList, entity } = toRefs(useGlobal());
 const data = computed(() => {
     const { entities } = store.result;
     let _templateExist = {};

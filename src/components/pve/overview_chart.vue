@@ -11,14 +11,15 @@ import { LineChart } from "echarts/charts";
 import { TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 
-import { provide, inject, computed } from "vue";
+import { provide, computed, toRefs } from "vue";
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
 use([CanvasRenderer, LineChart, TooltipComponent, LegendComponent, GridComponent]);
 provide(THEME_KEY, "dark");
 const store = useStore();
+const global = useGlobal();
 
-const statType = inject("statType");
-const focusEntities = inject("focusEntities");
+const { focusEntities, statType } = toRefs(global);
 
 // 被选中的人的名字
 const focusNames = computed(() => {
@@ -27,7 +28,7 @@ const focusNames = computed(() => {
         const entity = entities[x];
         return entity.name ?? "#" + entity.id;
     });
-}, [focusEntities]);
+});
 // 横轴数据
 const xData = computed(() => {
     let result = [];

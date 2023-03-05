@@ -8,8 +8,9 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted } from "vue";
+import { toRefs, onMounted } from "vue";
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
 import { useRouter } from "vue-router";
 
 import PveHeader from "@/components/pve/pve_header.vue";
@@ -18,13 +19,12 @@ import PveEntity from "@/components/pve/pve_entity.vue";
 
 const store = useStore();
 const router = useRouter();
+const { mainTab } = toRefs(useGlobal());
 // data
-const mainTab = ref("overview");
 const mainComponents = {
     overview: PveOverview,
     detail: PveEntity,
 };
-provide("mainTab", mainTab);
 
 onMounted(() => {
     if (!store.result) {

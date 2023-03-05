@@ -13,8 +13,20 @@
 </template>
 
 <script setup>
-import { inject } from "vue";
-const tabs = [
+import { toRefs, computed } from "vue";
+import { useGlobal } from "@/store/global";
+
+const global = useGlobal();
+const { statType } = toRefs(global);
+const props = defineProps({
+    extra: {
+        type: Boolean,
+        default: false,
+    },
+});
+const { extra } = toRefs(props);
+
+const baseTabs = [
     {
         name: "damage",
         title: "伤害总览",
@@ -32,8 +44,24 @@ const tabs = [
         title: "承疗总览",
     },
 ];
+const extraTabs = [
+    {
+        name: "buff",
+        title: "BUFF分析",
+    },
+    {
+        name: "skill",
+        title: "技能分析",
+    },
+];
 
-const statType = inject("statType");
+const tabs = computed(() => {
+    if (extra.value) {
+        return [...baseTabs, ...extraTabs];
+    }
+    return baseTabs;
+});
+
 const switchType = (tab) => {
     if (tab === statType.value) return;
     statType.value = tab;

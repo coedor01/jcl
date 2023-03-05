@@ -74,11 +74,11 @@
 
 <script setup>
 import { getEntityName, displayDigits, getResourceIcon, getResourceName, getMountIcon } from "@/utils/common";
-import { inject, computed } from "vue";
+import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
+import { useGlobal } from "@/store/global";
 
-const detail = inject("detail", null);
-const type = inject("viewType", null);
+const { log: detail, viewType: type } = toRefs(useGlobal());
 
 const buffs = computed(() => {
     if (!detail || !detail.value) return [];

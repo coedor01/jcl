@@ -17,7 +17,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column v-if="type === 'skill'" label="目标" :width="columnWidth[2]">
+            <el-table-column v-if="type === 'effect'" label="目标" :width="columnWidth[2]">
                 <template #default="{ row }">
                     <span>{{ getEntityName(row.target) }}</span>
                 </template>
@@ -54,32 +54,23 @@
 
 <script setup>
 import { getResource, getEntityName, displayDigits, getResourceIcon, getResourceName } from "@/utils/common";
-import { inject, computed } from "vue";
+import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
-
+import { useGlobal } from "@/store/global";
 // data
-const target = inject("target", null);
-const effect = inject("effect", null);
-
-const logs = inject("logs", null);
-const detail = inject("detail", null);
+const { viewType: type, target, effect, logs, log: detail } = toRefs(useGlobal());
 
 // computed
-const type = computed(() => {
-    if (target) return "target";
-    else if (effect) return "skill";
-    else return "";
-});
 const titleName = computed(() => {
     if (type.value === "target") {
         return `${getEntityName(target.value)}`;
-    } else if (type.value === "skill") {
+    } else if (type.value === "effect") {
         const resource = getResource(effect.value);
         return `${resource.name ?? resource.remark}`;
     } else return "";
 });
 const data = computed(() => {
-    if (!logs || !logs.value) return [];
+    if (!logs.value) return [];
     let index = 0;
     for (let log of logs.value) {
         log.index = ++index;

@@ -57,17 +57,19 @@
 
 <script setup>
 import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
 import { getMountIcon, getEntityName, displayDigits, displayPercent } from "@/utils/common";
 import { usePaginate } from "@/utils/uses/usePaginate";
 
-import { ref, watch, inject } from "vue";
+import { ref, watch, toRefs } from "vue";
 import { pick, sortBy } from "lodash-es";
-// inject
-const focusEntities = inject("focusEntities");
-const statType = inject("statType");
-// 数据
+
+const global = useGlobal();
 const store = useStore();
+
+// 数据
 const data = ref([]);
+const { focusEntities, statType } = toRefs(global);
 const { currentPage, currentData, total } = usePaginate(data, { pageSize: 25 });
 // methods
 const sort = ({ prop, order }) => {

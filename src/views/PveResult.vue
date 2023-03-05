@@ -8,11 +8,16 @@
 </template>
 
 <script setup>
-import { ref, provide } from "vue";
+import { ref, provide, onMounted } from "vue";
+import { useStore } from "@/store";
+import { useRouter } from "vue-router";
 
 import PveHeader from "@/components/pve/pve_header.vue";
 import PveOverview from "@/components/pve/pve_overview.vue";
 import PveEntity from "@/components/pve/pve_entity.vue";
+
+const store = useStore();
+const router = useRouter();
 // data
 const mainTab = ref("overview");
 const mainComponents = {
@@ -20,6 +25,12 @@ const mainComponents = {
     detail: PveEntity,
 };
 provide("mainTab", mainTab);
+
+onMounted(() => {
+    if (!store.result) {
+        router.push({ name: "home" });
+    }
+});
 </script>
 
 <style lang="less" scoped>

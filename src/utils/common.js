@@ -62,10 +62,11 @@ export function getResourceIcon(key) {
 }
 
 export function getResourceName(key, { showID = false } = {}) {
+    const id = key.split(":")[1];
     const resource = getResource(key);
     if (!resource) return "未知招式";
     let ret = resource.name || resource.remark;
-    if (showID) ret += `(${key})`;
+    if (showID) ret += `#${id}`;
     return ret;
 }
 
@@ -78,9 +79,13 @@ export function getMountIcon(id) {
     return iconLink(13);
 }
 
-export function getEntityName(id) {
+export function getEntity(id) {
     const { entities } = store.result;
-    const entity = entities[id];
+    return entities[id] ?? {};
+}
+
+export function getEntityName(id) {
+    const entity = getEntity(id);
     if (!entity) return "天外来客";
     if (entity.name) return entity.name;
     return `#${entity.id}`;

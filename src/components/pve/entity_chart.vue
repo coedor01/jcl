@@ -10,7 +10,7 @@
             <span class="u-overview-item">总次数 {{ overview.count || "-" }}</span>
             <span class="u-overview-item">总数值 {{ overview.value || "-" }}</span>
             <span class="u-overview-item">每秒数值 {{ displayDigits(overview.vps) }}</span>
-            <span class="u-overview-item">伤害会心率 {{ displayPercent(overview.critRate) }}</span>
+            <span class="u-overview-item">会心率 {{ displayPercent(overview.critRate) }}</span>
         </div>
     </div>
 </template>

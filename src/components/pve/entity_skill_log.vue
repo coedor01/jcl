@@ -4,32 +4,37 @@
         <div v-else-if="effect" class="w-card-title">招式 {{ titleName }} 的结算记录</div>
         <div v-else class="w-card-title">-</div>
         <el-table class="u-table" :data="currentData" :border="false" :row-class-name="rowClass" @row-click="selectLog">
-            <el-table-column prop="index" label="#" width="36" align="center"></el-table-column>
-            <el-table-column label="时间" width="60">
+            <el-table-column prop="index" label="#" align="center" :width="columnWidth[0]"></el-table-column>
+            <el-table-column label="时间" :width="columnWidth[1]">
                 <template #default="{ row }">
                     <span>{{ displayDigits(row.micro / 1000) + "s" }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="图标" align="center" width="36">
+            <el-table-column v-if="type === 'target'" label="图标" align="center" :width="columnWidth[2]">
                 <template #default="{ row }">
                     <div class="u-effect-icon">
                         <img :src="getResourceIcon(row.effect)" alt="" />
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="招式" width="240">
+            <el-table-column v-if="type === 'skill'" label="目标" :width="columnWidth[2]">
                 <template #default="{ row }">
-                    <span>{{ getResourceName(row.effect) }}</span>
+                    <span>{{ getEntityName(row.target) }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="实际数值" width="112">
+            <el-table-column label="招式" :width="columnWidth[3]">
+                <template #default="{ row }">
+                    <span>{{ getResourceName(row.effect) }}#{{ row.effect }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="实际数值" :width="columnWidth[4]">
                 <template #default="{ row }">
                     <span>{{ row.value }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="会心" width="64">
+            <el-table-column label="会心" :width="columnWidth[5]">
                 <template #default="{ row }">
-                    <span>{{ row.isCritical ? "会心" : "" }}</span>
+                    <span>{{ row.isCritical ? "会心" : "-" }}</span>
                 </template>
             </el-table-column>
         </el-table>
@@ -49,7 +54,7 @@
 
 <script setup>
 import { getResource, getEntityName, displayDigits, getResourceIcon, getResourceName } from "@/utils/common";
-import { inject, computed, ref } from "vue";
+import { inject, computed } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
 
 // data
@@ -58,17 +63,18 @@ const effect = inject("effect", null);
 
 const logs = inject("logs", null);
 const detail = inject("detail", null);
+
 // computed
 const type = computed(() => {
     if (target) return "target";
-    else if (effect) return "effect";
+    else if (effect) return "skill";
     else return "";
 });
 const titleName = computed(() => {
     if (type.value === "target") {
         return `${getEntityName(target.value)}`;
-    } else if (type.value === "effect") {
-        const resource = getResource(target.value);
+    } else if (type.value === "skill") {
+        const resource = getResource(effect.value);
         return `${resource.name ?? resource.remark}`;
     } else return "";
 });
@@ -80,7 +86,14 @@ const data = computed(() => {
     }
     return logs.value;
 });
-const pageSize = ref(25);
+const pageSize = computed(() => {
+    if (type.value === "target") return 25;
+    return 11;
+});
+const columnWidth = computed(() => {
+    if (type.value === "target") return [48, 60, 36, 240, 112, 64];
+    return [42, 54, 120, 120, 90, 36];
+});
 const { total, currentPage, currentData } = usePaginate(data, { pageSize: pageSize.value });
 
 const selectLog = (row) => {

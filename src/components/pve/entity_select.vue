@@ -132,6 +132,7 @@ const selectEntity = (row) => {
         if (entity.value?.id === row.id) entity.value = null;
     } else {
         entityList.value.push(row.id);
+        entity.value = row.id;
     }
 };
 

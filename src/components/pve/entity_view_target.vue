@@ -1,5 +1,5 @@
 <template>
-    <div class="m-entity-view-skill">
+    <div class="m-entity-view-target">
         <div class="u-left">
             <div class="w-card">
                 <div class="w-card-title">
@@ -178,7 +178,7 @@ watch(
 </script>
 
 <style lang="less">
-.m-entity-view-skill {
+.m-entity-view-target {
     display: flex;
     gap: 20px;
     .size(1440px, 800px);
@@ -192,6 +192,7 @@ watch(
 
         & > div:first-of-type {
             height: 420px;
+            flex-shrink: 0;
         }
 
         & > div:last-of-type {

@@ -14,7 +14,7 @@
 import { fabric } from "fabric";
 
 export default {
-    name: "Timeline",
+    name: "CanvasTimeline",
     props: {
         data: {
             type: Array,
@@ -36,7 +36,7 @@ export default {
     },
     data: () => ({
         padding: 40,
-        width: 1100,
+        width: 1400,
         canvas: null,
 
         lastItem: null,
@@ -59,6 +59,7 @@ export default {
                     selectable: false,
                 });
                 const axisText = new fabric.Text(this.linetime * i + "s", {
+                    stroke: "#fff",
                     left: this.width - this.padding + 4,
                     top: top - 6,
                     fontSize: 12,
@@ -77,7 +78,7 @@ export default {
                 const rect = new fabric.Rect({
                     left: left,
                     top: top,
-                    width: 3,
+                    width: 6,
                     height: height,
                     fill: item.extra?.color ?? "#ee6666",
                     selectable: false,
@@ -103,6 +104,8 @@ export default {
                     }
                 }
                 const nameText = new fabric.Text(item.content, {
+                    fontWeight: "100",
+                    stroke: "#fff",
                     left: left,
                     top: top - 16,
                     fontSize: 14,
@@ -116,6 +119,7 @@ export default {
                 };
                 let time = item.time.toFixed(digits[this.linetime]) + "s";
                 const timeText = new fabric.Text(time, {
+                    stroke: "#fff",
                     left: left,
                     top: top + 14,
                     fontSize: 14,
@@ -171,7 +175,7 @@ export default {
             return Math.ceil(this.time / this.linetime);
         },
         height: function () {
-            return (this.lines + 1) * 60;
+            return this.lines * 60;
         },
     },
     watch: {
@@ -190,7 +194,7 @@ export default {
 
 <style lang="less">
 .m-timeline-wrapper {
-    max-width: 960px;
+    max-width: 1440px;
     position: relative;
     .u-tooltip {
         position: absolute;

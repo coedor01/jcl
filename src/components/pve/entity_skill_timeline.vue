@@ -1,19 +1,108 @@
 <template>
-    <div class="m-entity-skill-timeline"></div>
+    <div class="m-entity-skill-timeline w-card">
+        <div class="w-card-title">
+            <span class="u-title">技能释放时间轴</span>
+            <el-radio-group v-model.number="linetime" size="small">
+                <el-radio-button :label="15">每行15s</el-radio-button>
+                <el-radio-button :label="30">每行30s</el-radio-button>
+                <el-radio-button :label="45">每行45s</el-radio-button>
+                <el-radio-button :label="60">每行60s</el-radio-button>
+            </el-radio-group>
+        </div>
+        <canvas-timeline :data="data" :time="time" :linetime="linetime"></canvas-timeline>
+    </div>
 </template>
 
-<script>
-export default {
-    name: "EntitySkillTimeline",
-    data() {
-        return {};
-    },
-    mounted() {},
-    methods: {},
-};
+<script setup>
+import CanvasTimeline from "../canvas_timeline.vue";
+
+import { computed, toRefs, ref } from "vue";
+import { useStore } from "@/store";
+import { useGlobal } from "@/store/global";
+import { getResource } from "@/utils/common";
+
+const store = useStore();
+const { entity, selectedSkills } = toRefs(useGlobal());
+const { end } = store.result;
+const time = computed(() => end.sec + 10);
+const linetime = ref(15);
+const data = computed(() => {
+    const source = store.result.skill?.[entity.value]?.logs;
+    if (!source) return [];
+    if (!source) return [];
+    const result = [];
+    const idNameMap = {};
+    const typeDescMap = {
+        cast: "读条",
+        hit: "命中",
+        miss: "偏离",
+    };
+    for (let log of source) {
+        if (!idNameMap[log.id]) {
+            const name = getResource("skill:" + log.id).name;
+            if (!name) continue;
+            idNameMap[log.id] = name;
+        }
+        let name = idNameMap[log.id];
+        const selectedSkill = selectedSkills.value[name];
+        if (!selectedSkill || !selectedSkill.stat.includes(log.skillType)) continue;
+        if (name.length > 5) name = name.charAt(0) + ".." + name.charAt(name.length - 1);
+        result.push({
+            content: name,
+            time: log.time,
+            extra: {
+                tooltip: {
+                    技能: selectedSkill.name,
+                    技能ID: log.id,
+                    施放时间: log.time.toFixed(2) + "s",
+                    施放类型: typeDescMap[log.type],
+                },
+                color: selectedSkill.color,
+            },
+        });
+    }
+    result.unshift({
+        extra: {
+            tooltip: {
+                事件: "战斗开始",
+            },
+            color: "#ffffff",
+        },
+        content: "战斗开始",
+        time: 0,
+    });
+    result.push({
+        extra: {
+            tooltip: {
+                事件: "战斗结束",
+            },
+            color: "#ffffff",
+        },
+        content: "战斗结束",
+        time: end.sec ?? result[result.length - 1].time + 2,
+    });
+    return result;
+});
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .m-entity-skill-timeline {
+    .w-card-title {
+        display: flex;
+        align-items: center;
+
+        .u-title {
+            .mr(20px);
+        }
+    }
+
+    .el-radio-button .el-radio-button__inner {
+        border: none;
+        background-color: transparent;
+
+        &.is-active {
+            background-color: #0c759e;
+        }
+    }
 }
 </style>

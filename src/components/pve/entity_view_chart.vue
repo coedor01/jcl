@@ -1,7 +1,7 @@
 <template>
     <div class="m-entity-chart">
         <div class="u-chart">
-            <v-chart ref="echart" :option="option" autoresize />
+            <v-chart ref="echart" theme="dark" :option="option" autoresize />
         </div>
         <div class="u-overview">
             <span v-if="overview.name" class="u-overview-item">{{ overview.name }}</span>
@@ -20,24 +20,23 @@ import { use, graphic } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { LineChart } from "echarts/charts";
 import { TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
-import VChart, { THEME_KEY } from "vue-echarts";
+import VChart from "vue-echarts";
 
-import { computed, provide, toRefs } from "vue";
+import { computed, toRefs } from "vue";
 import { displayDuration, displayDigits, displayPercent, getEntityColor } from "@/utils/common";
 import { pick } from "lodash-es";
 import { useStore } from "@/store";
 import { useGlobal } from "@/store/global";
 const store = useStore();
 
-const { entity, statType } = toRefs(useGlobal());
+const { entity, entityTab } = toRefs(useGlobal());
 use([CanvasRenderer, LineChart, TooltipComponent, LegendComponent, GridComponent]);
-provide(THEME_KEY, "dark");
 
 const overview = computed(() => {
     const { entities, stats, end } = store.result;
     const entityObj = entities[entity.value];
     let result = { ...pick(entityObj, ["name", "id"]) };
-    const stat = stats[statType.value];
+    const stat = stats[entityTab.value];
     const source = stat[entity.value]?.all;
     if (!source) return result;
     const duration = end.sec;
@@ -57,7 +56,7 @@ const overview = computed(() => {
 const entityColor = computed(() => getEntityColor(entity.value));
 // 横轴数据
 const chartData = computed(() => {
-    const source = store.result.stats?.[statType.value]?.[entity.value]?.windows;
+    const source = store.result.stats?.[entityTab.value]?.[entity.value]?.windows;
     const { end } = store.result;
     if (!source) return [];
     // 构造横轴

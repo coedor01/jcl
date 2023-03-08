@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import FileSelect from "@/components/common/file_select";
+import FileSelect from "@/components/file_select";
 export default {
     name: "SubjectList",
     components: {

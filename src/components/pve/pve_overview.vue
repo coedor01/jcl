@@ -2,7 +2,17 @@
     <div class="m-pve-overview">
         <div class="u-overview-charts">
             <div class="u-left">
-                <type-tabs></type-tabs>
+                <div class="m-type-tabs">
+                    <div
+                        class="u-tab"
+                        v-for="(tab, index) in tabs"
+                        :key="index"
+                        :class="{ 'is-active': statType == tab.name }"
+                        @click="switchType(tab.name)"
+                    >
+                        <span>{{ tab.title }}</span>
+                    </div>
+                </div>
                 <overview-chart></overview-chart>
             </div>
             <overview-pie></overview-pie>
@@ -23,7 +33,6 @@
 </template>
 
 <script setup>
-import TypeTabs from "./type_tabs.vue";
 import OverviewChart from "./overview_chart.vue";
 import OverviewPie from "./overview_pie.vue";
 import OverviewList from "./overview_list.vue";
@@ -31,9 +40,31 @@ import OverviewFocus from "./overview_focus.vue";
 
 import { toRefs } from "vue";
 import { useGlobal } from "@/store/global";
-const global = useGlobal();
 
-const { focusEntities } = toRefs(global);
+const { focusEntities, statType } = toRefs(useGlobal());
+
+const tabs = [
+    {
+        name: "damage",
+        title: "伤害总览",
+    },
+    {
+        name: "treat",
+        title: "治疗总览",
+    },
+    {
+        name: "beDamaged",
+        title: "承伤总览",
+    },
+    {
+        name: "beTreated",
+        title: "承疗总览",
+    },
+];
+const switchType = (tab) => {
+    if (tab === statType.value) return;
+    statType.value = tab;
+};
 </script>
 
 <style lang="less">
@@ -56,6 +87,27 @@ const { focusEntities } = toRefs(global);
             border-radius: 20px;
             padding: 20px;
             .size(1000px, 420px);
+
+            .m-type-tabs {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                .u-tab {
+                    .x(center);
+                    .fz(14px, 40px);
+                    .size(110px, 40px);
+                    cursor: pointer;
+                    border-radius: 20px;
+                    color: #fff;
+                    background-color: #252525;
+                    transition: all 0.3s ease-in-out;
+
+                    &.is-active {
+                        color: #fff;
+                        background-color: #0c759e;
+                    }
+                }
+            }
         }
         height: 420px;
     }

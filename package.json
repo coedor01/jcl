@@ -20,6 +20,7 @@
         "core-js": "^3.28.0",
         "echarts": "^5.4.1",
         "element-plus": "^2.2.32",
+        "fabric": "^5.3.0",
         "lodash-es": "^4.17.21",
         "luat2json": "^0.0.2",
         "pako": "^2.1.0",

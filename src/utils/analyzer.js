@@ -94,7 +94,6 @@ const defaultResult = {
 export class Analyzer {
     constructor(raw) {
         this.raw = raw.split("\n").filter((x) => x);
-
         this.reset();
     }
 
@@ -158,7 +157,6 @@ export class Analyzer {
         this.updateResult();
         return result(row, false, valid);
     }
-
     // 更新分析结果，执行下述的updateXX方法
     updateResult() {
         if (!this.updateMeta()) return;
@@ -172,7 +170,6 @@ export class Analyzer {
         this.updateTeam();
         this.updateStat();
     }
-
     // 更新JCL文件元信息
     updateMeta() {
         // frame=0，一般是JJC过完图了，直接截断，处理完毕
@@ -192,22 +189,27 @@ export class Analyzer {
             let { start, client, map, server } = this.current.detail;
             // JCL文件所属的客户端
             if (["classic_yq", "classic_exp"].includes(client)) this.result.client = client;
+            // 地图
+            this.result.map = map;
+            this.result.server = server.split("_")[1];
             // 战斗结束时间
             if (!start) {
                 this.result.end = getRowTime(this.current);
             } else {
                 this.result.start = getRowTime(this.current);
+                let cur = this.result.rows.pop();
                 this.result.rows = this.result.rows.map((row) => {
-                    row.frame -= this.result.start.frame;
-                    row.sec -= this.result.start.sec;
-                    row.micro -= this.result.start.micro;
+                    this.current = row;
+                    this.updateResult();
                     return row;
                 });
+                cur.micro = 0;
+                cur.sec = 0;
+                cur.frame = 0;
+                this.current = cur;
             }
-            // 地图
-            this.result.map = map;
-            this.result.server = server.split("_")[1];
         }
+        if (!this.result.start.micro) return false;
         return true;
     }
     // 更新JCL文件涉及到的资源列表
@@ -330,11 +332,14 @@ export class Analyzer {
     }
     // 分析结束时将buff的cur丢进logs
     endBuff() {
+        const { micro } = this.current;
         for (let eid in this.result.buff) {
             for (let bid in this.result.buff[eid]) {
                 let buff = this.result.buff[eid][bid];
                 if (buff.cur) {
+                    buff.cur.end = micro;
                     buff.logs.push(buff.cur);
+                    buff.cur = null;
                 }
             }
         }
@@ -398,7 +403,7 @@ export class Analyzer {
         const log = {
             time: micro / 1000,
             skillType,
-            id,
+            id: key,
             targets: [target],
             count: 1,
         };

@@ -1,6 +1,6 @@
 <template>
     <div class="m-overview-pie">
-        <v-chart ref="echart" :option="option" autoresize @selectchanged="handleSelect" />
+        <v-chart ref="echart" theme="dark" :option="option" autoresize @selectchanged="handleSelect" />
     </div>
 </template>
 
@@ -9,9 +9,9 @@ import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { PieChart } from "echarts/charts";
 import { TooltipComponent } from "echarts/components";
-import VChart, { THEME_KEY } from "vue-echarts";
+import VChart from "vue-echarts";
 
-import { ref, provide, watch, toRefs } from "vue";
+import { ref, watch, toRefs } from "vue";
 import { pick } from "lodash-es";
 import { useStore } from "@/store";
 import { useGlobal } from "@/store/global";
@@ -19,7 +19,6 @@ import { useGlobal } from "@/store/global";
 const store = useStore();
 const global = useGlobal();
 use([CanvasRenderer, PieChart, TooltipComponent]);
-provide(THEME_KEY, "dark");
 
 const { statType, focusEntities } = toRefs(global);
 

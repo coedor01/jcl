@@ -182,9 +182,6 @@ const rowClass = ({ row }) => {
                     .size(24px);
                 }
             }
-            .el-table__body {
-                padding-left: 0;
-            }
             .el-table__row {
                 cursor: pointer;
             }

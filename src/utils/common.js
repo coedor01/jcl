@@ -55,10 +55,10 @@ export function getResource(_key) {
     }
 }
 
-export function getResourceIcon(key) {
+export function getResourceIcon(key, { url = true } = {}) {
     const resource = getResource(key);
-    if (!resource) return iconLink(13);
-    return iconLink(resource.icon);
+    if (!resource) return url ? iconLink(13) : 13;
+    return url ? iconLink(resource.icon) : resource.icon;
 }
 
 export function getResourceName(key, { showID = false } = {}) {

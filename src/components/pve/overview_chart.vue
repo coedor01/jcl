@@ -1,6 +1,6 @@
 <template>
     <div class="m-overview-chart">
-        <v-chart ref="echart" :option="option" autoresize @legendselectchanged="handleSelect" />
+        <v-chart ref="echart" theme="dark" :option="option" autoresize @legendselectchanged="handleSelect" />
     </div>
 </template>
 
@@ -9,13 +9,12 @@ import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { LineChart } from "echarts/charts";
 import { TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
-import VChart, { THEME_KEY } from "vue-echarts";
+import VChart from "vue-echarts";
 
-import { provide, computed, toRefs } from "vue";
+import { computed, toRefs } from "vue";
 import { useStore } from "@/store";
 import { useGlobal } from "@/store/global";
 use([CanvasRenderer, LineChart, TooltipComponent, LegendComponent, GridComponent]);
-provide(THEME_KEY, "dark");
 const store = useStore();
 const global = useGlobal();
 

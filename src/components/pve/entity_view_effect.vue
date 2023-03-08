@@ -71,12 +71,12 @@ import { useGlobal } from "@/store/global";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { displayDigits, displayPercent, getResourceIcon, getResourceName } from "@/utils/common";
 
-import EntitySkillLog from "./entity_skill_log.vue";
-import EntitySkillLogDetail from "./entity_skill_log_detail.vue";
+import EntitySkillLog from "./entity_view_log.vue";
+import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
 const store = useStore();
-const { statType, entity, currentWindow, effect, logs, log: detail } = toRefs(useGlobal());
+const { entityTab, entity, currentWindow, effect, logs, log: detail } = toRefs(useGlobal());
 
 // data
 const data = ref([]);
@@ -98,8 +98,8 @@ const updateData = () => {
     const { stats } = store.result;
     const source =
         currentWindow.value === null
-            ? stats[statType.value]?.[entity.value]?.all
-            : stats[statType.value]?.[entity.value]?.windows?.[currentWindow.value];
+            ? stats[entityTab.value]?.[entity.value]?.all
+            : stats[entityTab.value]?.[entity.value]?.windows?.[currentWindow.value];
     if (!source) {
         data.value = [];
         return;
@@ -145,14 +145,18 @@ const sort = ({ prop, order }) => {
             return b[prop] - a[prop];
         }
     });
+    let index = 1;
+    for (let item of data.value) {
+        item.index = index++;
+    }
 };
 watch(
-    [() => store.result, currentWindow, entity, statType],
+    [() => store.result, currentWindow, entity, entityTab],
     () => {
         updateData();
-        effect.value = null;
-        logs.value = null;
-        detail.value = null;
+        effect.value = data.value[0]?.effect;
+        logs.value = data.value[0]?.logs;
+        detail.value = logs.value?.[0];
     },
     { immediate: true }
 );

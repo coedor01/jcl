@@ -73,16 +73,16 @@ import { useGlobal } from "@/store/global";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { getMountIcon, getEntityName, displayDigits, displayPercent } from "@/utils/common";
 
-import EntitySkillLog from "./entity_skill_log.vue";
-import EntitySkillLogDetail from "./entity_skill_log_detail.vue";
+import EntitySkillLog from "./entity_view_log.vue";
+import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
 const store = useStore();
-const { statType, entity, currentWindow, target, logs, log: detail } = toRefs(useGlobal());
+const { entityTab, entity, currentWindow, target, logs, log: detail } = toRefs(useGlobal());
 
 // computed
 const targetLabel = computed(() => {
-    return ["damage", "treat"].includes(statType.value) ? "目标" : "来源";
+    return ["damage", "treat"].includes(entityTab.value) ? "目标" : "来源";
 });
 
 // data
@@ -106,8 +106,8 @@ const updateData = () => {
     const { stats, entities } = store.result;
     const source =
         currentWindow.value === null
-            ? stats[statType.value]?.[entity.value]?.all
-            : stats[statType.value]?.[entity.value]?.windows?.[currentWindow.value];
+            ? stats[entityTab.value]?.[entity.value]?.all
+            : stats[entityTab.value]?.[entity.value]?.windows?.[currentWindow.value];
     if (!source) {
         data.value = [];
         return;
@@ -117,7 +117,7 @@ const updateData = () => {
     let total = 0;
     for (let detail of source.details) {
         //这个target不一定是目标的ID，在承伤/承疗的时候表现为来源ID
-        const target = ["damage", "treat"].includes(statType.value) ? detail.target : detail.caster;
+        const target = ["damage", "treat"].includes(entityTab.value) ? detail.target : detail.caster;
         const entity = entities[target];
         if (skipNoNameTarget.value && !entity.name) continue;
         if (!result[target])
@@ -157,12 +157,12 @@ const sort = ({ prop, order }) => {
     });
 };
 watch(
-    [() => store.result, currentWindow, entity, statType],
+    [() => store.result, currentWindow, entity, entityTab],
     () => {
         updateData();
-        target.value = null;
-        logs.value = null;
-        detail.value = null;
+        target.value = data.value[0]?.target;
+        logs.value = data.value[0]?.logs;
+        detail.value = logs.value?.[0];
     },
     { immediate: true }
 );

@@ -10,21 +10,21 @@
                     <span>{{ displayDigits(row.micro / 1000) + "s" }}</span>
                 </template>
             </el-table-column>
-            <el-table-column v-if="type === 'target'" label="图标" align="center" :width="columnWidth[2]">
+            <el-table-column v-if="viewType === 'target'" label="图标" align="center" :width="columnWidth[2]">
                 <template #default="{ row }">
                     <div class="u-effect-icon">
                         <img :src="getResourceIcon(row.effect)" alt="" />
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column v-if="type === 'effect'" label="目标" :width="columnWidth[2]">
+            <el-table-column v-if="viewType === 'effect'" label="目标" :width="columnWidth[2]">
                 <template #default="{ row }">
                     <span>{{ getEntityName(row.target) }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="招式" :width="columnWidth[3]">
                 <template #default="{ row }">
-                    <span>{{ getResourceName(row.effect) }}#{{ row.effect }}</span>
+                    <span>{{ getResourceName(row.effect, { showID: true }) }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="实际数值" :width="columnWidth[4]">
@@ -58,13 +58,13 @@ import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { useGlobal } from "@/store/global";
 // data
-const { viewType: type, target, effect, logs, log: detail } = toRefs(useGlobal());
+const { viewType, target, effect, logs, log: detail } = toRefs(useGlobal());
 
 // computed
 const titleName = computed(() => {
-    if (type.value === "target") {
+    if (viewType.value === "target") {
         return `${getEntityName(target.value)}`;
-    } else if (type.value === "effect") {
+    } else if (viewType.value === "effect") {
         const resource = getResource(effect.value);
         return `${resource.name ?? resource.remark}`;
     } else return "";
@@ -78,11 +78,11 @@ const data = computed(() => {
     return logs.value;
 });
 const pageSize = computed(() => {
-    if (type.value === "target") return 25;
+    if (viewType.value === "target") return 25;
     return 11;
 });
 const columnWidth = computed(() => {
-    if (type.value === "target") return [48, 60, 36, 240, 112, 64];
+    if (viewType.value === "target") return [48, 60, 36, 240, 112, 64];
     return [42, 54, 120, 120, 90, 36];
 });
 const { total, currentPage, currentData } = usePaginate(data, { pageSize: pageSize.value });

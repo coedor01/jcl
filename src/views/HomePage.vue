@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import NavHelper from "@/components/common/nav_helper.vue";
+import NavHelper from "@/components/nav_helper.vue";
 import HomeSlogan from "@/components/home/home_slogan.vue";
 import FileSelect from "@/components/home/subject_list.vue";
 import DataView from "@/components/home/data_view.vue";

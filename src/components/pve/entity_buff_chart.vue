@@ -16,12 +16,8 @@
 </template>
 
 <script setup>
-import { use, graphic } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { CustomChart } from "echarts/charts";
-import { TooltipComponent, GridComponent, DataZoomComponent } from "echarts/components";
+import { graphic } from "echarts/core";
 import VChart from "vue-echarts";
-
 import { displayDuration, getEntityName, getRandomColor, getResource, getResourceName } from "@/utils/common";
 import { toRefs, computed } from "vue";
 import { useGlobal } from "@/store/global";
@@ -30,7 +26,6 @@ import { useStore } from "@/store";
 const store = useStore();
 const { entity, selectedBuffs } = toRefs(useGlobal());
 const { end } = store.result;
-use([CanvasRenderer, CustomChart, TooltipComponent, GridComponent, DataZoomComponent]);
 
 const renderItem = (params, api) => {
     let children = [];

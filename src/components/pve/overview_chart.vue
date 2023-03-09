@@ -5,16 +5,11 @@
 </template>
 
 <script setup>
-import { use } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { LineChart } from "echarts/charts";
-import { TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
 import VChart from "vue-echarts";
-
 import { computed, toRefs } from "vue";
 import { useStore } from "@/store";
 import { useGlobal } from "@/store/global";
-use([CanvasRenderer, LineChart, TooltipComponent, LegendComponent, GridComponent]);
+
 const store = useStore();
 const global = useGlobal();
 

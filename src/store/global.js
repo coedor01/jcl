@@ -20,6 +20,11 @@ export const useGlobal = defineStore({
         log: null, // 单位某个日志详情
         selectedBuffs: [], // 选中的buff
         selectedSkills: {}, // 参与统计的技能
+
+        // compare
+        compareMode: "damage", // 比较tab
+        compareEntity: [null, null], // 参与比较的单位
+        comparePin: [], // 比较时置顶的技能
     }),
     getters: {},
     actions: {},

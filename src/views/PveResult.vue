@@ -16,6 +16,8 @@ import { useRouter } from "vue-router";
 import PveHeader from "@/components/pve/pve_header.vue";
 import PveOverview from "@/components/pve/pve_overview.vue";
 import PveEntity from "@/components/pve/pve_entity.vue";
+import PveCompare from "@/components/pve/pve_compare.vue";
+import PveLogs from "@/components/pve/pve_logs.vue";
 
 const store = useStore();
 const router = useRouter();
@@ -24,6 +26,8 @@ const { mainTab } = toRefs(useGlobal());
 const mainComponents = {
     overview: PveOverview,
     detail: PveEntity,
+    compare: PveCompare,
+    logs: PveLogs,
 };
 
 onMounted(() => {

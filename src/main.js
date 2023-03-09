@@ -16,9 +16,26 @@ app.use(router);
 import { createPinia } from "pinia";
 app.use(createPinia());
 
+// element-plus
 import ElementPlus from "element-plus";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import "element-plus/dist/index.css";
+
+// echarts
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { LineChart, BarChart, CustomChart } from "echarts/charts";
+import { TooltipComponent, LegendComponent, GridComponent, DataZoomComponent } from "echarts/components";
+use([
+    CanvasRenderer,
+    LineChart,
+    TooltipComponent,
+    LegendComponent,
+    GridComponent,
+    DataZoomComponent,
+    BarChart,
+    CustomChart,
+]);
 
 app.use(ElementPlus, {
     locale: zhCn,

@@ -109,14 +109,14 @@ const tabs = [
         name: "skill",
         title: "技能分析",
     },
-    {
-        name: "say",
-        title: "喊话分析",
-    },
-    {
-        name: "scene",
-        title: "场景分析",
-    },
+    // {
+    //     name: "say",
+    //     title: "喊话分析",
+    // },
+    // {
+    //     name: "scene",
+    //     title: "场景分析",
+    // },
 ];
 const switchTab = (tab) => {
     if (tab === entityTab.value) return;

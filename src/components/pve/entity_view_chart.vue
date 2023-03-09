@@ -16,10 +16,7 @@
 </template>
 
 <script setup>
-import { use, graphic } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { LineChart } from "echarts/charts";
-import { TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
+import { graphic } from "echarts/core";
 import VChart from "vue-echarts";
 
 import { computed, toRefs } from "vue";
@@ -30,7 +27,6 @@ import { useGlobal } from "@/store/global";
 const store = useStore();
 
 const { entity, entityTab } = toRefs(useGlobal());
-use([CanvasRenderer, LineChart, TooltipComponent, LegendComponent, GridComponent]);
 
 const overview = computed(() => {
     const { entities, stats, end } = store.result;

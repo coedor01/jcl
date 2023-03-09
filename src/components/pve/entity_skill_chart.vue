@@ -6,10 +6,6 @@
 </template>
 
 <script setup>
-import { use } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { BarChart } from "echarts/charts";
-import { TooltipComponent, GridComponent, DataZoomComponent } from "echarts/components";
 import VChart from "vue-echarts";
 
 import { computed, toRefs } from "vue";
@@ -19,8 +15,6 @@ import { getResource } from "@/utils/common";
 
 const store = useStore();
 const { entity, selectedSkills } = toRefs(useGlobal());
-
-use([CanvasRenderer, BarChart, TooltipComponent, GridComponent, DataZoomComponent]);
 
 const data = computed(() => {
     const source = store.result.skill?.[entity.value]?.logs;

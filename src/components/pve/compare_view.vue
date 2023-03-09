@@ -1,6 +1,6 @@
 <template>
-    <div class="m-compare-view">
-        <div class="u-overview" :class="`u-index-${index}`">
+    <div class="m-compare-view" :class="`u-index-${index}`">
+        <div class="u-overview">
             <div v-for="(item, index) in overview" :key="index" class="u-overview-item">
                 <span>{{ item.title }}</span>
                 <span>{{ item.value }}</span>
@@ -61,7 +61,7 @@
                 @update:currentPage="currentPage = $event"
             ></el-pagination>
         </div>
-        <div class="u-skill-more" :class="`u-index-${index}`">
+        <div class="u-skill-more">
             <div class="u-skill-logs w-card">
                 <div v-if="effect" class="w-card-title">招式 {{ getResourceName(effect) }} 的结算记录</div>
                 <div v-else class="w-card-title">-</div>
@@ -351,6 +351,38 @@ watch(
     --compare-view-color-primary-2: #a50852;
     --compare-view-color-secondary-2: #633d4f;
 
+    &.u-index-1 {
+        .u-overview {
+            border: 4px solid var(--compare-view-color-primary-1);
+        }
+
+        .u-card {
+            background: var(--compare-view-color-secondary-1);
+        }
+
+        .u-table .el-table__header-wrapper {
+            background-color: var(--compare-view-color-primary-1);
+        }
+    }
+
+    &.u-index-2 {
+        .u-overview {
+            border: 4px solid var(--compare-view-color-primary-2);
+        }
+
+        .u-card {
+            background: var(--compare-view-color-secondary-2);
+        }
+
+        .u-table .el-table__header-wrapper {
+            background-color: var(--compare-view-color-primary-2);
+        }
+
+        .u-skill-more {
+            flex-direction: row-reverse;
+        }
+    }
+
     .u-overview {
         .size(710px, 89px);
         padding: 0 30px;
@@ -359,14 +391,6 @@ watch(
         display: flex;
         align-items: center;
         justify-content: space-evenly;
-
-        &.u-index-1 {
-            border: 4px solid var(--compare-view-color-primary-1);
-        }
-
-        &.u-index-2 {
-            border: 4px solid var(--compare-view-color-primary-2);
-        }
 
         .u-overview-item {
             .fz(14px, 18px);
@@ -432,10 +456,6 @@ watch(
             flex-grow: 1;
         }
 
-        &.u-index-2 {
-            flex-direction: row-reverse;
-        }
-
         .w-pagination {
             justify-content: center;
         }
@@ -464,13 +484,6 @@ watch(
             flex-grow: 1;
             border-radius: 20px 20px 0 0;
             padding: 10px 10px 5px 10px;
-        }
-
-        &.u-index-1 {
-            background: var(--compare-view-color-secondary-1);
-        }
-        &.u-index-2 {
-            background: var(--compare-view-color-secondary-2);
         }
     }
 

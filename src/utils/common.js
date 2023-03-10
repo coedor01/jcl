@@ -73,10 +73,10 @@ export function getResourceName(key, { showID = false } = {}) {
 export function getMountIcon(id) {
     const { entities } = store.result;
     const entity = entities[id];
-    if (!entity) return iconLink(13);
+    if (!entity) return iconLink(0);
     const mount = entity.mount;
     if (mount) return showMountIcon(mount);
-    return iconLink(13);
+    return iconLink(41);
 }
 
 export function getEntity(id) {
@@ -84,11 +84,15 @@ export function getEntity(id) {
     return entities[id] ?? {};
 }
 
-export function getEntityName(id) {
+export function getEntityName(id, { showID = false, showOrder = false } = {}) {
     const entity = getEntity(id);
     if (!entity) return "天外来客";
-    if (entity.name) return entity.name;
-    return `#${entity.id}`;
+    if (!entity.name) return `#${entity.id}`;
+    let result = entity.name;
+
+    if (showID) result += `#${id}`;
+    if (showOrder && entity.appearOrder) result += `@${entity.appearOrder}`;
+    return result;
 }
 
 export function displayPercent(value) {

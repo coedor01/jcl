@@ -16,11 +16,13 @@ const parseLine = (line) => {
     let [frame, sec, micro, type, detail] = line.split("\t").slice(1);
     [frame, sec, micro, type] = [frame, sec, micro, type].map(Number);
     detail = parseLua(type, detail);
+    const typeDesc = JCL_TYPE[type]?.[0];
     return {
         frame,
         sec,
         micro,
         type,
+        typeDesc,
         detail,
     };
 };

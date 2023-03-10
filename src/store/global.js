@@ -25,6 +25,23 @@ export const useGlobal = defineStore({
         compareMode: "damage", // 比较tab
         compareEntity: [null, null], // 参与比较的单位
         comparePin: [], // 比较时置顶的技能
+
+        // logs
+        logFilter: {
+            hideReact: true,
+            hideNoValue: false,
+            timeRange: [-5, 0],
+            keyword: [],
+            hideKeyword: [],
+            entities: [],
+            selectOnlyName: true,
+            selectOnlyNoSon: true,
+            selectOnlyNoRepeat: true,
+            onlySource: true,
+            showTypes: ["say", "skill", "skillCast", "skillResult", "buff", "kill", "scene"],
+        },
+        logAutoApply: false,
+        logDebug: false,
     }),
     getters: {},
     actions: {},

@@ -1,13 +1,16 @@
 <template>
     <div class="m-pve-logs">
-        <logs-filter></logs-filter>
-        <logs-list></logs-list>
+        <logs-filter @apply="list.updateData()"></logs-filter>
+        <logs-list ref="list"></logs-list>
     </div>
 </template>
 
 <script setup>
 import LogsFilter from "./logs_filter.vue";
 import LogsList from "./logs_list.vue";
+import { ref } from "vue";
+
+const list = ref(null);
 </script>
 
 <style lang="less">

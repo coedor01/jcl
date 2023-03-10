@@ -52,7 +52,7 @@ export function entityFormat(entity) {
 
 // 将一条log转换为一个用于表格展示的对象
 export function formatLine(log) {
-    let { frame, sec, micro, type, detail } = log;
+    let { frame, sec, micro, type, typeDesc, detail } = log;
     let subtype = formatSubtype(type, detail); //事件子类型的描述
     let source = formatSource(type, detail); //事件来源
     let content = formatContent(type, detail); //事件内容的描述
@@ -63,6 +63,7 @@ export function formatLine(log) {
         sec,
         micro,
         type,
+        typeDesc,
         subtype,
         source,
         content,

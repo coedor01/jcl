@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import CanvasTimeline from "../canvas_timeline.vue";
+import CanvasTimeline from "../common/canvas_timeline.vue";
 
 import { computed, toRefs, ref } from "vue";
 import { useStore } from "@/store";

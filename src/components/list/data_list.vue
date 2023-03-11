@@ -8,7 +8,7 @@
             </template>
         </div>
         <div class="u-search">
-            <el-input v-model="search" />
+            <el-input v-model="search" placeholder="请输入搜索关键词.." />
         </div>
         <div class="u-list" v-loading="data.loading">
             <div class="u-data">
@@ -50,7 +50,10 @@
                     </span>
                 </div>
             </div>
-            <div class="u-pagination">
+            <router-link class="m-index-data__more" to="/public">
+                查看更多<el-icon><DArrowRight /></el-icon>
+            </router-link>
+            <!-- <div class="u-pagination">
                 <el-pagination
                     background
                     layout="prev, pager, next"
@@ -60,7 +63,7 @@
                     :page-size="12"
                     :hide-on-single-page="true"
                 />
-            </div>
+            </div> -->
         </div>
         <EditDialog ref="editDialog" @updated="getList"></EditDialog>
     </div>
@@ -75,29 +78,29 @@ import { Delete, Edit } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { ref, reactive, watch } from "vue";
 
-const active = ref("mine");
+const active = ref("newest");
 const editDialog = ref(null);
 const tabs = [
-    {
-        name: "mine",
-        title: "我的数据",
-    },
     {
         name: "newest",
         title: "最新数据",
     },
-    {
-        name: "team",
-        title: "团队行为",
-    },
-    {
-        name: "boss",
-        title: "首领行为",
-    },
-    {
-        name: "pvp",
-        title: "竞技多维",
-    },
+    // {
+    //     name: "mine",
+    //     title: "我的数据",
+    // },
+    // {
+    //     name: "team",
+    //     title: "团队行为",
+    // },
+    // {
+    //     name: "boss",
+    //     title: "首领行为",
+    // },
+    // {
+    //     name: "pvp",
+    //     title: "竞技多维",
+    // },
 ];
 // data
 const search = ref("");
@@ -219,6 +222,9 @@ watch(
     .u-search {
         .el-input__inner {
             color: #bfb0ff;
+            &::placeholder {
+                color: #554d77;
+            }
         }
 
         .el-input__wrapper {
@@ -254,7 +260,7 @@ watch(
         .u-li {
             display: flex;
             align-items: center;
-            height: 30px;
+            height: 40px;
 
             &:not(:last-child) {
                 border-bottom: 1px solid rgba(191, 176, 255, 0.2);
@@ -339,5 +345,11 @@ watch(
             }
         }
     }
+}
+.m-index-data__more {
+    .flex;
+    justify-content: center;
+    align-items: center;
+    color: #bfb0ff;
 }
 </style>

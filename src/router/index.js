@@ -14,6 +14,7 @@ const routes = [
     { name: "rank", path: "/rank", component: () => import("@/views/Rank.vue") },
     { name: "upload", path: "/upload", component: () => import("@/views/Upload.vue") },
     { name: "mine", path: "/mine", component: () => import("@/views/Mine.vue") },
+    { name: "public", path: "/public", component: () => import("@/views/Public.vue") },
 ];
 
 // 3.Build An Instance

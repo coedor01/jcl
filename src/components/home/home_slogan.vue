@@ -11,10 +11,10 @@
                 <p>控制，小怪出现时机等完整复盘，重要细节不错过。</p>
             </div>
             <div class="u-buttons">
-                <button @click="toScroll" class="u-button">开启上帝的视角</button>
-                <button class="u-button">阅览战斗的数据</button>
+                <router-link class="u-button" to="/upload">开启上帝的视角</router-link>
+                <router-link class="u-button" to="/public">阅览战斗的数据</router-link>
             </div>
-            <div class="u-tip">*需要了解更多的资讯来使用JCL</div>
+            <a class="u-tip" href="/collection/235" target="_blank">*需要了解更多的资讯来使用JCL</a>
         </div>
         <div class="u-icon">
             <div class="u-bg"></div>
@@ -97,6 +97,7 @@
         .u-tip {
             width: 180px;
             margin-top: 14px;
+            .db;
             font-size: 12px;
             line-height: 16px;
             background: linear-gradient(0deg, rgba(0, 0, 0, 0.26), rgba(0, 0, 0, 0.26)),

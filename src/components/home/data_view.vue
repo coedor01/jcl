@@ -110,7 +110,7 @@ p {
             background: rgba(85, 77, 119, 0.3);
             border-radius: 10px;
             padding: 20px;
-            .fz(14px, 18px);
+            .fz(14px, 24px);
 
             &:not(:last-of-type) {
                 .mb(40px);

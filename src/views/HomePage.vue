@@ -1,5 +1,5 @@
 <template>
-    <div class="v-home">
+    <div class="p-home">
         <div class="m-home">
             <home-slogan></home-slogan>
             <hr class="u-hr" />
@@ -23,8 +23,7 @@ import DataView from "@/components/home/data_view.vue";
 
 <style lang="less">
 @import "@/assets/css/app.less";
-
-.v-home {
+.p-home {
     .m-home {
         width: 1440px;
         margin: auto;

@@ -1,7 +1,11 @@
 <template>
     <div class="m-entity-skill-log w-card">
-        <div v-if="target" class="w-card-title">目标为 {{ titleName }} 的技能列表</div>
-        <div v-else-if="effect" class="w-card-title">招式 {{ titleName }} 的结算记录</div>
+        <div v-if="target" class="w-card-title">
+            目标为 <span class="u-light">{{ titleName }}</span> 的技能列表
+        </div>
+        <div v-else-if="effect" class="w-card-title">
+            招式 <span class="u-light">{{ titleName }}</span> 的结算记录
+        </div>
         <div v-else class="w-card-title">-</div>
         <el-table class="u-table" :data="currentData" :border="false" :row-class-name="rowClass" @row-click="selectLog">
             <el-table-column prop="index" label="#" align="center" :width="columnWidth[0]"></el-table-column>
@@ -78,8 +82,8 @@ const data = computed(() => {
     return logs.value;
 });
 const pageSize = computed(() => {
-    if (viewType.value === "target") return 25;
-    return 11;
+    if (viewType.value === "target") return 19;
+    return 8;
 });
 const columnWidth = computed(() => {
     if (viewType.value === "target") return [48, 60, 36, 240, 112, 64];
@@ -95,10 +99,13 @@ const rowClass = ({ row }) => {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .m-entity-skill-log {
-    height: 100%;
+    flex-shrink: 0;
 
+    .u-light {
+        color: white;
+    }
     .u-effect-icon {
         .size(18px);
         .db;
@@ -107,6 +114,29 @@ const rowClass = ({ row }) => {
 
     .u-table {
         flex-grow: 1;
+
+        .el-table__row {
+            height: 31px;
+            .pointer;
+        }
+
+        .el-table__row:not(.is-focus):hover {
+            .el-table__cell {
+                div.cell {
+                    background: #7650f8aa;
+                }
+                &:first-of-type {
+                    div.cell {
+                        border-radius: 6px 0 0 6px;
+                    }
+                }
+                &:last-of-type {
+                    div.cell {
+                        border-radius: 0 6px 6px 0;
+                    }
+                }
+            }
+        }
     }
 }
 </style>

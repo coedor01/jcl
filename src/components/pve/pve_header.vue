@@ -237,7 +237,7 @@ onMounted(() => {
             transition: all 0.2s ease-in-out;
 
             &:not(.is-active) {
-                filter: brightness(1.5) grayscale(1);
+                filter: brightness(0.8) grayscale(1);
             }
 
             .u-tab-icon {

@@ -26,7 +26,7 @@
 
 <script>
 import User from "@jx3box/jx3box-common/js/user";
-import _ from "lodash";
+//import _ from "lodash";
 export default {
     name: "CommonHeader",
     data: () => ({
@@ -48,7 +48,7 @@ export default {
                 path: "/activity",
             },
         ],
-        isOverlay: false,
+        isOverlay: true,
         isLogin: User.isLogin(),
         login_url: "/account/login?redirect=" + location.href,
         userdata: User.getInfo(),
@@ -57,19 +57,19 @@ export default {
         navTo(nav) {
             this.active = nav.name;
         },
-        installOverlay() {
-            const vm = this;
-            window.addEventListener(
-                "scroll",
-                _.throttle(() => {
-                    vm.isOverlay = window.scrollY > 200 ? true : false;
-                }, 200)
-            );
-        },
+        // installOverlay() {
+        //     const vm = this;
+        //     window.addEventListener(
+        //         "scroll",
+        //         _.throttle(() => {
+        //             vm.isOverlay = window.scrollY > 200 ? true : false;
+        //         }, 200)
+        //     );
+        // },
     },
     computed: {},
     mounted() {
-        this.installOverlay();
+        //this.installOverlay();
     },
 };
 </script>

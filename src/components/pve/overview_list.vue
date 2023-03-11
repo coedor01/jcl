@@ -179,7 +179,7 @@ watch(
         .el-table__row:not(.is-focus):hover {
             .el-table__cell:not(:first-of-type) {
                 div.cell {
-                    background: #1520b3;
+                    background: #7650f8aa;
                 }
                 &:nth-of-type(2) {
                     div.cell {

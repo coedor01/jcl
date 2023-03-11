@@ -91,22 +91,18 @@
         <div class="w-card-title">搜索词</div>
         <el-input
             v-model="keywordStr"
-            type="textarea"
-            autosize
             size="large"
-            placeholder="输入关键词，多个关键词使用空格或者换行分隔"
+            placeholder="输入关键词，多个关键词使用空格分隔"
             @change="inputChange"
         ></el-input>
         <div class="w-card-title">过滤词</div>
         <el-input
             v-model="hideKeywordStr"
-            type="textarea"
-            autosize
             size="large"
-            placeholder="输入关键词，多个关键词使用空格或者换行分隔"
+            placeholder="输入关键词，多个关键词使用空格分隔"
             @change="inputChange"
         ></el-input>
-        <div class="u-filters-center">
+        <div class="u-filters-center u-apply">
             <el-button
                 class="u-apply-button"
                 @click="
@@ -197,13 +193,6 @@ onMounted(() => {
     .el-input__inner {
         .bold;
     }
-    .el-textarea {
-        .el-textarea__inner {
-            padding: 10px 10px;
-            resize: none;
-            .bold;
-        }
-    }
 
     .u-time-range {
         align-items: center;
@@ -242,6 +231,7 @@ onMounted(() => {
     }
 
     .u-filters-bottom {
+        .mb(40px);
         .flex-center;
         gap: 10px;
         .w-check-button {
@@ -251,6 +241,10 @@ onMounted(() => {
                 background: #7650f8;
             }
         }
+    }
+
+    .u-apply {
+        .mt(40px);
     }
 
     .u-apply-button {

@@ -5,6 +5,7 @@
         :show-close="false"
         :close-on-click-modal="false"
         :align-center="true"
+        :lock-scroll="false"
         class="m-file-select"
     >
         <div class="m-dialog-body">

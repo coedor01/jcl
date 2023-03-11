@@ -84,7 +84,7 @@ import { cloneDeep } from "lodash";
 const store = useStore();
 const { logFilter, logAutoApply, logDebug } = toRefs(useGlobal());
 const data = ref([]);
-const pageSize = ref(52);
+const pageSize = ref(30);
 const { currentPage, total, currentData } = usePaginate(data, { pageSize: pageSize.value });
 
 // methods
@@ -194,13 +194,20 @@ onMounted(() => {
 });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .m-logs-list {
+    height: 1060px;
     flex-grow: 1;
-    min-height: 1400px;
 
     .u-table {
         flex-grow: 1;
+
+        .el-table__row {
+            transition: all 0.2s ease-in-out;
+        }
+        .el-table__row:hover {
+            background-color: #7650f8aa;
+        }
     }
 }
 </style>

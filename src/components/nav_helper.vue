@@ -1,10 +1,10 @@
 <template>
     <div class="m-nav-helper" :style="navSizeStyle">
-        <div class="u-nav closed" v-if="!isExpanded" @click="toggleExpanded">
+        <div class="u-nav closed" v-if="!isExpanded" @click="isExpanded = !isExpanded">
             <span class="u-name">导航助手</span>
         </div>
         <div class="u-nav" v-else>
-            <div class="u-btn">
+            <div class="u-btn" @click="toTop">
                 <img class="u-btn-img" src="@/assets/img/nav/top.svg" />
                 <span class="u-btn-name">返回顶部</span>
             </div>
@@ -17,7 +17,7 @@
                 <span class="u-btn-name">我的数据</span>
                 <span class="u-btn-name">数据大厅</span>
             </div>
-            <div class="u-btn" @click="toggleExpanded">
+            <div class="u-btn" @click="isExpanded = !isExpanded">
                 <span class="u-btn-name">➜收起</span>
             </div>
         </div>
@@ -38,8 +38,8 @@ export default {
     },
     mounted() {},
     methods: {
-        toggleExpanded() {
-            this.isExpanded = !this.isExpanded;
+        toTop() {
+            window.scrollTo({ top: 0 });
         },
     },
     computed: {
@@ -70,7 +70,7 @@ export default {
 }
 .m-nav-helper {
     position: fixed;
-    right: 10px;
+    right: 0px;
     background: #1a1825;
     border-radius: 10px 0px 0px 10px;
     z-index: 8;
@@ -119,10 +119,6 @@ export default {
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
-            }
-
-            &:hover {
-                transform: scale(1.05);
             }
         }
     }

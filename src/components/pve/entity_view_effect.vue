@@ -179,9 +179,11 @@ watch(
                     .size(23px);
                 }
             }
+
             .el-table__row {
                 cursor: pointer;
             }
+
             .el-table__row.is-focus {
                 .el-table__cell:first-of-type {
                     div.cell {
@@ -192,6 +194,24 @@ watch(
                 .el-table__cell:nth-of-type(2) {
                     div.cell {
                         border-radius: 6px 0 0 6px;
+                    }
+                }
+            }
+
+            .el-table__row:not(.is-focus):hover {
+                .el-table__cell:not(:first-of-type) {
+                    div.cell {
+                        background: #7650f8aa;
+                    }
+                    &:nth-of-type(2) {
+                        div.cell {
+                            border-radius: 6px 0 0 6px;
+                        }
+                    }
+                    &:last-of-type {
+                        div.cell {
+                            border-radius: 0 6px 6px 0;
+                        }
                     }
                 }
             }

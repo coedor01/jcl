@@ -85,8 +85,8 @@ const buffs = computed(() => {
     return detail.value.buffs;
 });
 const pageSize = computed(() => {
-    if (type.value === "target") return 12;
-    return 8;
+    if (type.value === "target") return 10;
+    return 7;
 });
 const { currentPage, currentData, total } = usePaginate(buffs, { pageSize: pageSize.value });
 </script>
@@ -157,7 +157,7 @@ const { currentPage, currentData, total } = usePaginate(buffs, { pageSize: pageS
         .fz(12px, 16px);
         .bold;
         .u-buff {
-            .size(120px, 18px);
+            .size(120px, 24px);
             flex-grow: 1;
             flex-shrink: 0;
             display: flex;

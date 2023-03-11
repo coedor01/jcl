@@ -63,6 +63,7 @@ const tabs = [
 ];
 const switchType = (tab) => {
     if (tab === statType.value) return;
+    focusEntities.value = [];
     statType.value = tab;
 };
 </script>

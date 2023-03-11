@@ -2,6 +2,9 @@
 GLOBAL DEFINITION 项目本地全局定义
 🚫 WARNING : 不可删除！
 ***/
+
+@common-header-height: 100px;
+
 .flex-center {
     display: flex;
     justify-content: center;
@@ -12,4 +15,27 @@ GLOBAL DEFINITION 项目本地全局定义
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.scrollbar(@color:#eee,@width:3px) {
+    &::-webkit-scrollbar {
+        width: @width;
+    }
+
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-track-piece {
+        background-color: lighten(@color, 10%);
+        border-radius: @width;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: @color;
+        border-radius: @width;
+    }
+
+    &::-webkit-scrollbar-button,
+    &::-webkit-scrollbar-corner,
+    &::-webkit-resizer {
+        display: none;
+    }
 }

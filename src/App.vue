@@ -1,15 +1,15 @@
 <template>
-    <el-scrollbar height="100vh" class="v-app">
-        <jcl-header></jcl-header>
+    <div class="p-jcl">
+        <common-header></common-header>
         <router-view />
-    </el-scrollbar>
+    </div>
 </template>
 
 <script>
-import JclHeader from "./components/jcl_header.vue";
+import CommonHeader from "./components/common/common_header.vue";
 export default {
     name: "App",
-    components: { JclHeader },
+    components: { CommonHeader },
     data: function () {
         return {};
     },

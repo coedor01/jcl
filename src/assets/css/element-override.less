@@ -1,0 +1,109 @@
+:root {
+    --app-font-color: #a798e6;
+}
+
+// 重写element-plus的一些变量
+:root {
+    --el-bg-color: #a798e6;
+    --el-bg-color-overlay: #5d528f;
+    --el-text-color-regular: #a798e6;
+    --el-text-color-primary: #554d77;
+    --el-fill-color-light: #5d528f;
+    --el-fill-color: #6d6494;
+
+    --el-color-primary: #b29fff;
+    --el-color-primary-light-3: #c6b9ff;
+    --el-color-primary-light-5: #dbd2ff;
+    --el-color-primary-light-7: #efecff;
+
+    --el-mask-color: #3b3652cc;
+}
+
+.el-button--primary {
+    --el-button-bg-color: #b29fff;
+    --el-button-border-color: #b29fff;
+    --el-button-outline-color: #b5a2ff;
+}
+
+.el-button.is-text,
+.el-button.is-link {
+    --el-button-text-color: #b29fff;
+    --el-button-disabled-text-color: #8874d6;
+    --el-button-hover-bg-color: #8874d6;
+    --el-button-hover-link-text-color: #9380df;
+}
+
+.el-input,
+.el-textarea {
+    --el-input-text-color: #b3b3b3;
+    --el-input-bg-color: #000000;
+    --el-input-border-color: #000000;
+    --el-input-placeholder-color: #9a9a9a;
+    --el-input-hover-border-color: #000000;
+    --el-input-focus-border-color: #000000;
+}
+
+.el-dialog {
+    --el-dialog-bg-color: #3b3652;
+}
+
+.el-radio-button {
+    --el-radio-button-checked-bg-color: #0c759e;
+    --el-radio-button-checked-text-color: var(--el-color-white);
+    --el-radio-button-checked-border-color: transparent;
+}
+
+.el-table {
+    --el-table-border: none;
+    --el-table-bg-color: transparent;
+    --el-table-tr-bg-color: transparent;
+    --el-table-header-bg-color: transparent;
+    --el-table-row-hover-bg-color: transparent;
+
+    .el-table__inner-wrapper::before {
+        height: 0;
+    }
+    .el-table__header-wrapper {
+        .mb(6px);
+        background-color: #3e4afa;
+        border-radius: 20px;
+        height: 26px;
+    }
+    th.el-table__cell {
+        color: white;
+    }
+    .el-table__header {
+        height: 26px;
+    }
+    .el-table__cell {
+        padding: 0;
+    }
+    div.cell {
+        padding: 3px 2px;
+        .fz(14px, 18px);
+        .ellipsis;
+        transition: all 0.1s ease-in-out;
+    }
+    .el-table__row {
+        color: #b3b3b3;
+    }
+
+    .el-table__row.is-focus {
+        .el-table__cell {
+            div.cell {
+                background: #7650f8;
+                color: white;
+            }
+            &:first-of-type {
+                div.cell {
+                    border-radius: 6px 0 0 6px;
+                }
+            }
+            &:last-of-type {
+                div.cell {
+                    border-radius: 0 6px 6px 0;
+                }
+            }
+        }
+    }
+}

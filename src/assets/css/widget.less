@@ -1,0 +1,53 @@
+.w-pagination {
+    justify-content: flex-end;
+
+    .el-pager li.number,
+    .el-pager li.more {
+        background: #2b2b42;
+        color: #b3b3b3;
+        border-radius: 5px;
+
+        &.is-active {
+            background: #7650f8;
+            color: #ffffff;
+        }
+    }
+}
+.w-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    background: #131517;
+    border-radius: 20px;
+    padding: 20px;
+
+    .w-card-title {
+        .fz(14px, 18px);
+        .bold;
+        color: #b3b3b3;
+        margin: 0;
+    }
+}
+.w-tabs {
+    .u-tab {
+        .x(center);
+        .fz(14px, 40px);
+        cursor: pointer;
+        padding: 0 12.5px;
+        height: 40px;
+        display: inline-block;
+        border-radius: 20px;
+        color: #fff;
+        background-color: #24292e;
+        transition: all 0.3s ease-in-out;
+
+        &:not(:last-of-type) {
+            margin-right: 20px;
+        }
+        &.is-active {
+            color: #fff;
+            background-color: #7650f8;
+        }
+    }
+}

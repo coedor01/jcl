@@ -2,7 +2,7 @@
     <div class="m-logs-list w-card">
         <div class="w-card-title">列表</div>
         <el-table class="u-table" :data="currentData" :border="false" :fit="true">
-            <el-table-column prop="index" label="#" width="48" :align="'center'"> </el-table-column>
+            <el-table-column prop="index" label="#" width="60"> </el-table-column>
             <el-table-column label="时间" width="60">
                 <template #default="{ row }">
                     <span>{{ displayDigits(row.micro / 1000) }}</span>
@@ -85,7 +85,7 @@ const store = useStore();
 const { logFilter, logAutoApply, logDebug } = toRefs(useGlobal());
 const data = ref([]);
 const pageSize = ref(30);
-const { currentPage, total, currentData } = usePaginate(data, { pageSize: pageSize.value });
+const { currentPage, total, currentData } = usePaginate(data, pageSize);
 
 // methods
 const consoleLog = (row) => console.log(cloneDeep(row));

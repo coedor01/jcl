@@ -81,7 +81,7 @@ const { entityTab, entity, currentWindow, effect, logs, log: detail } = toRefs(u
 // data
 const data = ref([]);
 const pageSize = ref(22);
-const { currentPage, currentData, total } = usePaginate(data, { pageSize: pageSize.value });
+const { currentPage, currentData, total } = usePaginate(data, pageSize);
 
 // 行点击事件
 const click = (row) => {

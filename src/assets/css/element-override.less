@@ -74,6 +74,12 @@
     }
     .el-table__header {
         height: 26px;
+        // 表头 左边距
+        .el-table__cell:first-of-type {
+            div.cell {
+                padding-left: 14px;
+            }
+        }
     }
     .el-table__cell {
         padding: 0;
@@ -86,6 +92,12 @@
     }
     .el-table__row {
         color: #b3b3b3;
+        height: 30px;
+        .el-table__cell:first-of-type {
+            div.cell {
+                padding-left: 14px;
+            }
+        }
     }
 
     .el-table__row.is-focus {

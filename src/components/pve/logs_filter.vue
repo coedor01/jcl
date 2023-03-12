@@ -183,7 +183,7 @@ onMounted(() => {
 <style lang="less">
 .m-logs-filter {
     .pr;
-    width: 510px;
+    width: 490px;
 
     .u-filters {
         display: flex;

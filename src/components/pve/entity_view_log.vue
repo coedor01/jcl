@@ -83,13 +83,13 @@ const data = computed(() => {
 });
 const pageSize = computed(() => {
     if (viewType.value === "target") return 19;
-    return 8;
+    return 9;
 });
 const columnWidth = computed(() => {
     if (viewType.value === "target") return [48, 60, 36, 240, 112, 64];
     return [42, 54, 120, 120, 90, 36];
 });
-const { total, currentPage, currentData } = usePaginate(data, { pageSize: pageSize.value });
+const { total, currentPage, currentData } = usePaginate(data, pageSize);
 
 const selectLog = (row) => {
     detail.value = row;

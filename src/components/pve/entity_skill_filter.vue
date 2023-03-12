@@ -70,7 +70,7 @@ const store = useStore();
 
 const data = ref([]);
 const pageSize = ref(8);
-const { currentPage, currentData, total } = usePaginate(data, { pageSize: pageSize.value });
+const { currentPage, currentData, total } = usePaginate(data, pageSize);
 
 // 获取可供选择的数据
 const updateData = () => {

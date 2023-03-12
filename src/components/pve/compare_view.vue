@@ -106,73 +106,71 @@
                     @update:currentPage="currentLogPage = $event"
                 ></el-pagination>
             </div>
-            <div class="u-skill-detail">
-                <div class="u-card" :class="`u-index-${index}`">
-                    <div class="u-top">
-                        <div class="u-card-title">技能详情</div>
-                        <div class="u-effect-infos" v-if="detail">
-                            <div class="u-effect-info">
-                                <span>招式：</span>
-                                <img :src="getResourceIcon(detail.effect)" />
-                                <span>{{ getResourceName(detail.effect, { showID: true }) }}</span>
-                            </div>
-                            <div class="u-effect-info">
-                                <span>来源：</span>
-                                <img :src="getMountIcon(detail.caster)" />
-                                <span>{{ getEntityName(detail.caster) }}#{{ detail.caster }}</span>
-                            </div>
-                            <div class="u-effect-info">
-                                <span>施展次数：</span>
-                                <span>第 {{ detail.index }} 次</span>
-                            </div>
-                            <div class="u-effect-info">
-                                <span>施展时间：</span>
-                                <span>{{ displayDigits(detail.micro / 1000) }} s</span>
-                            </div>
-                            <div class="u-effect-info">
-                                <span>实际数值：</span>
-                                <span>{{ detail.value }}</span>
-                            </div>
-                            <div class="u-effect-info">
-                                <span>目标：</span>
-                                <img :src="getMountIcon(detail.target)" />
-                                <span>{{ getEntityName(detail.target) }}#{{ detail.target }}</span>
-                            </div>
-                            <div class="u-effect-info">
-                                <span>备注：</span>
-                                <span v-if="detail.isCritical">会心</span>
-                                <span v-else> - </span>
-                            </div>
+            <div class="u-skill-detail u-card" :class="`u-index-${index}`">
+                <div class="u-top">
+                    <div class="u-card-title">技能详情</div>
+                    <div class="u-effect-infos" v-if="detail">
+                        <div class="u-effect-info">
+                            <span>招式：</span>
+                            <img :src="getResourceIcon(detail.effect)" />
+                            <span>{{ getResourceName(detail.effect, { showID: true }) }}</span>
+                        </div>
+                        <div class="u-effect-info">
+                            <span>来源：</span>
+                            <img :src="getMountIcon(detail.caster)" />
+                            <span>{{ getEntityName(detail.caster) }}#{{ detail.caster }}</span>
+                        </div>
+                        <div class="u-effect-info">
+                            <span>施展次数：</span>
+                            <span>第 {{ detail.index }} 次</span>
+                        </div>
+                        <div class="u-effect-info">
+                            <span>施展时间：</span>
+                            <span>{{ displayDigits(detail.micro / 1000) }} s</span>
+                        </div>
+                        <div class="u-effect-info">
+                            <span>实际数值：</span>
+                            <span>{{ detail.value }}</span>
+                        </div>
+                        <div class="u-effect-info">
+                            <span>目标：</span>
+                            <img :src="getMountIcon(detail.target)" />
+                            <span>{{ getEntityName(detail.target) }}#{{ detail.target }}</span>
+                        </div>
+                        <div class="u-effect-info">
+                            <span>备注：</span>
+                            <span v-if="detail.isCritical">会心</span>
+                            <span v-else> - </span>
                         </div>
                     </div>
-                    <div class="w-card">
-                        <div class="w-card-title">携带BUFF列表</div>
-                        <div class="u-buff-list">
-                            <div
-                                v-for="(buff, index) in currentBuffData"
-                                :key="index"
-                                class="u-buff"
-                                :title="getResourceName('buff:' + buff.split('*')[0], { showID: true })"
-                            >
-                                <img class="u-buff-icon" :src="getResourceIcon('buff:' + buff.split('*')[0])" />
-                                <span class="u-buff-stack">{{ buff.split("*")[1] }}</span>
-                                <span class="u-buff-name">{{
-                                    getResourceName("buff:" + buff.split("*")[0], { showID: true })
-                                }}</span>
-                            </div>
+                </div>
+                <div class="w-card">
+                    <div class="w-card-title">携带BUFF列表</div>
+                    <div class="u-buff-list">
+                        <div
+                            v-for="(buff, index) in currentBuffData"
+                            :key="index"
+                            class="u-buff"
+                            :title="getResourceName('buff:' + buff.split('*')[0], { showID: true })"
+                        >
+                            <img class="u-buff-icon" :src="getResourceIcon('buff:' + buff.split('*')[0])" />
+                            <span class="u-buff-stack">{{ buff.split("*")[1] }}</span>
+                            <span class="u-buff-name">{{
+                                getResourceName("buff:" + buff.split("*")[0], { showID: true })
+                            }}</span>
                         </div>
-                        <el-pagination
-                            class="w-pagination"
-                            small
-                            background
-                            layout="pager"
-                            :page-size="buffPageSize"
-                            :total="totalBuff"
-                            :hide-on-single-page="true"
-                            :current-page="currentBuffPage"
-                            @update:currentPage="currentBuffPage = $event"
-                        ></el-pagination>
                     </div>
+                    <el-pagination
+                        class="w-pagination"
+                        small
+                        background
+                        layout="pager"
+                        :page-size="buffPageSize"
+                        :total="totalBuff"
+                        :hide-on-single-page="true"
+                        :current-page="currentBuffPage"
+                        @update:currentPage="currentBuffPage = $event"
+                    ></el-pagination>
                 </div>
             </div>
         </div>
@@ -210,14 +208,10 @@ const detail = ref(null);
 // 技能列表
 const data = ref([]);
 const pageSize = ref(8);
-const { currentData, currentPage, total } = usePaginate(data, { pageSize: pageSize.value });
+const { currentData, currentPage, total } = usePaginate(data, pageSize);
 // 技能日志列表
 const logPageSize = ref(12);
-const {
-    currentData: currentLogData,
-    currentPage: currentLogPage,
-    total: totalLog,
-} = usePaginate(logs, { pageSize: logPageSize.value });
+const { currentData: currentLogData, currentPage: currentLogPage, total: totalLog } = usePaginate(logs, logPageSize);
 // 技能详情
 const buffPageSize = ref(8);
 const buff = computed(() => {
@@ -228,7 +222,7 @@ const {
     currentData: currentBuffData,
     currentPage: currentBuffPage,
     total: totalBuff,
-} = usePaginate(buff, { pageSize: buffPageSize.value });
+} = usePaginate(buff, buffPageSize);
 
 // computed
 const { compareEntity, compareMode } = toRefs(useGlobal());
@@ -384,7 +378,7 @@ watch(
     }
 
     .u-overview {
-        .size(710px, 89px);
+        .size(650px, 89px);
         padding: 0 30px;
         background: #24292e;
         border-radius: 20px;
@@ -405,7 +399,7 @@ watch(
 
     .u-skills {
         .mt(20px);
-        height: 400px;
+        height: 360px;
     }
 
     .u-skills .u-table {
@@ -440,7 +434,7 @@ watch(
     }
 
     .u-skill-logs {
-        .size(360px, 440px);
+        .size(320px, 405px);
     }
 
     .u-skill-more {
@@ -465,7 +459,7 @@ watch(
         display: flex;
         flex-direction: column;
         gap: 10px;
-        .size(330px, 440px);
+        .size(310px, 410px);
         padding: 20px 20px 0 20px;
         border-radius: 20px;
 
@@ -495,7 +489,7 @@ watch(
         flex-direction: column;
         justify-content: space-evenly;
         padding: 10px 0;
-        height: 200px;
+        height: 160px;
 
         .u-effect-info {
             display: flex;

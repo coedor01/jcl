@@ -89,7 +89,7 @@ const targetLabel = computed(() => {
 const skipNoNameTarget = ref(false);
 const data = ref([]);
 const pageSize = ref(9);
-const { currentPage, currentData, total } = usePaginate(data, { pageSize: pageSize.value });
+const { currentPage, currentData, total } = usePaginate(data, pageSize);
 
 // 行点击事件
 const click = (row) => {
@@ -182,12 +182,12 @@ watch(
         .size(810px, 760px);
 
         & > div:first-of-type {
-            height: 420px;
+            height: 410px;
             flex-shrink: 0;
         }
 
         & > div:last-of-type {
-            flex-grow: 1;
+            height: 290px;
         }
 
         .u-table {
@@ -220,6 +220,11 @@ watch(
 
     & > .u-right {
         .size(610px, 760px);
+        display: flex;
+
+        & > .w-card {
+            flex-grow: 1;
+        }
     }
 }
 </style>

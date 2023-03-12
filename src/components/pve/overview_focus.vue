@@ -76,7 +76,7 @@ watch(
 .m-overview-focus {
     background: #131517;
     border-radius: 20px;
-    .size(420px, 420px);
+    .size(380px, 380px);
     padding: 20px;
     .u-entity {
         display: flex;

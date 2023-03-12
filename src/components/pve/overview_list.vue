@@ -70,7 +70,7 @@ const store = useStore();
 // 数据
 const data = ref([]);
 const { focusEntities, statType } = toRefs(global);
-const { currentPage, currentData, total } = usePaginate(data, { pageSize: 25 });
+const { currentPage, currentData, total } = usePaginate(data, ref(25));
 // methods
 const sort = ({ prop, order }) => {
     data.value = data.value.sort((a, b) => {
@@ -143,7 +143,7 @@ watch(
     background: #131517;
     border-radius: 20px;
     padding: 20px;
-    .size(1000px, 1000px);
+    .size(960px, 960px);
 
     .u-title {
         margin: 0;

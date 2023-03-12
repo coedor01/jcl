@@ -124,7 +124,7 @@ const data = computed(() => {
     return entitiesArr;
 }, [store.result]);
 const pageSize = ref(5);
-const { currentPage, currentData, total } = usePaginate(data, { pageSize: pageSize.value });
+const { currentPage, currentData, total } = usePaginate(data, pageSize);
 // 选择单位事件
 const selectEntity = (row) => {
     if (entityList.value.includes(row.id)) {

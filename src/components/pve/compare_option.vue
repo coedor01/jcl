@@ -116,7 +116,7 @@ export default {
     gap: 20px;
 
     .m-compare-entity {
-        .size(360px, 230px);
+        .size(320px, 190px);
 
         .el-select .el-input.is-focus .el-input__wrapper {
             box-shadow: none;
@@ -210,7 +210,7 @@ export default {
     }
 
     .m-compare-mode {
-        .size(360px, 230px);
+        .size(320px, 190px);
 
         .u-tabs {
             flex-grow: 1;

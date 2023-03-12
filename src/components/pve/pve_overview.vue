@@ -87,7 +87,7 @@ const switchType = (tab) => {
             background: #131517;
             border-radius: 20px;
             padding: 20px;
-            .size(1000px, 420px);
+            .size(960px, 380px);
 
             .m-type-tabs {
                 display: flex;

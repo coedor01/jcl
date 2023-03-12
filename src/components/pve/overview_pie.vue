@@ -70,7 +70,8 @@ const updateData = () => {
 // 计算属性：当前选中的部分占用份额
 const rate = computed(() => {
     const { stats } = store.result;
-    const source = stats[statType.value];
+    const source = stats?.[statType.value];
+    if (!source) return 0;
     let value = 0;
     for (let entity of focusEntities.value) {
         const d = source[entity]?.all;
@@ -135,7 +136,8 @@ watch(
     .flex-center;
     background: #131517;
     border-radius: 20px;
-    .size(420px, 420px);
+    padding: 10px;
+    .size(400px, 400px);
     .pr;
 
     .u-label {

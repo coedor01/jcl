@@ -93,7 +93,7 @@ const { entity, selectedBuffs } = toRefs(useGlobal());
 
 const data = ref([]);
 const pageSize = ref(8);
-const { currentPage, currentData, total } = usePaginate(data, { pageSize: pageSize.value });
+const { currentPage, currentData, total } = usePaginate(data, pageSize);
 
 const rowClass = ({ row }) => {
     if (selectedBuffs.value.includes(row.id)) {

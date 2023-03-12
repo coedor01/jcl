@@ -285,6 +285,7 @@ onMounted(() => {
         gap: 8px;
         padding: 10px;
         border-radius: 8px;
+        transition: all 0.2s ease-in-out;
 
         &:hover {
             background-color: #0f5773;

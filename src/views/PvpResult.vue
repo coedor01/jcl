@@ -1,5 +1,5 @@
 <template>
-    <div class="m-pvp-result"></div>
+    <div class="p-pvp-result"></div>
 </template>
 
 <script setup></script>

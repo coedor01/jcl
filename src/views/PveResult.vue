@@ -1,5 +1,5 @@
 <template>
-    <div class="m-pve-result">
+    <div class="p-pve-result">
         <pve-header></pve-header>
         <div class="m-pve-content">
             <component :is="mainComponents[mainTab]"></component>
@@ -38,7 +38,7 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-.m-pve-result {
+.p-pve-result {
     .flex-center;
     flex-direction: column;
 

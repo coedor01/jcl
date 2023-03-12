@@ -2,8 +2,6 @@
     这个文件用于导出，输入应该是format生成的row
  */
 import moment from "moment";
-import { entityName, resourceName } from "@/scripts/jcl/format.js";
-import { getResource } from "@/scripts/jcl/resource.js";
 import xfid from "@jx3box/jx3box-data/data/xf/xfid.json";
 /**
  * 定义导出的excel文件的列名，数据源，以及是否隐藏等
@@ -12,7 +10,7 @@ export const header = [
     { label: "事件序号", value: "id" },
     { label: "时:分:秒", value: "displayTime" },
     { label: "逻辑帧", value: "frame" },
-    { label: "秒数", value: "time" },
+    { label: "秒数", value: "sec" },
     { label: "毫秒", value: "micro" },
 
     { label: "事件类型", value: "typeDesc" },
@@ -51,23 +49,72 @@ export const header = [
     { label: "内容描述", value: "contentDesc" },
 ];
 
+let store = {};
+
+// 找资源
+const resourceSearchCache = {};
+const getResource = (_key) => {
+    const [type, key] = _key.split(":");
+    const { resources } = store;
+    let cacheKey = `${type}:${key}`;
+    if (resourceSearchCache[cacheKey]) return resources[resourceSearchCache[cacheKey]];
+    let resourceKey = `${type}:${key}`;
+    let r = resources[resourceKey];
+    // 直接找到了id和level都符合的记录就直接返回图标
+    if (r) {
+        resourceSearchCache[cacheKey] = resourceKey;
+        return r;
+    }
+    // 如果没有找到尝试只匹配id一致的
+    let id = key.split("_")[0];
+    resourceKey = `${type}:${id}_`;
+    resourceKey = Object.keys(resources).find((k) => k?.startsWith(resourceKey));
+    r = resources[resourceKey] ?? {};
+    if (r) {
+        resourceSearchCache[cacheKey] = resourceKey;
+        return r;
+    }
+};
+const getResourceName = (key, { showID = false } = {}) => {
+    const id = key.split(":")[1];
+    const resource = getResource(key);
+    if (!resource) return "未知招式";
+    let ret = resource.name || resource.remark;
+    if (showID) ret += `#${id}`;
+    return ret;
+};
+const getEntity = (id) => {
+    const { entities } = store;
+    return entities[id] ?? {};
+};
+const getEntityName = (id, { showID = false, showOrder = false } = {}) => {
+    const entity = getEntity(id);
+    if (!entity) return "天外来客";
+    if (!entity.name) return `#${entity.id}`;
+    let result = entity.name;
+
+    if (showID) result += `#${id}`;
+    if (showOrder && entity.appearOrder) result += `@${entity.appearOrder}`;
+    return result;
+};
+
 /**
  * 传入一个JCL日志列表的row对象，返回一个包含额外信息的row用于导出
  */
-const rowAddExtra = (row, $store) => {
+const rowAddExtra = (row) => {
     if (row.micro < 0) row.displayTime = "-" + moment(-row.micro).utcOffset(0).format("HH:mm:ss.SSS");
     else row.displayTime = moment(row.micro).utcOffset(0).format("HH:mm:ss.SSS");
     // 事件来源和事件目标的详细信息
     for (let key of ["source", "target"]) {
         const entityID = row[key].v;
         if (!entityID) continue;
-        const entity = $store.entities[entityID];
+        const entity = store.entities[entityID];
         if (!entity) {
             row[key] = undefined;
             continue;
         }
         let extra = {};
-        extra[key] = entityName(entity, true) || "";
+        extra[key] = getEntityName(entityID, { showID: true, showOrder: true }) || "";
         extra[key + "ID"] = entity.id;
         extra[key + "Name"] = entity.name;
         extra[key + "Order"] = entity.appearOrder;
@@ -86,17 +133,18 @@ const rowAddExtra = (row, $store) => {
         row.values = valuesText;
     }
     // 备注
-    if (row.type == 21 && row.__log.C) row.remark = "会心";
+    if (row.type == 21 && row.detail.isCritical) row.remark = "会心";
     // 事件内容的详细信息
     const content = row.content;
     if (content.t == "str") {
         row.contentType = "文本";
         row.content = content.v;
     } else if (["skill", "buff"].includes(content.t) && content.v) {
-        const resource = getResource(content.t, content.v, $store.resources);
+        const key = `${content.t}:${content.v}`;
+        const resource = getResource(key);
         row.contentType = content.t;
         if (row.content.n) row.contentStackNum = row.content.n;
-        row.content = resourceName(resource);
+        row.content = getResourceName(key);
         row.contentID = resource.id;
         row.contentName = resource.name;
         row.contentRemark = resource.remark;
@@ -111,6 +159,7 @@ const rowAddExtra = (row, $store) => {
  * @returns
  */
 export const writeRowsToSheet = function* ($store) {
+    store = $store;
     const rows = $store.rows;
     const length = rows.length;
     const result = [];
@@ -119,7 +168,7 @@ export const writeRowsToSheet = function* ($store) {
             ...rows[i],
             id: i + 1,
         };
-        result.push(rowAddExtra(row, $store));
+        result.push(rowAddExtra(row));
         if (i % 1000) yield (i / length) * 100;
     }
     return result;

@@ -42,7 +42,6 @@ import { moment } from "@jx3box/jx3box-common/js/moment";
 
 const store = useStore();
 const { mainTab } = toRefs(useGlobal());
-
 // data
 const tabList = [
     {

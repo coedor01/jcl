@@ -1,6 +1,6 @@
 import { unparse } from "papaparse";
 import iconv from "iconv-lite";
-import { header, writeRowsToSheet } from "@/scripts/jcl/export.js";
+import { header, writeRowsToSheet } from "@/utils/export.js";
 
 // 在子线程向主线程传递进度信息
 const updateStatus = function (desc, status, processing) {

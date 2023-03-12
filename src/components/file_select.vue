@@ -65,7 +65,7 @@ import { Buffer } from "buffer";
 const store = useStore();
 const router = useRouter();
 // data
-const dialogVisible = ref(true);
+const dialogVisible = ref(false);
 const subject = ref("team");
 const subjectName = {
     team: "团队行为分析",
@@ -152,8 +152,8 @@ defineExpose({
             .pa;
             .size(45px, 45px);
             .fz(32px);
-            right: 20px;
-            top: -6px;
+            right: 30px;
+            top: 4px;
             background: #72689d;
             color: #3b3552;
             border-radius: 100%;

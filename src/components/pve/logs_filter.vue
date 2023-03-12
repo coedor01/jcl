@@ -1,5 +1,9 @@
 <template>
     <div class="m-logs-filter w-card">
+        <div class="u-export-button" @click="exportBox.open()">
+            <el-icon><CopyDocument /></el-icon>
+            导出JCL
+        </div>
         <div class="w-card-title">建议过滤</div>
         <div class="u-filters">
             <check-button v-model="logFilter.hideReact">
@@ -116,10 +120,12 @@
             <check-button v-model="logAutoApply">自动应用</check-button>
             <check-button v-model="logDebug">调试模式</check-button>
         </div>
+        <export-dialog ref="exportBox"></export-dialog>
     </div>
 </template>
 
 <script setup>
+import ExportDialog from "@/components/export_dialog.vue";
 import { getMountIcon, getEntityName } from "@/utils/common";
 import { InfoFilled } from "@element-plus/icons-vue";
 import CheckButton from "../common/check_button.vue";
@@ -128,13 +134,21 @@ import { useStore } from "@/store";
 import { toRefs, computed, onMounted, ref } from "vue";
 import { throttle } from "lodash-es";
 
+// emit
 const emits = defineEmits(["apply"]);
+
+// data
 const store = useStore();
 const { logFilter, logAutoApply, logDebug } = toRefs(useGlobal());
+
+// computed
 const entities = computed(() => Object.values(store.result?.entities).slice(1));
 const maxTime = computed(() => store?.result?.end?.sec + 5 || 120);
 const keywordStr = ref("");
 const hideKeywordStr = ref("");
+const exportBox = ref(null);
+
+// methods
 const getKeywords = (type) => {
     let target = type === "hide" ? hideKeywordStr.value : keywordStr.value;
     if (!target) return null;
@@ -160,6 +174,7 @@ const updateKeyword = () => {
 const inputChange = throttle(() => {
     updateKeyword();
 }, 1000);
+
 onMounted(() => {
     logFilter.value.timeRange[1] = maxTime.value;
 });
@@ -167,6 +182,7 @@ onMounted(() => {
 
 <style lang="less">
 .m-logs-filter {
+    .pr;
     width: 510px;
 
     .u-filters {
@@ -255,6 +271,24 @@ onMounted(() => {
         background: #7650f8;
         border-radius: 50px;
         color: white;
+    }
+
+    .u-export-button {
+        .pa;
+        .fz(14px, 18px);
+        .bold;
+        .flex-center;
+        .pointer;
+        color: #b3b3b3;
+        right: 10px;
+        top: 10px;
+        gap: 8px;
+        padding: 10px;
+        border-radius: 8px;
+
+        &:hover {
+            background-color: #0f5773;
+        }
     }
 }
 

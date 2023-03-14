@@ -12,7 +12,7 @@ const routes = [
     { name: "pvp", path: "/pvp", component: () => import("@/views/PvpResult.vue") },
     { name: "activity", path: "/activity", component: () => import("@/views/Activity.vue") },
     { name: "rank", path: "/rank", component: () => import("@/views/Rank.vue") },
-    { name: "upload", path: "/upload", component: () => import("@/views/Upload.vue") },
+    { name: "analysis", path: "/analysis", component: () => import("@/views/Analysis.vue") },
     { name: "mine", path: "/mine", component: () => import("@/views/Mine.vue") },
     { name: "public", path: "/public", component: () => import("@/views/Public.vue") },
 ];

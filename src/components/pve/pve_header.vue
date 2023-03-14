@@ -20,7 +20,7 @@
         <div class="u-tabs">
             <div
                 class="u-tab"
-                v-for="(tab, index) in tabList"
+                v-for="(tab, index) in showTab"
                 :key="index"
                 :class="{ 'is-active': mainTab === tab.name }"
                 @click="switchTab(tab.name, tab)"
@@ -60,11 +60,28 @@ const tabList = [
         title: "单位对比",
     },
     {
+        name: "video",
+        icon: require("@/assets/img/common/video.svg"),
+        title: "视频回放",
+    },
+    {
         name: "logs",
         icon: require("@/assets/img/pve/header_logs.svg"),
         title: "全部记录",
     },
+    {
+        name: "upload",
+        icon: require("@/assets/img/common/upload.svg"),
+        title: "云端保存",
+    },
 ];
+const showTab = computed(() => {
+    return tabList.filter((tab) => {
+        if (tab.name === "upload" && store.info != "") return false;
+        if (tab.name === "video" && !store.info.video_identifier) return false;
+        return true;
+    });
+});
 const mapNames = ref({});
 
 // computed

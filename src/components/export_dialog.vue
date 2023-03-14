@@ -12,7 +12,7 @@
             <el-button class="u-close" link @click="dialogVisible = false">×</el-button>
             <!-- 标题 -->
             <div class="u-title">导出为CSV</div>
-            <!-- 上传组件 -->
+            <!-- 进度条 -->
             <el-progress :show-text="false" :percentage="progress" :stroke-width="10" />
             <div class="u-progress-desc" v-for="(item, key) in statusMap" :key="key">
                 <el-icon><component :is="statusIcon[item.status]"></component></el-icon>

@@ -23,6 +23,10 @@ export default {
             type: [Number, String, Boolean],
             default: undefined,
         },
+        canCancel: {
+            type: Boolean,
+            default: false,
+        },
     },
     emits: ["update:modelValue"],
     data() {
@@ -40,6 +44,9 @@ export default {
                     this.$emit("update:modelValue", [...this.modelValue, this.value]);
                 }
             } else if (this.type === "radio") {
+                if (this.modelValue == this.value && this.canCancel) {
+                    this.$emit("update:modelValue", undefined);
+                }
                 if (this.modelValue != this.value) {
                     this.$emit("update:modelValue", this.value);
                 }

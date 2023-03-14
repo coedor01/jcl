@@ -1,10 +1,10 @@
 <template>
-    <div class="p-upload"></div>
+    <div class="p-analysis"></div>
 </template>
 
 <script>
 export default {
-    name: "UploadIndex",
+    name: "AnalysisIndex",
     props: [],
     components: {},
     data: function () {
@@ -19,5 +19,5 @@ export default {
 </script>
 
 <style lang="less">
-@import "@/assets/css/upload.less";
+@import "@/assets/css/analysis.less";
 </style>

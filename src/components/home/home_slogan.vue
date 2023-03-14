@@ -11,7 +11,7 @@
                 <p>控制，小怪出现时机等完整复盘，重要细节不错过。</p>
             </div>
             <div class="u-buttons">
-                <router-link class="u-button" to="/upload">开启上帝的视角</router-link>
+                <router-link class="u-button" to="/analysis">开启上帝的视角</router-link>
                 <router-link class="u-button" to="/public">阅览战斗的数据</router-link>
             </div>
             <a class="u-tip" href="/collection/235" target="_blank">*需要了解更多的资讯来使用JCL</a>

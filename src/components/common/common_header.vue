@@ -18,7 +18,7 @@
                     <span class="u-name">{{ userdata.name }}</span>
                 </div>
                 <a class="u-login" v-else :href="login_url">登录|注册</a>
-                <router-link class="u-upload" to="/upload">分析数据</router-link>
+                <router-link class="u-upload" to="/analysis">分析数据</router-link>
             </div>
         </div>
     </div>

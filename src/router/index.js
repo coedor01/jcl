@@ -7,7 +7,8 @@ import {
 
 // 2.Routes
 const routes = [
-    { name: "home", path: "/", component: () => import("@/views/HomePage.vue") },
+    { name: "home", path: "/", component: () => import("@/views/Home.vue") },
+    { name: "view", path: "/view", component: () => import("@/views/View.vue") },
     { name: "pve", path: "/pve", component: () => import("@/views/PveResult.vue") },
     { name: "pvp", path: "/pvp", component: () => import("@/views/PvpResult.vue") },
     { name: "activity", path: "/activity", component: () => import("@/views/Activity.vue") },

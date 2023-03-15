@@ -55,7 +55,7 @@
 
 <script setup>
 import { UploadFilled, WarningFilled } from "@element-plus/icons-vue";
-import { ref, computed } from "vue";
+import { ref, toRef, computed } from "vue";
 import { useRouter } from "vue-router";
 import { decode } from "iconv-lite";
 import { useAnalysis } from "@/utils/uses/useAnalysis";
@@ -66,7 +66,7 @@ const store = useStore();
 const router = useRouter();
 // data
 const dialogVisible = ref(false);
-const subject = ref("team");
+const subject = toRef(store.subject);
 const subjectName = {
     team: "团队行为分析",
     boss: "首领行为分析",
@@ -103,18 +103,21 @@ const fileChange = (file) => {
 };
 const start = () => {
     store.result = {};
-    const promise = new Promise((resolve) => {
+    new Promise((resolve) => {
         let reader = new FileReader();
         reader.onload = (e) => {
             resolve(e.target.result);
         };
         reader.readAsArrayBuffer(store.file);
-    }).then((buffer) => {
-        const raw = decode(Buffer.from(buffer), "gbk");
-        store.raw = raw;
-        return new Promise((resolve) => resolve(true));
-    });
-    startAnalysis(promise);
+    })
+        .then((buffer) => {
+            const raw = decode(Buffer.from(buffer), "gbk");
+            store.raw = raw;
+            return new Promise((resolve) => resolve(true));
+        })
+        .then(() => {
+            startAnalysis();
+        });
 };
 const view = () => {
     if (subject.value === "pvp") {
@@ -138,7 +141,7 @@ defineExpose({
 .m-file-select {
     border-radius: 8px;
     overflow: hidden;
-    .size(1000px, 540px);
+    .size(1000px, 500px);
     .el-dialog__body {
         padding: 0;
     }

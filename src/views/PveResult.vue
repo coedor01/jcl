@@ -39,7 +39,7 @@ onMounted(() => {
 });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .p-pve-result {
     .flex-center;
     flex-direction: column;

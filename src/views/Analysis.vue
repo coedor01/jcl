@@ -1,21 +1,17 @@
 <template>
-    <div class="p-analysis"></div>
+    <div class="p-analysis">
+        <div class="u-analysis-title">选择你的分析模式</div>
+        <subject-list></subject-list>
+    </div>
 </template>
 
-<script>
-export default {
+<script setup>
+import { defineComponent } from "vue";
+import SubjectList from "@/components/home/subject_list.vue";
+
+defineComponent({
     name: "AnalysisIndex",
-    props: [],
-    components: {},
-    data: function () {
-        return {};
-    },
-    computed: {},
-    watch: {},
-    methods: {},
-    created: function () {},
-    mounted: function () {},
-};
+});
 </script>
 
 <style lang="less">

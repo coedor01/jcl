@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { defineProps, toRefs, computed } from "vue";
+import { toRefs, computed } from "vue";
 import { getResourceName, getResourceIcon } from "@/utils/common";
 const props = defineProps({
     effect: {

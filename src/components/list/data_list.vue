@@ -1,19 +1,24 @@
 <template>
     <div class="m-data-list">
-        <div class="u-tabs">
+        <!-- <div class="u-tabs">
             <template v-for="(tab, index) in tabs" :key="index">
                 <div class="u-tab" :class="{ active: tab.name == active }" @click="toggle(tab.name)">
                     {{ tab.title }}
                 </div>
             </template>
-        </div>
-        <div class="u-search">
+        </div> -->
+        <!-- <div class="u-search">
             <el-input v-model="search" placeholder="请输入搜索关键词.." />
-        </div>
+        </div> -->
         <div class="u-list" v-loading="data.loading">
             <div class="u-data">
                 <div class="u-empty" v-if="data.total === 0">暂无数据，上传一个吧 😘</div>
-                <div class="u-li" v-for="(item, index) in data.list" :key="index">
+                <router-link
+                    class="u-li"
+                    v-for="(item, index) in data.list"
+                    :key="index"
+                    :to="{ name: 'view', query: { id: item.id } }"
+                >
                     <!-- 数据类型 -->
                     <span class="u-type" :class="`u-type-${item.subject}`">{{ subjectName(item.subject) }}</span>
                     <!-- 私有、天梯榜等 -->
@@ -26,10 +31,8 @@
                     /></i>
                     <!-- 名称 -->
                     <span class="u-name">{{ item.title }}</span>
-                    <span class="u-opr" v-if="active == 'mine'">
-                        <!-- 编辑 -->
+                    <!-- <span class="u-opr" v-if="active == 'mine'">
                         <el-button link :icon="Edit" @click="edit(item)" />
-                        <!-- 删除 -->
                         <el-popconfirm
                             width="220"
                             confirm-button-text="确定"
@@ -43,12 +46,12 @@
                                 <el-button link :icon="Delete" />
                             </template>
                         </el-popconfirm>
-                    </span>
+                    </span> -->
                     <span class="u-update">
                         <span>更新：</span>
                         <span>{{ item.updated_at }}</span>
                     </span>
-                </div>
+                </router-link>
             </div>
             <router-link class="m-index-data__more" to="/public">
                 查看更多<el-icon><DArrowRight /></el-icon>
@@ -65,45 +68,44 @@
                 />
             </div> -->
         </div>
-        <EditDialog ref="editDialog" @updated="getList"></EditDialog>
+        <!-- <EditDialog ref="editDialog" @updated="getList"></EditDialog> -->
     </div>
 </template>
 
 <script setup>
-import EditDialog from "./edit_dialog.vue";
+// import EditDialog from "./edit_dialog.vue";
 
-import { getPublicList, getMyList, deleteBattle } from "@/services/team";
+import { getPublicList } from "@/services/team";
 
-import { Delete, Edit } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import { ref, reactive, watch } from "vue";
+import { reactive, onMounted } from "vue";
 
-const active = ref("newest");
-const editDialog = ref(null);
-const tabs = [
-    {
-        name: "newest",
-        title: "最新数据",
-    },
-    // {
-    //     name: "mine",
-    //     title: "我的数据",
-    // },
-    // {
-    //     name: "team",
-    //     title: "团队行为",
-    // },
-    // {
-    //     name: "boss",
-    //     title: "首领行为",
-    // },
-    // {
-    //     name: "pvp",
-    //     title: "竞技多维",
-    // },
-];
+//const active = ref("newest");
+//const editDialog = ref(null);
+// const tabs = [
+//     {
+//         name: "newest",
+//         title: "最新数据",
+//     },
+//     {
+//         name: "mine",
+//         title: "我的数据",
+//     },
+//     {
+//         name: "team",
+//         title: "团队行为",
+//     },
+//     {
+//         name: "boss",
+//         title: "首领行为",
+//     },
+//     {
+//         name: "pvp",
+//         title: "竞技多维",
+//     },
+// ];
 // data
-const search = ref("");
+//const search = ref("");
 const data = reactive({
     list: [],
     total: 0,
@@ -114,17 +116,10 @@ const data = reactive({
 const getList = () => {
     let res;
     data.loading = true;
-    if (active.value === "mine") {
-        res = getMyList({
-            page: data.page,
-            pageSize: 12,
-        });
-    } else if (active.value === "newest") {
-        res = getPublicList({
-            page: data.page,
-            pageSize: 12,
-        });
-    }
+    res = getPublicList({
+        page: data.page,
+        pageSize: 14,
+    });
     if (res) {
         res.then((res) => {
             if (res.data?.code === 0) {
@@ -147,23 +142,23 @@ const getList = () => {
             });
     }
 };
-const del = (item) => {
-    deleteBattle(item.id).then((res) => {
-        if (res.data?.code === 0) {
-            ElMessage.success("删除成功");
-            getList();
-        } else {
-            ElMessage.error(res.data.msg ?? "删除失败");
-        }
-    });
-};
-const edit = (item) => {
-    editDialog.value.open(item);
-};
+// const del = (item) => {
+//     deleteBattle(item.id).then((res) => {
+//         if (res.data?.code === 0) {
+//             ElMessage.success("删除成功");
+//             getList();
+//         } else {
+//             ElMessage.error(res.data.msg ?? "删除失败");
+//         }
+//     });
+// };
+// const edit = (item) => {
+//     editDialog.value.open(item);
+// };
 
-const toggle = (name) => {
-    active.value = name;
-};
+// const toggle = (name) => {
+//     active.value = name;
+// };
 const subjectName = (subject) => {
     return (
         {
@@ -174,13 +169,9 @@ const subjectName = (subject) => {
     );
 };
 // watch
-watch(
-    [() => active.value, () => data.page],
-    () => {
-        getList();
-    },
-    { immediate: true }
-);
+onMounted(() => {
+    getList();
+});
 </script>
 
 <style lang="less">
@@ -207,7 +198,7 @@ watch(
 
             .bold;
             .fz(14px, 40px);
-            .x(center);
+            .x;
             transition: flex-grow 0.2s ease-in-out;
 
             &:hover {
@@ -248,7 +239,7 @@ watch(
         .color(#BFB0FF);
 
         .u-empty {
-            .x(center);
+            .x;
             padding: 60px;
             height: 100%;
         }
@@ -258,6 +249,7 @@ watch(
         }
 
         .u-li {
+            .color(#BFB0FF);
             display: flex;
             align-items: center;
             height: 40px;
@@ -272,7 +264,7 @@ watch(
                 border-radius: 10px;
                 width: 69px;
                 height: 18px;
-                .x(center);
+                .x;
                 .mr(10px);
                 .fz(12px, 18px);
                 &.u-badge-team {

@@ -147,14 +147,14 @@ onMounted(() => {
     }
 
     .m-title {
-        .x(center);
+        .x;
         .fz(18px, 26px);
         .bold;
         .mb(16px);
     }
 
     .m-desc {
-        .x(center);
+        .x;
         .fz(14px, 18px);
         color: #b3b3b3;
         .mb(16px);

@@ -166,7 +166,7 @@ const switchTab = (tab) => {
         align-items: center;
         gap: 20px;
         .u-tab {
-            .x(center);
+            .x;
             .fz(14px, 40px);
             .size(110px, 40px);
             cursor: pointer;

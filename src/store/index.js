@@ -4,7 +4,7 @@ export const useStore = defineStore({
     id: "store",
     state: () => ({
         // 用户选择的分析方向
-        subject: "",
+        subject: "team",
         // 用户选择的文件
         file: "",
         // 读取文件解码后内容

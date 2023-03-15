@@ -1,0 +1,174 @@
+.m-data-view {
+    display: flex;
+    padding: 0 80px 90px;
+    p {
+        margin: 0;
+    }
+
+    .u-left {
+        display: flex;
+        flex-grow: 1;
+        width: 890px;
+        .mr(20px);
+    }
+
+    .u-list {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background: #121019;
+        border: 3px dashed #554d77;
+        border-radius: 10px;
+        padding: 20px;
+        .fz(14px, 17px);
+        .color(#BFB0FF);
+
+        .u-empty {
+            .x;
+            padding: 60px;
+            height: 100%;
+        }
+
+        .u-data {
+            flex-grow: 1;
+        }
+
+        .u-li {
+            .color(#BFB0FF);
+            display: flex;
+            align-items: center;
+            height: 40px;
+
+            &:not(:last-child) {
+                border-bottom: 1px solid rgba(191, 176, 255, 0.2);
+            }
+
+            .u-type {
+                color: white;
+                background: #24a4cc;
+                border-radius: 10px;
+                .size(69px, 18px);
+                .x;
+                .mr(10px);
+                .fz(12px, 18px);
+                &.u-badge-team {
+                    background: #42a28b;
+                }
+                &.u-badge-boss {
+                    background: #8472d2;
+                }
+                &.u-badge-pvp {
+                    background: #812e13;
+                }
+            }
+            .u-badge {
+                .mr(4px);
+                .db;
+                &.u-private {
+                    .mt(4px);
+                }
+
+                &.u-star {
+                    i {
+                        .mr(1px);
+                        color: #fbc224;
+                    }
+                    border: 1px solid #fbc224;
+                    color: #edaf05;
+                    padding: 0 3px;
+                    font-style: normal;
+                    font-size: 12px;
+                    border-radius: 2px;
+                    transform: scale(0.8);
+                    flex-shrink: 0;
+                }
+
+                &.u-checked svg {
+                    .size(16px);
+                    .pr;
+                    top: 1px;
+                }
+            }
+            .u-name {
+                flex-grow: 1;
+            }
+        }
+
+        .u-data__more {
+            .flex;
+            justify-content: center;
+            align-items: center;
+            color: #bfb0ff;
+        }
+    }
+
+    .u-right {
+        width: 350px;
+        .u-title {
+            .fz(36px, 44px);
+            .x(right);
+            .mb(20px);
+
+            p.u-colorful {
+                .bold;
+                .colorful-text(linear-gradient(88.56deg, #1d95f8 0.51%, #fa5fa6 101.59%));
+                display: inline-block;
+                .mb(8px);
+            }
+        }
+        .u-card {
+            color: #a798e6;
+            background: rgba(85, 77, 119, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            .fz(14px, 24px);
+
+            &:not(:last-of-type) {
+                .mb(40px);
+            }
+            .u-card-title {
+                font-weight: bold;
+                .fz(16px, 19px);
+            }
+            p {
+                .mb(8px);
+            }
+        }
+        .u-jba {
+            .u-jba-token {
+                .flex-center;
+                cursor: pointer;
+                background: #554d77;
+                border-radius: 10px;
+                color: #b29fff;
+                margin: 8px 0;
+                padding: 0 6px;
+                .bold;
+                .fz(20px, 26px);
+                .x;
+
+                p {
+                    margin: 0;
+                    padding: 16px 6px;
+                    white-space: nowrap;
+                }
+
+                .el-button {
+                    margin-left: 8px;
+                }
+                .el-scrollbar {
+                    flex-grow: 1;
+                }
+            }
+
+            .u-jba-help {
+                display: flex;
+                align-items: center;
+
+                .el-icon {
+                    .mr(8px);
+                }
+            }
+        }
+    }
+}

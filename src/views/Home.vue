@@ -27,7 +27,6 @@ defineComponent({
 </script>
 
 <style lang="less">
-@import "@/assets/css/app.less";
 .p-home {
     .m-home {
         width: 1440px;

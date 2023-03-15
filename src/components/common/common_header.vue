@@ -54,9 +54,6 @@ export default {
         userdata: User.getInfo(),
     }),
     methods: {
-        navTo(nav) {
-            this.active = nav.name;
-        },
         // installOverlay() {
         //     const vm = this;
         //     window.addEventListener(

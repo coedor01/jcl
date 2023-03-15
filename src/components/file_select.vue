@@ -54,8 +54,7 @@
 </template>
 
 <script setup>
-import { UploadFilled, WarningFilled } from "@element-plus/icons-vue";
-import { ref, toRef, computed } from "vue";
+import { ref, toRefs, computed } from "vue";
 import { useRouter } from "vue-router";
 import { decode } from "iconv-lite";
 import { useAnalysis } from "@/utils/uses/useAnalysis";
@@ -66,7 +65,7 @@ const store = useStore();
 const router = useRouter();
 // data
 const dialogVisible = ref(false);
-const subject = toRef(store.subject);
+const { subject } = toRefs(store);
 const subjectName = {
     team: "团队行为分析",
     boss: "首领行为分析",
@@ -138,118 +137,5 @@ defineExpose({
 </script>
 
 <style lang="less">
-.m-file-select {
-    border-radius: 8px;
-    overflow: hidden;
-    .size(1000px, 500px);
-    .el-dialog__body {
-        padding: 0;
-    }
-    .m-dialog-body {
-        .pr;
-        .flex-center;
-        flex-direction: column;
-
-        .u-close {
-            .flex-center;
-            .pa;
-            .size(45px, 45px);
-            .fz(32px);
-            right: 30px;
-            top: 4px;
-            background: #72689d;
-            color: #3b3552;
-            border-radius: 100%;
-            &:hover,
-            &:active,
-            &:focus {
-                background: #72689d;
-            }
-        }
-        .u-bg {
-            .pa;
-            .db;
-            .size(400px, 400px);
-            left: -120px;
-            top: -120px;
-            filter: contrast(0) opacity(0.12);
-        }
-        .u-upload {
-            .w(720px);
-            .x(center);
-
-            .el-upload-dragger {
-                background-color: transparent;
-                border: transparent;
-                padding: 10px 0;
-            }
-            .u-upload-icon {
-                color: #b29fff;
-                .w(300px);
-                .h(200px);
-                transform: scale(1.4);
-            }
-            .u-upload-title {
-                .mt(4px);
-                .fz(32px, 42px);
-                font-weight: bold;
-                color: #8d80c1;
-            }
-            .u-upload-filename {
-                .mt(20px);
-                .fz(18px, 24px);
-            }
-            .u-upload-tip {
-                .mt(14px);
-                color: #8d80c1;
-                .fz(24px, 32px);
-                em {
-                    font-weight: bold;
-                    padding: 0 4px;
-                    font-style: normal;
-                }
-            }
-            .u-upload-help {
-                .mt(20px);
-                .fz(18px, 22px);
-                text-align: center;
-            }
-        }
-        .u-buttons {
-            .mt(14px);
-            padding: 4px 0;
-            .el-button {
-                width: 170px;
-                height: 45px;
-                border-radius: 10px;
-                .fz(18px, 22px);
-                font-weight: bold;
-                border: none;
-
-                background: #b29fff;
-                color: #3b3552;
-
-                &.is-disabled {
-                    opacity: 0.5;
-                }
-            }
-            .u-view {
-                transition: all 0.2s ease-in-out;
-                &.ready {
-                    background: linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%);
-                    color: white;
-                }
-            }
-        }
-        .el-progress {
-            .mt(10px);
-            width: 100%;
-            height: 10px;
-            .el-progress-bar__outer,
-            .el-progress-bar__inner {
-                border-radius: 0;
-            }
-        }
-    }
-}
+@import "@/assets/css/common/file_select.less";
 </style>

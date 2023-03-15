@@ -17,6 +17,12 @@ GLOBAL DEFINITION 项目本地全局定义
     white-space: nowrap;
 }
 
+.colorful-text(@gradient: linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%)) {
+    background: @gradient;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 .scrollbar(@color:#eee,@width:3px) {
     &::-webkit-scrollbar {
         width: @width;

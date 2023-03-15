@@ -1,7 +1,37 @@
 <template>
     <div class="m-data-view">
         <div class="u-left">
-            <data-list></data-list>
+            <div class="u-list" v-loading="data.loading">
+                <div class="u-data">
+                    <div class="u-empty" v-if="data.total === 0">暂无数据，上传一个吧 😘</div>
+                    <router-link
+                        class="u-li"
+                        v-for="(item, index) in data.list"
+                        :key="index"
+                        :to="{ name: 'view', query: { id: item.id } }"
+                    >
+                        <!-- 数据类型 -->
+                        <span class="u-type" :class="`u-type-${item.subject}`">{{ subjectName(item.subject) }}</span>
+                        <!-- 私有、天梯榜等 -->
+                        <i class="u-badge u-private" v-if="item.visible != 0"
+                            ><img svg-inline src="@/assets/img/works/draft.svg" alt=""
+                        /></i>
+                        <i class="u-badge u-star" v-if="item.rank_id"><i>★</i>天梯榜</i>
+                        <i class="u-badge u-checked" v-if="item.is_checked"
+                            ><img svg-inline src="@/assets/img/works/checked.svg"
+                        /></i>
+                        <!-- 名称 -->
+                        <span class="u-name">{{ item.title }}</span>
+                        <span class="u-update">
+                            <span>更新：</span>
+                            <span>{{ item.updated_at }}</span>
+                        </span>
+                    </router-link>
+                </div>
+                <router-link class="u-data__more" to="/public">
+                    查看更多<el-icon><DArrowRight /></el-icon>
+                </router-link>
+            </div>
         </div>
         <div class="u-right">
             <div class="u-title">
@@ -34,13 +64,18 @@
 </template>
 
 <script setup>
-import DataList from "@/components/list/data_list.vue";
 import { WarningFilled, DocumentCopy } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import { getNewToken } from "@/services/team";
-import { getBattleAc } from "@/services/helper";
-import { ref, onMounted } from "vue";
+import { getNewToken, getPublicList } from "@/services/team";
+import { getBattleAc as _getBattleAc } from "@/services/helper";
+import { ref, reactive, onMounted } from "vue";
 
+const data = reactive({
+    list: [],
+    total: 0,
+    page: 1,
+    loading: false,
+});
 const ac = ref("loading...");
 const jbaToken = ref(null);
 const getJbaToken = () => {
@@ -67,98 +102,55 @@ const copyToken = () => {
             ElMessage.error("复制失败");
         });
 };
+const getList = () => {
+    data.loading = true;
+    getPublicList({
+        page: data.page,
+        pageSize: 14,
+    })
+        .then((res) => {
+            if (res.data?.code === 0) {
+                let {
+                    list,
+                    page: { total },
+                } = res.data.data;
+                data.list = list;
+                data.total = total;
+            } else {
+                ElMessage.error(res.data.msg ?? "获取数据失败");
+            }
+        })
+        .catch((e) => {
+            console.warn(e);
+            ElMessage.error("获取数据失败");
+        })
+        .finally(() => {
+            data.loading = false;
+        });
+};
+const subjectName = (subject) => {
+    return (
+        {
+            boss: "首领行为",
+            team: "团队行为",
+            pvp: "竞技多维",
+        }[subject] ?? "JCL数据"
+    );
+};
+const getBattleAc = () => {
+    _getBattleAc().then((res) => {
+        if (res.data?.code === 200) {
+            ac.value = res.data.data.breadcrumb.html;
+        }
+    });
+};
 
-onMounted(async () => {
-    const res = (await getBattleAc()).data;
-    if (res.code == 200) ac.value = res.data.breadcrumb.html;
+onMounted(() => {
+    getList();
+    getBattleAc();
 });
 </script>
 
 <style lang="less">
-p {
-    margin: 0;
-}
-.m-data-view {
-    display: flex;
-    padding: 0 80px 90px;
-
-    .u-left {
-        flex-grow: 1;
-        width: 890px;
-        .mr(20px);
-    }
-
-    .u-right {
-        width: 350px;
-        .u-title {
-            .fz(36px, 44px);
-            .x(right);
-            .mb(20px);
-
-            p.u-colorful {
-                .bold;
-                background: linear-gradient(88.56deg, #1d95f8 0.51%, #fa5fa6 101.59%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                display: inline-block;
-                .mb(8px);
-            }
-        }
-        .u-card {
-            color: #a798e6;
-            background: rgba(85, 77, 119, 0.3);
-            border-radius: 10px;
-            padding: 20px;
-            .fz(14px, 24px);
-
-            &:not(:last-of-type) {
-                .mb(40px);
-            }
-            .u-card-title {
-                font-weight: bold;
-                .fz(16px, 19px);
-            }
-            p {
-                .mb(8px);
-            }
-        }
-        .u-jba {
-            .u-jba-token {
-                .flex-center;
-                cursor: pointer;
-                background: #554d77;
-                border-radius: 10px;
-                color: #b29fff;
-                margin: 8px 0;
-                padding: 0 6px;
-                .bold;
-                .fz(20px, 26px);
-                .x(center);
-
-                p {
-                    margin: 0;
-                    padding: 16px 6px;
-                    white-space: nowrap;
-                }
-
-                .el-button {
-                    margin-left: 8px;
-                }
-                .el-scrollbar {
-                    flex-grow: 1;
-                }
-            }
-
-            .u-jba-help {
-                display: flex;
-                align-items: center;
-
-                .el-icon {
-                    .mr(8px);
-                }
-            }
-        }
-    }
-}
+@import "@/assets/css/home/data_view.less";
 </style>

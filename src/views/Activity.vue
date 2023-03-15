@@ -7,16 +7,6 @@
 <script>
 export default {
     name: "ActivityIndex",
-    props: [],
-    components: {},
-    data: function () {
-        return {};
-    },
-    computed: {},
-    watch: {},
-    methods: {},
-    created: function () {},
-    mounted: function () {},
 };
 </script>
 

@@ -19,5 +19,5 @@ export default {
 </script>
 
 <style lang="less">
-@import "@/assets/css/mine.less";
+@import "@/assets/css/views/mine.less";
 </style>

@@ -125,57 +125,5 @@ onMounted(() => {
 </script>
 
 <style lang="less">
-.p-view {
-    .flex-center;
-    .mt(80px);
-
-    .m-view-card {
-        .size(1000px, 240px);
-        background: #3b3652;
-        border-radius: 10px;
-        padding: 40px 0;
-    }
-
-    .el-progress {
-        .mt(10px);
-        width: 100%;
-        height: 10px;
-        .el-progress-bar__outer,
-        .el-progress-bar__inner {
-            border-radius: 0;
-        }
-    }
-
-    .m-title {
-        .x;
-        .fz(18px, 26px);
-        .bold;
-        .mb(16px);
-    }
-
-    .m-desc {
-        .x;
-        .fz(14px, 18px);
-        color: #b3b3b3;
-        .mb(16px);
-    }
-
-    .m-view-logs {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-        padding-top: 40px;
-        .fz(14px, 18px);
-        color: #b3b3b3;
-
-        .el-icon {
-            .mr(16px);
-        }
-
-        & > div {
-            .flex-center;
-        }
-    }
-}
+@import "@/assets/css/views/view.less";
 </style>

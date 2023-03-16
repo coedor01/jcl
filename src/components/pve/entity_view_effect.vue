@@ -166,7 +166,7 @@ watch(
 .m-entity-view-effect {
     display: flex;
     gap: 20px;
-    .size(1440px, 800px);
+    width: 1440px;
     & > .u-left {
         .size(900px, 800px);
 

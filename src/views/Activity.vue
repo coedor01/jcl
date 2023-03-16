@@ -11,5 +11,5 @@ export default {
 </script>
 
 <style lang="less">
-@import "@/assets/css/activity.less";
+@import "@/assets/css/views/activity.less";
 </style>

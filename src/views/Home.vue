@@ -22,36 +22,10 @@ import FileSelect from "@/components/home/subject_list.vue";
 import DataView from "@/components/home/data_view.vue";
 
 defineComponent({
-    name: "HomePage",
+    name: "HomeIndex",
 });
 </script>
 
 <style lang="less">
-.p-home {
-    .m-home {
-        width: 1440px;
-        margin: auto;
-        padding-top: 197px;
-
-        color: #fff;
-
-        .u-hr {
-            width: 1440px;
-            margin: 60px auto 60px;
-            border: 1px solid rgba(255, 255, 255);
-            opacity: 10%;
-        }
-    }
-
-    .m-big-battle {
-        .flex-center;
-        & > img {
-            opacity: 0.3;
-            width: 420px;
-            height: 490px;
-            display: block;
-            margin: auto;
-        }
-    }
-}
+@import "@/assets/css/views/home.less";
 </style>

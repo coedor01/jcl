@@ -15,5 +15,5 @@ defineComponent({
 </script>
 
 <style lang="less">
-@import "@/assets/css/analysis.less";
+@import "@/assets/css/views/analysis.less";
 </style>

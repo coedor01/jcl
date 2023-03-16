@@ -11,5 +11,5 @@ export default {
 </script>
 
 <style lang="less">
-@import "@/assets/css/rank.less";
+@import "@/assets/css/views/rank.less";
 </style>

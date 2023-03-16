@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { toRefs, onMounted } from "vue";
+import { toRefs, onMounted, defineComponent } from "vue";
 import { useStore } from "@/store";
 import { useGlobal } from "@/store/global";
 import { useRouter } from "vue-router";
@@ -37,15 +37,11 @@ onMounted(() => {
         router.push({ name: "home" });
     }
 });
+defineComponent({
+    name: "PveIndex",
+});
 </script>
 
 <style lang="less">
-.p-pve-result {
-    .flex-center;
-    flex-direction: column;
-
-    .m-pve-content {
-        .mb(80px);
-    }
-}
+@import "@/assets/css/views/pve.less";
 </style>

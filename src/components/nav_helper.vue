@@ -8,14 +8,14 @@
                 <img class="u-btn-img" src="@/assets/img/nav/top.svg" />
                 <span class="u-btn-name">返回顶部</span>
             </div>
-            <div class="u-btn">
+            <router-link class="u-btn" :target="target" :to="{ name: 'analysis' }">
                 <img class="u-btn-img" src="@/assets/img/nav/chart.svg" />
                 <span class="u-btn-name">分析数据</span>
-            </div>
+            </router-link>
             <div class="u-btn">
                 <img class="u-btn-img" src="@/assets/img/nav/comment.svg" />
-                <span class="u-btn-name">我的数据</span>
-                <span class="u-btn-name">数据大厅</span>
+                <router-link class="u-btn-name" :to="{ name: 'mine' }" :target="target">我的数据</router-link>
+                <router-link class="u-btn-name" :to="{ name: 'public' }" :target="target">数据大厅</router-link>
             </div>
             <div class="u-btn" @click="isExpanded = !isExpanded">
                 <span class="u-btn-name">➜收起</span>
@@ -24,40 +24,35 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: "NavHelper",
-    data: () => ({
-        isExpanded: false,
-    }),
-    props: {
-        target: {
-            type: String,
-            default: "_blank",
-        },
+<script setup>
+import { ref, toRefs, computed } from "vue";
+
+const props = defineProps({
+    target: {
+        type: String,
+        default: "_blank",
     },
-    mounted() {},
-    methods: {
-        toTop() {
-            window.scrollTo({ top: 0 });
-        },
-    },
-    computed: {
-        navSizeStyle() {
-            return this.isExpanded
-                ? {
-                      width: "68px",
-                      height: "332px",
-                      top: "320px",
-                  }
-                : {
-                      width: "26px",
-                      height: "110px",
-                      top: "431px",
-                  };
-        },
-    },
+});
+const { target } = toRefs(props);
+
+const isExpanded = ref(false);
+const toTop = () => {
+    window.scrollTo({ top: 0 });
 };
+
+const navSizeStyle = computed(() => {
+    return isExpanded.value
+        ? {
+              width: "68px",
+              height: "332px",
+              top: "320px",
+          }
+        : {
+              width: "26px",
+              height: "110px",
+              top: "431px",
+          };
+});
 </script>
 
 <style lang="less" scoped>

@@ -10,13 +10,11 @@
         <div class="m-big-battle">
             <img src="@/assets/img/battle.svg" alt="" />
         </div>
-        <nav-helper target="_self"></nav-helper>
     </div>
 </template>
 
 <script setup>
 import { defineComponent } from "vue";
-import NavHelper from "@/components/nav_helper.vue";
 import HomeSlogan from "@/components/home/home_slogan.vue";
 import FileSelect from "@/components/home/subject_list.vue";
 import DataView from "@/components/home/data_view.vue";

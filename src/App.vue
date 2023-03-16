@@ -2,14 +2,16 @@
     <div class="p-jcl">
         <common-header></common-header>
         <router-view />
+        <nav-helper></nav-helper>
     </div>
 </template>
 
 <script>
-import CommonHeader from "./components/common/common_header.vue";
+import NavHelper from "@/components/nav_helper.vue";
+import CommonHeader from "@/components/common/common_header.vue";
 export default {
     name: "App",
-    components: { CommonHeader },
+    components: { CommonHeader, NavHelper },
     data: function () {
         return {};
     },

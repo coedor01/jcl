@@ -6,7 +6,6 @@
 </template>
 
 <script setup>
-import NavHelper from "@/components/nav_helper.vue";
 import { defineComponent } from "vue";
 
 defineComponent({

@@ -28,16 +28,20 @@
 </template>
 
 <script setup>
-import { ref, toRefs, computed } from "vue";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
-const props = defineProps({
-    target: {
-        type: String,
-        default: "_blank",
-    },
+const router = useRouter();
+const current = router.currentRoute;
+
+const target = computed(() => {
+    const { name } = current.value;
+    console.log(name);
+    if (name === "home") {
+        return "_self";
+    }
+    return "_blank";
 });
-const { target } = toRefs(props);
-
 const isExpanded = ref(false);
 const toTop = () => {
     window.scrollTo({ top: 0 });

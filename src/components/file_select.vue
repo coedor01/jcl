@@ -24,12 +24,12 @@
             >
                 <upload-filled class="u-upload-icon" />
                 <div class="u-upload-title">{{ subjectName[subject] }}</div>
-                <div class="u-upload-filename">{{ store.file.name ?? "(✪ω✪)" }}</div>
+                <div class="u-upload-filename">{{ store.file.name ?? "点击上传" }}</div>
                 <template #tip>
-                    <div class="u-upload-tip">请将<em>JCL文件</em>拖至框内，或<em>点击上传</em></div>
-                    <div class="u-upload-help">
-                        <el-icon :size="16"><warning-filled /></el-icon> JCL文件获取指南
-                    </div>
+                    <div class="u-upload-tip">仅支持<em>JCL</em>文件</div>
+                    <a class="u-upload-help" href="/tool/22456" target="_blank">
+                        <el-icon :size="22"><info-filled /></el-icon> JCL文件获取指南
+                    </a>
                 </template>
             </el-upload>
             <div class="u-buttons">
@@ -82,6 +82,7 @@ const statusCode = {
     loading: 2,
     ready: 3,
 };
+const upload = ref(null);
 const { startAnalysis, progress, ready } = useAnalysis();
 
 const status = computed(() => {

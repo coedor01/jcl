@@ -1,21 +1,39 @@
 <template>
-    <div class="p-public">公开数据列表</div>
+    <div class="p-public">
+        <div class="u-public-title">公开数据大厅</div>
+        <div class="u-public-content">
+            <div class="u-left">
+                <data-list
+                    :mine="false"
+                    :enable-tab="true"
+                    :enable-paginate="true"
+                    :enable-search="true"
+                    :show-more="false"
+                    :page-size="10"
+                ></data-list>
+            </div>
+            <div class="u-right">
+                <div class="u-title">
+                    <p class="u-colorful">数据大厅</p>
+                    <p>各路豪杰的战斗记录</p>
+                </div>
+                <ac-card></ac-card>
+                <jba-card></jba-card>
+            </div>
+        </div>
+    </div>
 </template>
 
-<script>
-export default {
+<script setup>
+import AcCard from "@/components/list/ac_card.vue";
+import JbaCard from "@/components/list/jba_card.vue";
+import DataList from "@/components/list/data_list.vue";
+
+import { defineComponent } from "vue";
+
+defineComponent({
     name: "PublicIndex",
-    props: [],
-    components: {},
-    data: function () {
-        return {};
-    },
-    computed: {},
-    watch: {},
-    methods: {},
-    created: function () {},
-    mounted: function () {},
-};
+});
 </script>
 
 <style lang="less">

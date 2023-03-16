@@ -1,38 +1,36 @@
 <template>
     <div class="m-data-list">
-        <!-- <div class="u-tabs">
+        <div class="u-tabs" v-if="enableTab">
             <template v-for="(tab, index) in tabs" :key="index">
-                <div class="u-tab" :class="{ active: tab.name == active }" @click="toggle(tab.name)">
+                <div class="u-tab" :class="{ active: tab.name == active }" @click="active = tab.name">
                     {{ tab.title }}
                 </div>
             </template>
-        </div> -->
-        <!-- <div class="u-search">
-            <el-input v-model="search" placeholder="请输入搜索关键词.." />
-        </div> -->
-        <div class="u-list" v-loading="data.loading">
-            <div class="u-data">
-                <div class="u-empty" v-if="data.total === 0">暂无数据，上传一个吧 😘</div>
-                <router-link
-                    class="u-li"
-                    v-for="(item, index) in data.list"
-                    :key="index"
-                    :to="{ name: 'view', query: { id: item.id } }"
-                >
+        </div>
+        <div class="u-search" v-if="enableSearch">
+            <el-input v-model="search" placeholder="请输入搜索关键词.." @keyup.enter="getList" />
+        </div>
+        <div class="u-list" v-loading="loading">
+            <div class="u-list-data">
+                <div class="u-list-empty" v-if="total === 0">暂无数据，上传一个吧 😘</div>
+                <div class="u-list-item" v-for="(item, index) in data" :key="index">
                     <!-- 数据类型 -->
                     <span class="u-type" :class="`u-type-${item.subject}`">{{ subjectName(item.subject) }}</span>
-                    <!-- 私有、天梯榜等 -->
-                    <i class="u-badge u-private" v-if="item.visible != 0"
-                        ><img svg-inline src="@/assets/img/works/draft.svg" alt=""
-                    /></i>
-                    <i class="u-badge u-star" v-if="item.rank_id"><i>★</i>天梯榜</i>
-                    <i class="u-badge u-checked" v-if="item.is_checked"
-                        ><img svg-inline src="@/assets/img/works/checked.svg"
-                    /></i>
-                    <!-- 名称 -->
-                    <span class="u-name">{{ item.title }}</span>
-                    <!-- <span class="u-opr" v-if="active == 'mine'">
-                        <el-button link :icon="Edit" @click="edit(item)" />
+                    <div class="u-name" @click="router.push({ name: 'view', query: { id: item.id } })">
+                        <!-- 私有、天梯榜等 -->
+                        <i class="u-badge u-private" v-if="item.visible != 0"
+                            ><img svg-inline src="@/assets/img/works/draft.svg" alt=""
+                        /></i>
+                        <i class="u-badge u-star" v-if="item.rank_id"><i>★</i>天梯榜</i>
+                        <i class="u-badge u-checked" v-if="item.is_checked"
+                            ><img svg-inline src="@/assets/img/works/checked.svg"
+                        /></i>
+                        <!-- 名称 -->
+                        <span>{{ item.title }}</span>
+                    </div>
+                    <!-- 私人数据操作 -->
+                    <span class="u-opr" v-if="mine">
+                        <el-button link :icon="Edit" @click.stop="editDialog.open(item)" />
                         <el-popconfirm
                             width="220"
                             confirm-button-text="确定"
@@ -40,95 +38,128 @@
                             effect="dark"
                             popper-class="m-del-confirm"
                             :icon="null"
-                            @confirm="del(item)"
+                            @confirm="delData(item)"
                         >
                             <template #reference>
                                 <el-button link :icon="Delete" />
                             </template>
                         </el-popconfirm>
-                    </span> -->
+                    </span>
                     <span class="u-update">
                         <span>更新：</span>
                         <span>{{ item.updated_at }}</span>
                     </span>
-                </router-link>
+                </div>
             </div>
-            <router-link class="m-index-data__more" to="/public">
-                查看更多<el-icon><DArrowRight /></el-icon>
-            </router-link>
-            <!-- <div class="u-pagination">
+
+            <div v-if="enablePaginate" class="u-list-pagination">
                 <el-pagination
                     background
                     layout="prev, pager, next"
-                    :current-page="data.page"
-                    @update:current-page="data.page = $event"
-                    :total="data.total"
-                    :page-size="12"
+                    :current-page="page"
+                    @update:current-page="page = $event"
+                    :total="total"
+                    :page-size="pageSize"
                     :hide-on-single-page="true"
                 />
-            </div> -->
+            </div>
+            <router-link v-if="showMore" class="u-list-more" to="/public">
+                查看更多<el-icon><DArrowRight /></el-icon>
+            </router-link>
         </div>
-        <!-- <EditDialog ref="editDialog" @updated="getList"></EditDialog> -->
+        <EditDialog v-if="mine" ref="editDialog" @updated="getList"></EditDialog>
     </div>
 </template>
 
 <script setup>
-// import EditDialog from "./edit_dialog.vue";
-
-import { getPublicList } from "@/services/team";
+import { Edit, Delete } from "@element-plus/icons-vue";
+import EditDialog from "./edit_dialog.vue";
+import { getPublicList, deleteBattle, getMyList } from "@/services/team";
 
 import { ElMessage } from "element-plus";
-import { reactive, onMounted } from "vue";
+import { ref, watch, toRefs } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
-//const active = ref("newest");
-//const editDialog = ref(null);
-// const tabs = [
-//     {
-//         name: "newest",
-//         title: "最新数据",
-//     },
-//     {
-//         name: "mine",
-//         title: "我的数据",
-//     },
-//     {
-//         name: "team",
-//         title: "团队行为",
-//     },
-//     {
-//         name: "boss",
-//         title: "首领行为",
-//     },
-//     {
-//         name: "pvp",
-//         title: "竞技多维",
-//     },
-// ];
-// data
-//const search = ref("");
-const data = reactive({
-    list: [],
-    total: 0,
-    page: 1,
-    loading: false,
+// props
+const props = defineProps({
+    enableTab: {
+        type: Boolean,
+        default: false,
+    },
+    enableSearch: {
+        type: Boolean,
+        default: false,
+    },
+    mine: {
+        type: Boolean,
+        default: false,
+    },
+    pageSize: {
+        type: Number,
+        default: 12,
+    },
+    enablePaginate: {
+        type: Boolean,
+        default: false,
+    },
+    showMore: {
+        type: Boolean,
+        default: false,
+    },
 });
+const { enableTab, enableSearch, enablePaginate, mine, showMore, pageSize } = toRefs(props);
+
+// data
+const active = ref("team");
+const tabs = [
+    {
+        name: "team",
+        title: "团队分析",
+    },
+    {
+        name: "boss",
+        title: "首领分析",
+    },
+    {
+        name: "pvp",
+        title: "竞技多维",
+    },
+];
+const editDialog = ref(null);
+
+const search = ref("");
+const loading = ref(false);
+const data = ref([]);
+const page = ref(1);
+const total = ref(0);
+
 // methods
 const getList = () => {
-    let res;
-    data.loading = true;
-    res = getPublicList({
-        page: data.page,
-        pageSize: 14,
-    });
+    const params = {
+        type: "jcl",
+        subject: active.value,
+        page: page.value,
+        pageSize: pageSize.value,
+    };
+    if (search.value) {
+        if (search.value.match(/^zhcn_.+::.+::\d+::\d+::\d+\/\d+/)) {
+            params.battle_id = search.value;
+        } else {
+            params.title = search.value;
+        }
+    }
+    loading.value = true;
+    const res = mine.value ? getMyList(params) : getPublicList(params);
     if (res) {
         res.then((res) => {
             if (res.data?.code === 0) {
                 let {
-                    list,
-                    page: { total },
+                    list: _data,
+                    page: { total: _total },
                 } = res.data.data;
-                data.list = list;
-                data.total = total;
+                data.value = _data;
+                total.value = _total;
             } else {
                 ElMessage.error(res.data.msg ?? "获取数据失败");
             }
@@ -138,27 +169,21 @@ const getList = () => {
                 ElMessage.error("获取数据失败");
             })
             .finally(() => {
-                data.loading = false;
+                loading.value = false;
             });
     }
 };
-// const del = (item) => {
-//     deleteBattle(item.id).then((res) => {
-//         if (res.data?.code === 0) {
-//             ElMessage.success("删除成功");
-//             getList();
-//         } else {
-//             ElMessage.error(res.data.msg ?? "删除失败");
-//         }
-//     });
-// };
-// const edit = (item) => {
-//     editDialog.value.open(item);
-// };
+const delData = (item) => {
+    deleteBattle(item.id).then((res) => {
+        if (res.data?.code === 0) {
+            ElMessage.success("删除成功");
+            getList();
+        } else {
+            ElMessage.error(res.data.msg ?? "删除失败");
+        }
+    });
+};
 
-// const toggle = (name) => {
-//     active.value = name;
-// };
 const subjectName = (subject) => {
     return (
         {
@@ -169,9 +194,13 @@ const subjectName = (subject) => {
     );
 };
 // watch
-onMounted(() => {
-    getList();
-});
+watch(
+    [page, active],
+    () => {
+        getList();
+    },
+    { immediate: true }
+);
 </script>
 
 <style lang="less">
@@ -181,7 +210,10 @@ onMounted(() => {
 .m-data-list {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     height: 100%;
+    min-height: 500px;
+
     .u-tabs {
         display: flex;
         gap: 10px;
@@ -237,111 +269,114 @@ onMounted(() => {
         padding: 20px;
         .fz(14px, 17px);
         .color(#BFB0FF);
+    }
+    .u-list-empty {
+        .x;
+        padding: 60px;
+        height: 100%;
+    }
+    .u-list-data {
+        flex-grow: 1;
+    }
+    .u-list-item {
+        .color(#BFB0FF);
+        display: flex;
+        align-items: center;
+        height: 40px;
 
-        .u-empty {
+        &:not(:last-child) {
+            border-bottom: 1px solid rgba(191, 176, 255, 0.2);
+        }
+
+        .u-type {
+            color: white;
+            background: #24a4cc;
+            border-radius: 10px;
+            width: 69px;
+            height: 18px;
             .x;
-            padding: 60px;
-            height: 100%;
+            .mr(10px);
+            .fz(12px, 18px);
+            &.u-badge-team {
+                background: #42a28b;
+            }
+            &.u-badge-boss {
+                background: #8472d2;
+            }
+            &.u-badge-pvp {
+                background: #812e13;
+            }
         }
+        .u-badge {
+            .db;
+            &.u-private {
+                .mt(4px);
+            }
 
-        .u-data {
-            flex-grow: 1;
+            &.u-star {
+                i {
+                    .mr(1px);
+                    color: #fbc224;
+                }
+                border: 1px solid #fbc224;
+                color: #edaf05;
+                padding: 0 3px;
+                font-style: normal;
+                font-size: 12px;
+                border-radius: 2px;
+                transform: scale(0.8);
+                flex-shrink: 0;
+            }
+
+            &.u-checked svg {
+                .size(16px);
+                .pr;
+                top: 1px;
+            }
         }
-
-        .u-li {
-            .color(#BFB0FF);
+        .u-name {
+            .pointer;
             display: flex;
             align-items: center;
-            height: 40px;
+            gap: 4px;
+            flex-grow: 1;
 
-            &:not(:last-child) {
-                border-bottom: 1px solid rgba(191, 176, 255, 0.2);
-            }
-
-            .u-type {
-                color: white;
-                background: #24a4cc;
-                border-radius: 10px;
-                width: 69px;
-                height: 18px;
-                .x;
-                .mr(10px);
-                .fz(12px, 18px);
-                &.u-badge-team {
-                    background: #42a28b;
-                }
-                &.u-badge-boss {
-                    background: #8472d2;
-                }
-                &.u-badge-pvp {
-                    background: #812e13;
-                }
-            }
-            .u-badge {
-                .mr(4px);
-                .db;
-                &.u-private {
-                    .mt(4px);
-                }
-
-                &.u-star {
-                    i {
-                        .mr(1px);
-                        color: #fbc224;
-                    }
-                    border: 1px solid #fbc224;
-                    color: #edaf05;
-                    padding: 0 3px;
-                    font-style: normal;
-                    font-size: 12px;
-                    border-radius: 2px;
-                    transform: scale(0.8);
-                    flex-shrink: 0;
-                }
-
-                &.u-checked svg {
-                    .size(16px);
-                    .pr;
-                    top: 1px;
-                }
-            }
-            .u-name {
-                flex-grow: 1;
-            }
-            .u-opr {
-                padding: 0 14px;
-
-                .el-button {
-                    color: #bfb0ff;
-                    transition: all 0.2s ease-in-out;
-                    &:hover {
-                        transform: scale(1.05);
-                    }
-                }
+            &:hover {
+                filter: brightness(1.5);
             }
         }
+        .u-opr {
+            padding: 0 14px;
 
-        .u-pagination {
-            .el-pagination {
-                justify-content: center;
-
-                li,
-                button {
-                    color: white;
-                    background-color: #554d77;
-
-                    &.is-active {
-                        background: linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%);
-                    }
+            .el-button {
+                color: #bfb0ff;
+                transition: all 0.2s ease-in-out;
+                &:hover {
+                    transform: scale(1.05);
                 }
             }
         }
     }
-}
-.m-index-data__more {
-    .flex;
-    justify-content: center;
-    align-items: center;
-    color: #bfb0ff;
+    .u-list-pagination {
+        .el-pagination {
+            justify-content: center;
+
+            li,
+            button {
+                color: white;
+                background-color: #554d77;
+
+                &.is-active {
+                    background: linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%);
+                }
+            }
+        }
+    }
+    .u-list-more {
+        .flex;
+        justify-content: center;
+        align-items: center;
+        color: #bfb0ff;
+    }
 }
 </style>

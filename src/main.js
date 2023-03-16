@@ -46,5 +46,6 @@ app.use(ElementPlus, {
     locale: zhCn,
 });
 
+import "@/assets/css/app.less";
 // 3.Mount DOM
 app.mount("#app");

@@ -76,7 +76,7 @@ export function getMountIcon(id) {
     if (!entity) return iconLink(0);
     const mount = entity.mount;
     if (mount) return showMountIcon(mount);
-    return iconLink(41);
+    return require("@/assets/img/pve/target_57.png");
 }
 
 export function getEntity(id) {

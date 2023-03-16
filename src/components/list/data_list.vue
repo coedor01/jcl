@@ -8,7 +8,7 @@
             </template>
         </div>
         <div class="u-search" v-if="enableSearch">
-            <el-input v-model="search" placeholder="请输入搜索关键词.." @keyup.enter="getList" />
+            <el-input v-model="search" placeholder="请输入搜索关键词.." @keyup.enter="getList" :suffix-icon="Search" />
         </div>
         <div class="u-list" v-loading="loading">
             <div class="u-list-data">
@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { Edit, Delete } from "@element-plus/icons-vue";
+import { Edit, Delete, Search } from "@element-plus/icons-vue";
 import EditDialog from "./edit_dialog.vue";
 import { getPublicList, deleteBattle, getMyList } from "@/services/team";
 
@@ -233,9 +233,6 @@ watch(
             .x;
             transition: flex-grow 0.2s ease-in-out;
 
-            &:hover {
-                transform: scale(1.05);
-            }
             &.active {
                 flex-grow: 2;
                 background: linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%);
@@ -307,6 +304,14 @@ watch(
                 background: #812e13;
             }
         }
+        .badge-color(@color: #f360a8) {
+            i {
+                .mr(1px);
+                color: @color;
+            }
+            border: 1px solid @color;
+            color: @color;
+        }
         .u-badge {
             .db;
             &.u-private {
@@ -314,18 +319,17 @@ watch(
             }
 
             &.u-star {
-                i {
-                    .mr(1px);
-                    color: #fbc224;
-                }
-                border: 1px solid #fbc224;
-                color: #edaf05;
+                .badge-color(#f360a8);
                 padding: 0 3px;
                 font-style: normal;
                 font-size: 12px;
                 border-radius: 2px;
                 transform: scale(0.8);
                 flex-shrink: 0;
+
+                &:hover {
+                    .badge-color(#2892f4);
+                }
             }
 
             &.u-checked svg {

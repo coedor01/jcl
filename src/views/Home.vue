@@ -10,7 +10,7 @@
         <div class="m-big-battle">
             <img src="@/assets/img/battle.svg" alt="" />
         </div>
-        <nav-helper></nav-helper>
+        <nav-helper target="_self"></nav-helper>
     </div>
 </template>
 

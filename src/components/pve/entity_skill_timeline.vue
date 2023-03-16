@@ -96,13 +96,15 @@ const data = computed(() => {
         }
     }
 
+    .el-radio-button.is-active {
+        .el-radio-button__inner {
+            background-color: #7650f8;
+            border-radius: 4px;
+        }
+    }
     .el-radio-button .el-radio-button__inner {
         border: none;
         background-color: transparent;
-
-        &.is-active {
-            background-color: #0c759e;
-        }
     }
 }
 </style>

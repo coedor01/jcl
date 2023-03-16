@@ -68,7 +68,7 @@ module.exports = {
             .use({
                 loader: "worker-loader",
                 options: {
-                    inline: true,
+                    inline: "fallback",
                 },
             })
             .loader("worker-loader")

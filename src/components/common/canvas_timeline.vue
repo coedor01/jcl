@@ -41,6 +41,7 @@ export default {
 
         lastItem: null,
         tooltipData: {},
+        color: "#a798e6",
     }),
     mounted: function () {
         this.$nextTick(() => {
@@ -54,7 +55,7 @@ export default {
                 const height = 2;
                 const top = (i - 1) * 60 + 29;
                 const line = new fabric.Line([0, top, this.width - this.padding, top], {
-                    stroke: "#e4e7ed",
+                    stroke: "#888",
                     strokeWidth: height,
                     selectable: false,
                 });
@@ -80,7 +81,7 @@ export default {
                     top: top,
                     width: 6,
                     height: height,
-                    fill: item.extra?.color ?? "#ee6666",
+                    fill: item.extra?.color ?? this.color,
                     selectable: false,
                 });
                 if (this.tooltip) {
@@ -105,7 +106,7 @@ export default {
                 }
                 const nameText = new fabric.Text(item.content, {
                     fontWeight: "100",
-                    stroke: "#fff",
+                    stroke: this.color,
                     left: left,
                     top: top - 16,
                     fontSize: 14,
@@ -119,7 +120,7 @@ export default {
                 };
                 let time = item.time.toFixed(digits[this.linetime]) + "s";
                 const timeText = new fabric.Text(time, {
-                    stroke: "#fff",
+                    stroke: this.color,
                     left: left,
                     top: top + 14,
                     fontSize: 14,

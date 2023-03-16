@@ -1,7 +1,13 @@
 <template>
     <div class="m-subject-list">
         <div class="m-cards">
-            <div v-for="(item, index) in types" :key="index" class="u-card" @click="open(item.subject)">
+            <div
+                v-for="(item, index) in types"
+                :key="index"
+                class="u-card"
+                @click="open(item)"
+                :class="{ 'is-disabled': !item.enable }"
+            >
                 <img class="u-card__bg" :src="item.icon" draggable="false" />
                 <div class="u-card__inner">
                     <img class="u-icon" svg-inline :src="item.icon" draggable="false" />
@@ -50,25 +56,29 @@ export default {
                 title: "团队行为分析 ",
                 tips: "团队成员全时间链行为分析、动作细节",
                 subject: "team",
+                enable: true,
             },
             {
                 icon: require("@/assets/img/home/boss.svg"),
                 title: "首领行为分析",
                 tips: "首领与小怪技能类型/数量/伤害/时间轴等分析",
                 subject: "boss",
+                enable: true,
             },
             {
                 icon: require("@/assets/img/home/pvp.svg"),
                 title: "竞技多维分析",
                 tips: "敌我玩家全时间链行为分析、重要节点标注",
                 subject: "pvp",
+                enable: false,
             },
         ],
     }),
     mounted() {},
     methods: {
-        open(subject) {
-            this.$refs.fileSelect.open(subject);
+        open(item) {
+            if (!item.enable) return;
+            this.$refs.fileSelect.open(item.subject);
         },
     },
 };

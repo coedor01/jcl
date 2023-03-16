@@ -1,21 +1,22 @@
 <template>
     <div class="p-mine">
-        <div class="u-mine-title">我的数据</div>
-        <div class="u-mine-content">
-            <div class="u-left">
-                <data-list
-                    :mine="true"
-                    :enable-tab="false"
-                    :enable-paginate="true"
-                    :enable-search="true"
-                    :show-more="false"
-                ></data-list>
-            </div>
-            <div class="u-right">
-                <div class="u-title">
-                    <p class="u-colorful">我的数据</p>
-                    <p>刻骨铭心的战斗回忆</p>
-                </div>
+        <div class="u-title">我的数据</div>
+        <div class="u-subtitle">
+            <div class="u-subtitle-content">刻骨铭心的沙场回忆</div>
+            <router-link class="u-subtitle-switch" :to="{ name: 'public' }">
+                <el-icon><Switch /></el-icon>
+                数据大厅
+            </router-link>
+        </div>
+        <div class="u-content">
+            <data-list
+                :mine="true"
+                :enable-tab="false"
+                :enable-paginate="true"
+                :enable-search="true"
+                :show-more="false"
+            ></data-list>
+            <div class="u-bottom">
                 <ac-card></ac-card>
                 <jba-card></jba-card>
             </div>

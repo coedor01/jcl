@@ -11,12 +11,7 @@
                 bilibili
             </check-button>
         </div>
-        <el-input
-            v-if="form.video_type"
-            v-model="form.video_identifier"
-            size="large"
-            placeholder="请输入视频号"
-        ></el-input>
+        <el-input v-model="form.video_identifier" size="large" placeholder="请输入视频号"></el-input>
         <div class="w-card-title">描述</div>
         <el-input
             v-model="form.desc"
@@ -81,7 +76,7 @@ const form = ref({
     title: "",
     desc: "",
     visible: 1,
-    video_type: null,
+    video_type: "douyu",
     video_identifier: null,
     type: "jcl",
     subject: "team",

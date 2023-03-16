@@ -133,6 +133,7 @@ export default {
 
 .c-header-nav {
     .flex;
+    gap: 30px;
 
     .u-nav {
         .header-button();

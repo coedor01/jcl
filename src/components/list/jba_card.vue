@@ -11,19 +11,22 @@
                 <el-button link :icon="DocumentCopy" @click="copyToken()"></el-button>
             </template>
         </div>
-        <p class="u-jba-help">
+        <div class="u-jba-help" v-html="jbaHelp"></div>
+        <!-- <p class="u-jba-help">
             <el-icon><WarningFilled /></el-icon>使用教程
         </p>
-        <p>请参考 此教程 在魔盒助手中输入此处生成的令牌，即可快速上传战斗数据</p>
+        <p>请参考 此教程 在魔盒助手中输入此处生成的令牌，即可快速上传战斗数据</p> -->
     </div>
 </template>
 
 <script setup>
 import { DocumentCopy } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { getNewToken } from "@/services/team";
+import { getJbaHelp } from "@/services/helper";
 
+const jbaHelp = ref("");
 const jbaToken = ref(null);
 const getJbaToken = () => {
     getNewToken()
@@ -49,6 +52,14 @@ const copyToken = () => {
             ElMessage.error("复制失败");
         });
 };
+
+onMounted(() => {
+    getJbaHelp().then((res) => {
+        if (res.data?.code === 200) {
+            jbaHelp.value = res.data.data.breadcrumb.html;
+        }
+    });
+});
 </script>
 
 <style lang="less">

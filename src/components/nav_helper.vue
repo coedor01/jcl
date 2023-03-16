@@ -12,11 +12,14 @@
                 <img class="u-btn-img" src="@/assets/img/nav/chart.svg" />
                 <span class="u-btn-name">分析数据</span>
             </router-link>
-            <div class="u-btn">
-                <img class="u-btn-img" src="@/assets/img/nav/comment.svg" />
-                <router-link class="u-btn-name" :to="{ name: 'mine' }" :target="target">我的数据</router-link>
-                <router-link class="u-btn-name" :to="{ name: 'public' }" :target="target">数据大厅</router-link>
-            </div>
+            <router-link class="u-btn" :to="{ name: 'public' }" :target="target">
+                <img class="u-btn-img" src="@/assets/img/nav/public.svg" />
+                <span class="u-btn-name">数据大厅</span>
+            </router-link>
+            <router-link class="u-btn" :to="{ name: 'mine' }" :target="target">
+                <img class="u-btn-img" src="@/assets/img/nav/mine.svg" />
+                <span class="u-btn-name">我的数据</span>
+            </router-link>
             <div class="u-btn" @click="isExpanded = !isExpanded">
                 <span class="u-btn-name">➜收起</span>
             </div>
@@ -44,8 +47,8 @@ const navSizeStyle = computed(() => {
     return isExpanded.value
         ? {
               width: "68px",
-              height: "332px",
-              top: "320px",
+              height: "400px",
+              top: "300px",
           }
         : {
               width: "26px",

@@ -18,7 +18,7 @@
         </div>
         <div class="u-icon">
             <div class="u-bg"></div>
-            <img class="u-img" src="@/assets/img/battle.svg" />
+            <img class="u-img" draggable="false" src="@/assets/img/battle.svg" />
         </div>
     </div>
 </template>

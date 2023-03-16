@@ -22,7 +22,7 @@
                 class="u-tab"
                 v-for="(tab, index) in showTab"
                 :key="index"
-                :class="{ 'is-active': mainTab === tab.name }"
+                :class="{ 'is-active': mainTab === tab.name, [tab.name]: true }"
                 @click="switchTab(tab.name, tab)"
             >
                 <img class="u-tab-icon" :src="tab.icon" :draggable="false" />
@@ -87,7 +87,8 @@ const mapNames = ref({});
 // computed
 const displayTitle = computed(() => {
     const { info, file } = store;
-    return info.title || file.name || "这是一个标题！这是一个标题！这是一个标题！这是一个标题！";
+    const title = info.title || file.name || "这是一个标题！这是一个标题！这是一个标题！这是一个标题！";
+    return title.replace(/\.jcl$/, "");
 });
 const displayStart = computed(() => {
     const { start } = store.result;
@@ -265,6 +266,10 @@ onMounted(() => {
                 .bold;
                 .fz(14px, 18px);
             }
+        }
+
+        .u-tab.upload .u-tab-icon {
+            .size(52.5px, 35px);
         }
     }
 }

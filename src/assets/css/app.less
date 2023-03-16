@@ -7,9 +7,14 @@ html {
 body {
     padding-top: @common-header-height;
     background: url("../img/home/bg.jpg") #3c3c3c;
-    background-size: cover;
+    background-repeat: no-repeat;
+    background-size: 3840px 5010px;
     background-position: left top;
     color: #eee;
+}
+
+* {
+    user-select: none;
 }
 
 @import "./widget.less";

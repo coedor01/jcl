@@ -19,6 +19,7 @@ import PveEntity from "@/components/pve/pve_entity.vue";
 import PveCompare from "@/components/pve/pve_compare.vue";
 import PveLogs from "@/components/pve/pve_logs.vue";
 import UploadCard from "@/components/upload_card.vue";
+import VideoCard from "@/components/video_card.vue";
 
 const store = useStore();
 const router = useRouter();
@@ -30,6 +31,7 @@ const mainComponents = {
     compare: PveCompare,
     logs: PveLogs,
     upload: UploadCard,
+    video: VideoCard,
 };
 
 onMounted(() => {

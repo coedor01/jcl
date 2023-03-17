@@ -36,7 +36,6 @@ const current = router.currentRoute;
 
 const target = computed(() => {
     const { name } = current.value;
-    console.log(name);
     if (name === "home") {
         return "_self";
     }

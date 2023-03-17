@@ -16,7 +16,7 @@
                         <el-icon v-else> <Checked /> </el-icon>
                         解压数据文件
                     </div>
-                    <div v-if="analysisProgress">
+                    <div v-if="inflateProgress === 100">
                         <el-icon v-if="analysisProgress != 100" class="is-loading"> <Loading /> </el-icon>
                         <el-icon v-else> <Checked /> </el-icon>
                         分析JCL

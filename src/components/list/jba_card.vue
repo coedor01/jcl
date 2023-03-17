@@ -3,10 +3,11 @@
         <p class="w-card-title">绑定魔盒助手</p>
         <p>*此令牌用于魔盒助手身份校验，切勿泄漏。</p>
         <div class="u-jba-token">
-            <p v-if="!jbaToken" @click="getJbaToken" class="u-jba-tip">点击获取并复制临时令牌</p>
+            <a v-if="!isLogin" class="u-jba-inner" :href="loginUrl">请先登录</a>
+            <p v-else-if="!jbaToken" @click="getJbaToken" class="u-jba-inner">点击获取并复制临时令牌</p>
             <template v-else>
                 <el-scrollbar>
-                    <p>{{ jbaToken }}</p>
+                    <p class="u-jba-inner">{{ jbaToken }}</p>
                 </el-scrollbar>
                 <el-button link :icon="DocumentCopy" @click="copyToken()"></el-button>
             </template>
@@ -25,6 +26,7 @@ import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { getNewToken } from "@/services/team";
 import { getJbaHelp } from "@/services/helper";
+import User from "@jx3box/jx3box-common/js/user";
 
 const jbaHelp = ref("");
 const jbaToken = ref(null);
@@ -52,6 +54,8 @@ const copyToken = () => {
             ElMessage.error("复制失败");
         });
 };
+const isLogin = User.isLogin();
+const loginUrl = `/account/login?redirect=${location.href}`;
 
 onMounted(() => {
     getJbaHelp().then((res) => {

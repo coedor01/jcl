@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { useStore } from "@/store/index.js";
+import { useGlobal } from "@/store/global.js";
 import { getRandomColor } from "../common.js";
 import analysisWorker from "../analysis.worker.js";
 
@@ -32,10 +33,12 @@ export function useAnalysis() {
                         const { value } = colors.next();
                         entities[id].color = value;
                     }
+                    // 重置global
+                    const global = useGlobal();
+                    global.$reset();
                     // 返回结果
                     // window.$store = data;
                     store.result = Object.freeze(data);
-                    console.log("Analysis finished.");
                     ready.value = true;
                     worker.terminate();
                 }

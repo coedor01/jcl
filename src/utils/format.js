@@ -20,36 +20,6 @@ export const defaultRow = {
     __log: "", //原始log的detail
 };
 
-// 把一个实体的详情转变为一个给表格展示的，可读的对象
-export function entityFormat(entity) {
-    const keyMap = {
-        npc: {
-            i: "id",
-            n: "name",
-            t: "templateID",
-            b: "belongID",
-        },
-        player: {
-            i: "id",
-            n: "name",
-            s: "school",
-            m: "mount",
-            e: "equipScore",
-            E: "equips",
-            t: "talents",
-            g: "guid",
-        },
-    };
-    let type = entity.type;
-    for (let key in entity) {
-        if (keyMap[type][key]) {
-            entity[keyMap[type][key]] = entity[key];
-            delete entity[key];
-        }
-    }
-    return entity;
-}
-
 // 将一条log转换为一个用于表格展示的对象
 export function formatLine(log) {
     let { frame, sec, micro, type, typeDesc, detail } = log;

@@ -1,7 +1,7 @@
 import { parseJx3dat } from "luat2json";
 
 import { JCL_TYPE } from "./jclType";
-import { formatLine, entityFormat } from "./format";
+import { formatLine } from "./format";
 import { cloneDeep, pick } from "lodash-es";
 
 // 用于解析lua table
@@ -233,14 +233,14 @@ export class Analyzer {
             if (entities[id]) {
                 // 已经记录的玩家不再记录，但是可以用于刷新原来没有的数据。比如奇穴啥的
                 let oldEntity = entities[id];
-                let newEntity = entityFormat(Object.assign({}, { type: "player" }, detail));
+                let newEntity = Object.assign({}, { type: "player" }, detail);
                 if (Object.values(oldEntity.talents).length == 0) oldEntity.talents = newEntity.talents;
                 if (!oldEntity.equips?.length) oldEntity.equips = newEntity.equips;
                 return;
             }
             let firstAppear = getRowTime(this.current);
             // 记录玩家信息
-            let entity = entityFormat(Object.assign({}, { type: "player", firstAppear }, detail));
+            let entity = Object.assign({}, { type: "player", firstAppear }, detail);
             entities[id] = entity;
         }
         // NPC信息
@@ -253,7 +253,7 @@ export class Analyzer {
             if (this.tmp.enterSceneCount[templateID] === undefined) this.tmp.enterSceneCount[templateID] = 1;
             let appearOrder = this.tmp.enterSceneCount[templateID]++;
             // 记录NPC信息
-            let entity = entityFormat(Object.assign({}, { type: "npc", firstAppear, appearOrder }, detail));
+            let entity = Object.assign({}, { type: "npc", firstAppear, appearOrder }, detail);
             entities[id] = entity;
         }
         if ([2, 6].includes(type)) {

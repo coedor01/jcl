@@ -33,7 +33,7 @@ export function useAnalysis() {
                         entities[id].color = value;
                     }
                     // 返回结果
-                    window.$store = data;
+                    // window.$store = data;
                     store.result = Object.freeze(data);
                     console.log("Analysis finished.");
                     ready.value = true;

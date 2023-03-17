@@ -36,6 +36,8 @@
 
 <script>
 import User from "@jx3box/jx3box-common/js/user";
+import { ElMessage } from "element-plus";
+
 //import _ from "lodash";
 export default {
     name: "CommonHeader",
@@ -64,6 +66,12 @@ export default {
         userdata: User.getInfo(),
     }),
     methods: {
+        logout() {
+            User.destroy().then(() => {
+                location.href = "/";
+                ElMessage.success("登出成功");
+            });
+        },
         // installOverlay() {
         //     const vm = this;
         //     window.addEventListener(

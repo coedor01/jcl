@@ -49,6 +49,7 @@ const yData = computed(() => {
     if (!source) return [];
     // 已有数据的统计
     for (let id in source) {
+        if (!entities[id]) continue;
         const { name, color } = entities[id];
         if (!name || id == 0) continue;
         if (result[name]) {

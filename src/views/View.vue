@@ -87,14 +87,6 @@ const getBattleInfo = async () => {
 };
 
 const init = async () => {
-    // 有结果直接跳转到结果页
-    if (store.result) {
-        if (store.subject === "pvp") {
-            router.push({ name: "pvp" });
-        } else {
-            router.push({ name: "pve" });
-        }
-    }
     // 没有分析结果，也没有id，也没有battle_id，跳转到首页
     if (!store.result && !id && !battle_id) {
         router.push({ name: "home" });

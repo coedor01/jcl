@@ -13,10 +13,20 @@
                 </div>
             </div>
             <div class="c-header-user">
-                <div class="u-user" v-if="isLogin">
-                    <img class="u-avatar" :src="userdata?.avatar" />
-                    <span class="u-name">{{ userdata.name }}</span>
-                </div>
+                <template v-if="isLogin">
+                    <div class="u-user">
+                        <img class="u-avatar" :src="userdata?.avatar" />
+                        <span class="u-name">{{ userdata.name }}</span>
+                        <div class="u-user-pop">
+                            <router-link class="u-pop-button" :to="{ name: 'mine' }">我的数据</router-link>
+                            <router-link class="u-pop-button" :to="{ name: 'rank' }">我的成绩</router-link>
+                            <el-divider />
+                            <a class="u-pop-button" href="/">前往主站</a>
+                            <div class="u-pop-button" @click="logout">退出登录</div>
+                        </div>
+                    </div>
+                </template>
+
                 <a class="u-login" v-else :href="login_url">登录|注册</a>
                 <router-link class="u-upload" to="/analysis">分析数据</router-link>
             </div>
@@ -169,11 +179,57 @@ export default {
         .flex;
         align-items: center;
         gap: 10px;
+        height: 100%;
+        .pr;
         .pointer;
         .u-avatar {
             cursor: pointer;
             .size(30px);
             border-radius: 30px;
+        }
+    }
+    .u-user:hover {
+        .u-user-pop {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+    .u-user-pop {
+        // 悬浮框效果
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0.15s, opacity 0.15s linear;
+        // 卡片样式
+        width: 156px;
+        border: 1px solid #373c41;
+        border-radius: 10px;
+        background: #000000;
+        padding-top: 1px;
+        // 定位
+        .pa;
+        top: 100%;
+        right: 0;
+
+        z-index: 20;
+        .delta(#000000, #373c41);
+
+        .el-divider {
+            margin: 0;
+            border-color: #373c41;
+        }
+    }
+    .u-pop-button {
+        display: flex;
+        align-items: center;
+        color: #b3b3b3;
+        padding: 10px 24px;
+        .fz(14px, 16px);
+        .bold;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        border-radius: 8px;
+        &:hover {
+            background: #373c41;
         }
     }
 }

@@ -8,7 +8,7 @@
 
 <script>
 import NavHelper from "@/components/nav_helper.vue";
-import CommonHeader from "@/components/common/common_header.vue";
+import CommonHeader from "@/components/header/common_header.vue";
 export default {
     name: "App",
     components: { CommonHeader, NavHelper },

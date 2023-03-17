@@ -121,6 +121,7 @@ const displayOverview = computed(() => {
     // 求全团伤害
     let totalDamage = 0;
     for (let entity in stats.damage) {
+        if (!entities[entity]) continue;
         if (entities[entity].type === "player") {
             totalDamage += stats.damage[entity].all.value;
         }

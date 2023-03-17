@@ -23,6 +23,30 @@ GLOBAL DEFINITION 项目本地全局定义
     background-clip: text;
 }
 
+.delta(@color:#131517, @border-color: #373c41) {
+    &:before {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        left: auto;
+        right: 14px;
+        top: -16px;
+        border: 8px solid transparent;
+        border-bottom-color: @border-color;
+    }
+
+    &:after {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        left: auto;
+        right: 15px;
+        top: -14px;
+        border: 7px solid transparent;
+        border-bottom-color: @color;
+    }
+}
+
 .scrollbar(@color:#eee,@width:3px) {
     &::-webkit-scrollbar {
         width: @width;

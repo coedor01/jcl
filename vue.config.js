@@ -5,16 +5,10 @@ module.exports = {
     //❤️ Multiple pages ~
     // pages: {
     //     index: {
-    //         title: "Home",
+    //         title: "战斗分析 - JX3BOX",
     //         entry: "src/main.js",
     //         template: "public/index.html",
     //         filename: "index.html",
-    //     },
-    //     $project: {
-    //         title: "Project",
-    //         entry: "src/core/$project/index.js",
-    //         template: "public/$project/index.html",
-    //         filename: "$project/index.html",
     //     },
     // },
 

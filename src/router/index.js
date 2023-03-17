@@ -21,8 +21,7 @@ const routes = [
 
 // 3.Build An Instance
 const router = createRouter({
-    history: createWebHistory(), //history api
-    base: "/jcl",
+    history: createWebHistory("jcl"), //history api
     routes,
 });
 

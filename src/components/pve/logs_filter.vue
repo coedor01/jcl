@@ -94,17 +94,21 @@
         </div>
         <div class="w-card-title">搜索词</div>
         <el-input
+            class="u-search-input"
             v-model="keywordStr"
             size="large"
             placeholder="输入关键词，多个关键词使用空格分隔"
             @change="inputChange"
+            :class="{ 'is-fill': keywordStr }"
         ></el-input>
         <div class="w-card-title">过滤词</div>
         <el-input
+            class="u-filter-input"
             v-model="hideKeywordStr"
             size="large"
             placeholder="输入关键词，多个关键词使用空格分隔"
             @change="inputChange"
+            :class="{ 'is-fill': hideKeywordStr }"
         ></el-input>
         <div class="u-filters-center u-apply">
             <el-button
@@ -157,10 +161,17 @@ const getKeywords = (type) => {
     let ks = target.split(/\s/);
     for (let k of ks) {
         if (!k) continue;
-        let includes = Object.keys(resources).filter((r) => resources[r].name && resources[r].name.includes(k));
+        const resourceMatch = (resource, k) => {
+            if (resource.name && resource.name.includes(k)) return true;
+            if (resource.desc && resource.desc.includes(k)) return true;
+            if (resource.remark && resource.remark.includes(k)) return true;
+            return false;
+        };
+        let includes = Object.keys(resources).filter((r) => resourceMatch(resources[r], k));
         for (let include of includes) {
             let type = include.split(":")[0];
             let id = include.split(":")[1];
+            if (id.split("_").length > 1) id = id.split("_")[0];
             keywords.push({ type, id });
         }
         keywords.push({ type: "str", text: k });
@@ -206,6 +217,7 @@ onMounted(() => {
         appearance: none;
         margin: 0;
     }
+
     .el-input__inner {
         .bold;
     }
@@ -289,6 +301,22 @@ onMounted(() => {
 
         &:hover {
             background-color: #0f5773;
+        }
+    }
+
+    .el-input__wrapper {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .el-input.is-fill {
+        &.u-search-input .el-input__wrapper {
+            background: #d45125;
+        }
+        &.u-filter-input .el-input__wrapper {
+            background: #df2b82;
+        }
+        .el-input__inner {
+            color: white;
         }
     }
 }

@@ -22,6 +22,9 @@
                         :type="row.content.t"
                         :effect="row.content.v"
                     ></jcl-effect>
+                    <div v-else-if="row.content.t === 'str'" :title="row.content.v">
+                        {{ row.content.v }}
+                    </div>
                 </template>
             </el-table-column>
             <el-table-column label="事件目标" width="144">

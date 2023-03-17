@@ -1,7 +1,6 @@
 <template>
     <div class="p-activity">
         <div class="m-activity-null">暂时还没有任何活动</div>
-        <nav-helper></nav-helper>
     </div>
 </template>
 

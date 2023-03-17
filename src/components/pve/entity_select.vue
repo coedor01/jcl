@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, computed, toRefs } from "vue";
+import { ref, computed, toRefs, onMounted } from "vue";
 import { useStore } from "@/store";
 import { useGlobal } from "@/store/global";
 import { usePaginate } from "@/utils/uses/usePaginate";
@@ -135,13 +135,15 @@ const selectEntity = (row) => {
         entity.value = row.id;
     }
 };
-
 const rowClass = ({ row }) => {
     if (entityList.value.includes(row.id)) {
         return "is-focus";
     }
     return "";
 };
+onMounted(() => {
+    if (data.value.length !== 0 && entity.value === null) selectEntity(data.value[0]);
+});
 </script>
 
 <style lang="less">

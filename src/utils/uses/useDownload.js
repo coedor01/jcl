@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useStore } from "@/store/index.js";
 import { resolveImagePath } from "@jx3box/jx3box-common/js/utils";
-import PakoWorker from "@/utils/pako.worker";
+
 import jx3box_url from "@jx3box/jx3box-common/data/jx3box.json";
 import axios from "axios";
 
@@ -44,7 +44,7 @@ export function useDownload() {
     const inflate = async (data) => {
         const arrayBuffer = await data.arrayBuffer();
         await new Promise((resolve) => {
-            const worker = new PakoWorker();
+            const worker = new Worker(new URL("../workers/pako.worker", import.meta.url));
             worker.onmessage = (e) => {
                 e = e.data;
                 if (e.type == "progress") {

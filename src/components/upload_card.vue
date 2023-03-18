@@ -63,7 +63,6 @@
 <script setup>
 import { getUploadToken, addBattle } from "@/services/team";
 import CheckButton from "@/components/common/check_button.vue";
-import PakoWorker from "@/utils/pako.worker";
 import { ElMessage } from "element-plus";
 import { useStore } from "@/store";
 import { ref, onMounted, computed } from "vue";
@@ -87,7 +86,7 @@ const form = ref({
 const deflatedData = ref(null);
 const deflateProgress = ref(-1);
 const deflate = () => {
-    const worker = new PakoWorker();
+    const worker = new Worker(new URL("../utils/workers/pako.worker.js", import.meta.url));
     worker.onmessage = (e) => {
         const {
             data: { type, data },

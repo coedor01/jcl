@@ -1,4 +1,4 @@
-import { Analyzer } from "./analyzer";
+import { Analyzer } from "@/utils/analyzer";
 import { getResource as _getResourceFromApi } from "@/services/resource.js";
 import { uniq } from "lodash-es";
 

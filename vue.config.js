@@ -65,13 +65,9 @@ module.exports = {
         config.module
             .rule("worker-loader")
             .test(/\.worker\.js$/)
-            .use({
-                loader: "worker-loader",
-                options: {
-                    inline: "fallback",
-                },
-            })
+            .use("worker-loader")
             .loader("worker-loader")
+            .options({ inline: "fallback" })
             .end();
     },
 };

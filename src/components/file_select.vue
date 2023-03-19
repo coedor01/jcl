@@ -23,8 +23,8 @@
                 ref="upload"
             >
                 <upload-filled class="u-upload-icon" />
-                <div class="u-upload-title">{{ subjectName[subject] }}</div>
-                <div class="u-upload-filename">{{ store.file.name ?? "点击上传" }}</div>
+                <el-button v-if="!store.file.name"> 点击上传 </el-button>
+                <div v-else class="u-upload-filename">{{ store.file.name }}</div>
                 <template #tip>
                     <div class="u-upload-tip">仅支持<em>JCL</em>文件</div>
                     <a class="u-upload-help" href="/tool/22456" target="_blank">
@@ -32,7 +32,7 @@
                     </a>
                 </template>
             </el-upload>
-            <div class="u-buttons">
+            <div class="u-buttons" v-if="status != statusCode.upload">
                 <el-button
                     class="u-start"
                     :disabled="[statusCode.upload, statusCode.ready].includes(status)"
@@ -66,11 +66,6 @@ const router = useRouter();
 // data
 const dialogVisible = ref(false);
 const { subject } = toRefs(store);
-const subjectName = {
-    team: "团队行为分析",
-    boss: "首领行为分析",
-    pvp: "竞技多维分析",
-};
 const icons = {
     team: require("@/assets/img/home/action.svg"),
     boss: require("@/assets/img/home/boss.svg"),

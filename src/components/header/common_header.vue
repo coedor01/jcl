@@ -7,9 +7,14 @@
                     <span class="u-name">战斗分析</span>
                 </a>
                 <div class="c-header-nav">
-                    <router-link class="u-nav" v-for="(nav, index) in navs" :key="index" :to="{ name: nav.name }">
-                        {{ nav.title }}
-                    </router-link>
+                    <template v-for="(nav, index) in navs" :key="index">
+                        <router-link v-if="nav.enable" class="u-nav" :to="{ name: nav.name }">
+                            {{ nav.title }}
+                        </router-link>
+                        <span v-else class="u-nav is-disabled">
+                            {{ nav.title }}
+                        </span>
+                    </template>
                 </div>
             </div>
             <div class="c-header-user">
@@ -48,16 +53,19 @@ export default {
                 name: "home",
                 title: "首页",
                 path: "/",
+                enable: true,
             },
             {
                 name: "rank",
                 title: "排行榜",
                 path: "/rank",
+                enable: false,
             },
             {
                 name: "activity",
                 title: "活动",
                 path: "/activity",
+                enable: false,
             },
         ],
         isOverlay: true,
@@ -159,6 +167,11 @@ export default {
         transition: all 0.2s ease-in-out;
     }
 
+    .u-nav.is-disabled {
+        opacity: 0.4;
+        cursor: inherit;
+    }
+
     .u-nav.router-link-active {
         background: linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%);
         color: #fff;
@@ -187,7 +200,7 @@ export default {
         .flex;
         align-items: center;
         gap: 10px;
-        height: 100%;
+        .size(160px, 60px);
         .pr;
         .pointer;
         .u-avatar {

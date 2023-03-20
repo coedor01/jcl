@@ -15,21 +15,27 @@
             <el-upload
                 class="u-upload"
                 drag
-                accept="jcl"
+                accept=".jcl"
                 :show-file-list="false"
                 :auto-upload="false"
                 :on-change="fileChange"
                 :disabled="status == statusCode.loading"
+                :class="{ 'is-fill': store.file.name }"
                 ref="upload"
             >
                 <upload-filled class="u-upload-icon" />
-                <el-button v-if="!store.file.name"> 点击上传 </el-button>
-                <div v-else class="u-upload-filename">{{ store.file.name }}</div>
+                <div v-if="!store.file.name" class="u-select-file">点击选择文件</div>
+                <div v-else class="u-file-info">
+                    <div class="u-upload-filename">{{ store.file.name }}</div>
+                    <div class="u-filemeta">{{ fileType }}</div>
+                    <div class="u-filemeta">{{ fileSize }}</div>
+                </div>
                 <template #tip>
-                    <div class="u-upload-tip">仅支持<em>JCL</em>文件</div>
-                    <a class="u-upload-help" href="/tool/22456" target="_blank">
-                        <el-icon :size="22"><info-filled /></el-icon> JCL文件获取指南
-                    </a>
+                    <div class="u-upload-help">
+                        <el-icon :size="16"><info-filled /></el-icon>
+                        <span>仅支持JCL文件</span>
+                        <a href="/tool/22456" target="_blank"> JCL文件获取指南 </a>
+                    </div>
                 </template>
             </el-upload>
             <div class="u-buttons" v-if="status != statusCode.upload">
@@ -60,6 +66,7 @@ import { decode } from "iconv-lite";
 import { useAnalysis } from "@/utils/uses/useAnalysis";
 import { useStore } from "@/store";
 import { Buffer } from "buffer";
+import { ElMessage } from "element-plus";
 
 const store = useStore();
 const router = useRouter();
@@ -90,6 +97,16 @@ const status = computed(() => {
     // 分析完毕
     return statusCode.ready;
 });
+const fileSize = computed(() => {
+    return store.file.size > 1024 * 1024
+        ? (store.file.size / 1024 / 1024).toFixed(2) + " M"
+        : (store.file.size / 1024).toFixed(2) + " K";
+});
+const fileType = computed(() => {
+    if (!store.file.name) return;
+    if (store.file.name.endsWith(".jcl")) return "JCL - JX3 Combat Log";
+    return "不支持的文件类型";
+});
 // event
 const fileChange = (file) => {
     store.file = file.raw;
@@ -97,6 +114,10 @@ const fileChange = (file) => {
     ready.value = false;
 };
 const start = () => {
+    if (!store.file.name.endsWith(".jcl")) {
+        ElMessage.error("仅支持JCL文件");
+        return;
+    }
     store.result = {};
     new Promise((resolve) => {
         let reader = new FileReader();

@@ -46,6 +46,10 @@ app.use(ElementPlus, {
     locale: zhCn,
 });
 
+// jx3box-vue3-ui
+import { install } from "@jx3box/jx3box-vue3-ui";
+install(app);
+
 import "@/assets/css/app.less";
 // 3.Mount DOM
 app.mount("#app");

@@ -51,12 +51,12 @@ const navSizeStyle = computed(() => {
         ? {
               width: "68px",
               height: "400px",
-              top: "300px",
+              top: "calc(50vh - 200px)",
           }
         : {
               width: "26px",
               height: "110px",
-              top: "431px",
+              top: "calc(50vh - 55px)",
           };
 });
 </script>

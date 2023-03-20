@@ -74,9 +74,9 @@
 import { getEntityName, displayDigits, getResourceIcon, getResourceName, getMountIcon } from "@/utils/common";
 import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 
-const { log: detail, viewType: type } = toRefs(useGlobal());
+const { log: detail, viewType: type } = toRefs(usePve());
 
 const buffs = computed(() => {
     if (!detail || !detail.value) return [];

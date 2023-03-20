@@ -17,11 +17,11 @@
 </template>
 
 <script setup>
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { getEntityName } from "@/utils/common";
 import { toRefs } from "vue";
 
-const { entityList, entity } = toRefs(useGlobal());
+const { entityList, entity } = toRefs(usePve());
 
 const switchEntity = (id) => {
     if (entity.value === id) return;

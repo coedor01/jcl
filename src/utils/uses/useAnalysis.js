@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useStore } from "@/store/index.js";
-import { useGlobal } from "@/store/global.js";
+import { usePve } from "@/store/pve.js";
 import { getRandomColor } from "../common.js";
 
 export function useAnalysis() {
@@ -33,7 +33,7 @@ export function useAnalysis() {
                         entities[id].color = value;
                     }
                     // 重置global
-                    const global = useGlobal();
+                    const global = usePve();
                     global.$reset();
                     // 返回结果
                     // window.$store = data;

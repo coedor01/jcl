@@ -57,14 +57,14 @@
 
 <script setup>
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { getMountIcon, getEntityName, displayDigits, displayPercent } from "@/utils/common";
 import { usePaginate } from "@/utils/uses/usePaginate";
 
 import { ref, watch, toRefs } from "vue";
 import { pick, sortBy } from "lodash-es";
 
-const global = useGlobal();
+const global = usePve();
 const store = useStore();
 
 // 数据

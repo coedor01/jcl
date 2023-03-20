@@ -60,9 +60,9 @@
 import { getResource, getEntityName, displayDigits, getResourceIcon, getResourceName } from "@/utils/common";
 import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 // data
-const { viewType, target, effect, logs, log: detail } = toRefs(useGlobal());
+const { viewType, target, effect, logs, log: detail } = toRefs(usePve());
 
 // computed
 const titleName = computed(() => {

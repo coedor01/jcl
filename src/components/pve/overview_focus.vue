@@ -21,10 +21,10 @@
 import { ref, toRefs, watch } from "vue";
 import { getMountIcon, getEntityName, getResource, displayPercent } from "@/utils/common";
 import { useStore } from "@/store/index";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 
 const store = useStore();
-const global = useGlobal();
+const global = usePve();
 // props
 const props = defineProps({
     entityID: {

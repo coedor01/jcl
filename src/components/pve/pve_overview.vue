@@ -39,9 +39,9 @@ import OverviewList from "./overview_list.vue";
 import OverviewFocus from "./overview_focus.vue";
 
 import { toRefs } from "vue";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 
-const { focusEntities, statType } = toRefs(useGlobal());
+const { focusEntities, statType } = toRefs(usePve());
 
 const tabs = [
     {

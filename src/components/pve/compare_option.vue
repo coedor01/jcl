@@ -69,7 +69,7 @@
 <script>
 import { getMountIcon, getEntityName } from "@/utils/common";
 import { mapWritableState } from "pinia";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
 
 export default {
@@ -95,7 +95,7 @@ export default {
         ],
     }),
     computed: {
-        ...mapWritableState(useGlobal, ["compareEntity", "compareMode"]),
+        ...mapWritableState(usePve, ["compareEntity", "compareMode"]),
         entities() {
             const store = useStore();
             return Object.values(store.result.entities).slice(1);

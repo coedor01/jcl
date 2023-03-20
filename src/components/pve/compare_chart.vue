@@ -12,7 +12,7 @@ import VChart from "vue-echarts";
 
 import { mapState } from "pinia";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { getEntityColor, getEntityName } from "@/utils/common";
 
 export default {
@@ -24,7 +24,7 @@ export default {
         return {};
     },
     computed: {
-        ...mapState(useGlobal, ["compareEntity", "compareMode"]),
+        ...mapState(usePve, ["compareEntity", "compareMode"]),
         ...mapState(useStore, ["result"]),
         xData() {
             let result = [];

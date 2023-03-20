@@ -20,11 +20,11 @@ import { graphic } from "echarts/core";
 import VChart from "vue-echarts";
 import { displayDuration, getEntityName, getRandomColor, getResource, getResourceName } from "@/utils/common";
 import { toRefs, computed } from "vue";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
 
 const store = useStore();
-const { entity, selectedBuffs } = toRefs(useGlobal());
+const { entity, selectedBuffs } = toRefs(usePve());
 const { end } = store.result;
 
 const renderItem = (params, api) => {

@@ -105,6 +105,14 @@ export function displayDigits(value) {
     return value.toFixed(2);
 }
 
+export function displayBigNumber(value) {
+    if (!value) return " - ";
+    if (value > 1000000000000) return (value / 1000000000000).toFixed(2) + "万亿";
+    if (value > 100000000) return (value / 100000000).toFixed(2) + "亿";
+    if (value > 10000) return (value / 10000).toFixed(2) + "万";
+    return value;
+}
+
 export function displayDuration(value) {
     const duration = moment.duration(value, "seconds");
     return duration.isValid() ? `${padStart(duration.minutes(), 2, 0)}:${padStart(duration.seconds(), 2, 0)}` : "--:--";

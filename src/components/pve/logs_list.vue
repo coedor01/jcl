@@ -81,11 +81,11 @@ import { displayDigits } from "@/utils/common";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { ref, toRefs, watch, onMounted } from "vue";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { cloneDeep } from "lodash";
 // data
 const store = useStore();
-const { logFilter, logAutoApply, logDebug } = toRefs(useGlobal());
+const { logFilter, logAutoApply, logDebug } = toRefs(usePve());
 const data = ref([]);
 const pageSize = ref(30);
 const { currentPage, total, currentData } = usePaginate(data, pageSize);

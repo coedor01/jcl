@@ -65,7 +65,7 @@
 
 <script setup>
 import { toRefs } from "vue";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 
 import EntityTabs from "./entity_tabs.vue";
 import EntitySelect from "./entity_select.vue";
@@ -82,7 +82,7 @@ const typeComponent = {
     effect: EntityViewSkill,
     target: EntityViewTarget,
 };
-const { viewType, entityTab } = toRefs(useGlobal());
+const { viewType, entityTab } = toRefs(usePve());
 
 const tabs = [
     {

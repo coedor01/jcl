@@ -8,10 +8,10 @@
 import VChart from "vue-echarts";
 import { computed, toRefs } from "vue";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 
 const store = useStore();
-const global = useGlobal();
+const global = usePve();
 
 const { focusEntities, statType } = toRefs(global);
 

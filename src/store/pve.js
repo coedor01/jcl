@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
-export const useGlobal = defineStore({
-    id: "global",
+export const usePve = defineStore({
+    id: "pve",
     state: () => ({
         mainTab: "overview", // 当前页面的主tab
         // overview

@@ -1,5 +1,5 @@
 <template>
-    <div class="m-pve-header">
+    <div class="m-pve-header" :style="headerBackground">
         <div class="u-title">{{ displayTitle }}</div>
         <div class="u-overview">
             <div class="u-li" v-for="(item, index) in displayOverview" :key="index">
@@ -35,13 +35,16 @@
 <script setup>
 import { ref, computed, onMounted, toRefs } from "vue";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
-import { getMaps } from "@/services/img";
-import { displayDuration } from "@/utils/common";
+import { usePve } from "@/store/pve";
+import { getMaps, getBannerIndex } from "@/services/img";
+import { displayDuration, displayBigNumber } from "@/utils/common";
 import { moment } from "@jx3box/jx3box-common/js/moment";
+import jx3box_url from "@jx3box/jx3box-common/data/jx3box.json";
+import { useRouter } from "vue-router";
+const { __imgPath } = jx3box_url;
 
 const store = useStore();
-const { mainTab } = toRefs(useGlobal());
+const { mainTab } = toRefs(usePve());
 // data
 const tabList = [
     {
@@ -83,6 +86,7 @@ const showTab = computed(() => {
     });
 });
 const mapNames = ref({});
+const imgIndex = ref(null);
 
 // computed
 const displayTitle = computed(() => {
@@ -102,7 +106,8 @@ const displayEnd = computed(() => {
 });
 const displayServer = computed(() => {
     const { server, map } = store.result;
-    return server + " - " + mapNames.value[map] || `(${map})`;
+    const mapName = mapNames.value[map] ?? "未知地图";
+    return server + " - " + mapName;
 });
 const displayOverview = computed(() => {
     const { stats, entities, end } = store.result;
@@ -126,11 +131,6 @@ const displayOverview = computed(() => {
             totalDamage += stats.damage[entity].all.value;
         }
     }
-    const displayTotalDamage = (totalDamage / 10000).toFixed(2) + "万";
-    // 求战斗时长
-    const duration = displayDuration(end.sec);
-    // 团队秒伤
-    const teamDamage = (totalDamage / end.sec / 10000).toFixed(2) + "万";
 
     return [
         {
@@ -139,17 +139,31 @@ const displayOverview = computed(() => {
         },
         {
             title: "总伤害",
-            value: displayTotalDamage,
+            value: displayBigNumber(totalDamage),
         },
         {
             title: "总时长",
-            value: duration,
+            value: displayDuration(end.sec),
         },
         {
             title: "团队秒伤",
-            value: teamDamage,
+            value: displayBigNumber(totalDamage / end.sec),
         },
     ];
+});
+const banner = computed(() => {
+    if (!imgIndex.value) return null;
+    if (!displayOverview.value.length) return null;
+    const target = displayOverview.value[0].value;
+    return imgIndex.value[target];
+});
+const headerBackground = computed(() => {
+    if (banner.value) {
+        return {
+            backgroundImage: `linear-gradient(90deg, #000000 0%, rgba(0, 0, 0, 0) 72.12%), url(${banner.value})`,
+        };
+    }
+    return null;
 });
 
 // event
@@ -162,13 +176,27 @@ onMounted(() => {
     getMaps().then((res) => {
         mapNames.value = res.data;
     });
+    getBannerIndex().then((res) => {
+        imgIndex.value = res.data;
+        if (imgIndex.value.length) {
+            imgIndex.value = imgIndex.value.reduce((obj, item) => {
+                obj[item.npcName] = `${__imgPath}/pve/${item.banner}`;
+                return obj;
+            }, {});
+        } else {
+            imgIndex.value = {};
+        }
+    });
+    const router = useRouter();
+    window.router = router;
 });
 </script>
 
 <style lang="less" scoped>
 .m-pve-header {
     .pr;
-    .size(1440px, 214px);
+    .size(1400px, 174px);
+    padding: 20px;
     margin-top: 60px;
     border-radius: 20px;
     background-image: linear-gradient(90deg, #000000 0%, rgba(0, 0, 0, 0) 72.12%), url("@/assets/img/pve/header_bg.png");
@@ -228,8 +256,8 @@ onMounted(() => {
     }
     .u-tabs {
         .pa;
-        right: 30px;
-        bottom: 24px;
+        right: 20px;
+        bottom: 20px;
         height: 80px;
 
         display: flex;
@@ -248,10 +276,7 @@ onMounted(() => {
             .size(80px, 80px);
             flex-direction: column;
             gap: 4px;
-            background: linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            .colorful-text(linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%));
             transition: all 0.2s ease-in-out;
 
             &:not(.is-active) {

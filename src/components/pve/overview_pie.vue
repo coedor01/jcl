@@ -17,11 +17,11 @@ import VChart from "vue-echarts";
 import { ref, watch, toRefs, computed } from "vue";
 import { pick } from "lodash-es";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { displayPercent } from "@/utils/common";
 
 const store = useStore();
-const global = useGlobal();
+const global = usePve();
 use([CanvasRenderer, PieChart, TooltipComponent]);
 
 const { statType, focusEntities } = toRefs(global);

@@ -23,10 +23,10 @@ import { computed, toRefs } from "vue";
 import { displayDuration, displayDigits, displayPercent, getEntityColor } from "@/utils/common";
 import { pick } from "lodash-es";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 const store = useStore();
 
-const { entity, entityTab } = toRefs(useGlobal());
+const { entity, entityTab } = toRefs(usePve());
 
 const overview = computed(() => {
     const { entities, stats, end } = store.result;

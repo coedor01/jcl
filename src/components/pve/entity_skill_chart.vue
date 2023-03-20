@@ -10,11 +10,11 @@ import VChart from "vue-echarts";
 
 import { computed, toRefs } from "vue";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { getResource } from "@/utils/common";
 
 const store = useStore();
-const { entity, selectedSkills } = toRefs(useGlobal());
+const { entity, selectedSkills } = toRefs(usePve());
 
 const data = computed(() => {
     const source = store.result.skill?.[entity.value]?.logs;

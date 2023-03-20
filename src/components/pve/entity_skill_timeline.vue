@@ -18,11 +18,11 @@ import CanvasTimeline from "../common/canvas_timeline.vue";
 
 import { computed, toRefs, ref } from "vue";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { getResource } from "@/utils/common";
 
 const store = useStore();
-const { entity, selectedSkills } = toRefs(useGlobal());
+const { entity, selectedSkills } = toRefs(usePve());
 const { end } = store.result;
 const time = computed(() => end.sec + 10);
 const linetime = ref(15);

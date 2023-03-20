@@ -179,7 +179,7 @@
 
 <script setup>
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import {
     displayDigits,
     displayDuration,
@@ -225,7 +225,7 @@ const {
 } = usePaginate(buff, buffPageSize);
 
 // computed
-const { compareEntity, compareMode } = toRefs(useGlobal());
+const { compareEntity, compareMode } = toRefs(usePve());
 const { result } = toRefs(useStore());
 const entity = computed(() => compareEntity.value[index.value - 1]);
 const source = computed(() => result.value?.stats?.[compareMode.value]?.[entity.value]?.all);

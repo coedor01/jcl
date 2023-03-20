@@ -133,7 +133,7 @@ import ExportDialog from "@/components/export_dialog.vue";
 import { getMountIcon, getEntityName } from "@/utils/common";
 import { InfoFilled } from "@element-plus/icons-vue";
 import CheckButton from "../common/check_button.vue";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
 import { toRefs, computed, onMounted, ref } from "vue";
 import { throttle } from "lodash-es";
@@ -143,7 +143,7 @@ const emits = defineEmits(["apply"]);
 
 // data
 const store = useStore();
-const { logFilter, logAutoApply, logDebug } = toRefs(useGlobal());
+const { logFilter, logAutoApply, logDebug } = toRefs(usePve());
 
 // computed
 const entities = computed(() => Object.values(store.result?.entities).slice(1));

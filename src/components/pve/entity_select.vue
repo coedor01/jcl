@@ -66,7 +66,7 @@
 <script setup>
 import { ref, computed, toRefs, onMounted } from "vue";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { displayDigits, getEntityName } from "@/utils/common";
 const store = useStore();
@@ -103,7 +103,7 @@ const switchFilter = (filter) => {
     }
 };
 // 数据相关
-const { entityList, entity } = toRefs(useGlobal());
+const { entityList, entity } = toRefs(usePve());
 const data = computed(() => {
     const { entities } = store.result;
     let _templateExist = {};

@@ -24,6 +24,7 @@ const resolveDownLink = (url, fromOrigin = false) => {
 export function useDownload() {
     const downProgress = ref(0);
     const inflateProgress = ref(0);
+    const downloadError = ref(false);
 
     // 下载
     const download = (fromOrigin = false) => {
@@ -64,6 +65,7 @@ export function useDownload() {
         return download(false)
             .catch(() => download(true))
             .catch(() => {
+                downloadError.value = true;
                 throw new Error("下载失败");
             })
             .then((res) => {
@@ -72,5 +74,5 @@ export function useDownload() {
             });
     };
 
-    return { downProgress, inflateProgress, startDownload };
+    return { downProgress, inflateProgress, downloadError, startDownload };
 }

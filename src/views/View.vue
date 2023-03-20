@@ -1,7 +1,7 @@
 <template>
     <div class="p-view">
         <div class="m-view-card">
-            <template v-if="!error">
+            <template v-if="!error && !downloadError">
                 <div class="m-title">{{ title }}</div>
                 <div class="m-desc">{{ desc }}</div>
                 <el-progress :show-text="false" :percentage="progress" :stroke-width="10" />
@@ -49,14 +49,14 @@ const router = useRouter();
 const { query } = router.currentRoute.value;
 const { id, battle_id } = query;
 const error = ref(false);
-const { startDownload, inflateProgress, downProgress } = useDownload();
+const { startDownload, inflateProgress, downProgress, downloadError } = useDownload();
 const { startAnalysis, progress: analysisProgress, ready } = useAnalysis();
 
 const title = computed(() => {
-    return store.info.title ?? "...";
+    return store.info.title || "-";
 });
 const desc = computed(() => {
-    return store.info.desc ?? "...";
+    return store.info.desc || "-";
 });
 const progress = computed(() => {
     return downProgress.value * 0.2 + inflateProgress.value * 0.2 + analysisProgress.value * 0.6;
@@ -105,10 +105,11 @@ const init = async () => {
 
 watch(ready, () => {
     if (!ready.value) return;
+    const query = router.currentRoute.value.query;
     if (store.subject === "pvp") {
-        router.push({ name: "pvp" });
+        router.push({ name: "pvp", query });
     } else {
-        router.push({ name: "pve" });
+        router.push({ name: "pve", query });
     }
 });
 onMounted(() => {

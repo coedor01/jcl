@@ -59,13 +59,13 @@
 </template>
 
 <script setup>
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { toRefs, watch, ref } from "vue";
 import { getRandomColor, getResource } from "@/utils/common";
 
-const { entity, selectedSkills } = toRefs(useGlobal());
+const { entity, selectedSkills } = toRefs(usePve());
 const store = useStore();
 
 const data = ref([]);

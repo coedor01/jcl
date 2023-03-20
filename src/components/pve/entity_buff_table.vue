@@ -83,13 +83,13 @@
 import { iconLink } from "@jx3box/jx3box-common/js/utils";
 import { getResourceName, getResourceIcon, displayPercent, displayDigits } from "@/utils/common";
 import { ref, toRefs, watch } from "vue";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { sortBy } from "lodash-es";
 
 const store = useStore();
-const { entity, selectedBuffs } = toRefs(useGlobal());
+const { entity, selectedBuffs } = toRefs(usePve());
 
 const data = ref([]);
 const pageSize = ref(8);

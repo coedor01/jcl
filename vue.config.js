@@ -27,6 +27,12 @@ module.exports = {
                     request.setHeader("origin", "");
                 },
             },
+            "/battle/jcl/": {
+                target: "https://cdn.jx3box.com/",
+                onProxyReq: function (request) {
+                    request.setHeader("origin", "");
+                },
+            },
         },
     },
 

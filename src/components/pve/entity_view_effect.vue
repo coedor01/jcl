@@ -67,7 +67,7 @@
 <script setup>
 import { ref, watch, toRefs } from "vue";
 import { useStore } from "@/store";
-import { useGlobal } from "@/store/global";
+import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { displayDigits, displayPercent, getResourceIcon, getResourceName } from "@/utils/common";
 
@@ -76,7 +76,7 @@ import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
 const store = useStore();
-const { entityTab, entity, currentWindow, effect, logs, log: detail } = toRefs(useGlobal());
+const { entityTab, entity, currentWindow, effect, logs, log: detail } = toRefs(usePve());
 
 // data
 const data = ref([]);

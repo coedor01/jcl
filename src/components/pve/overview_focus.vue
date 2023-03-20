@@ -3,6 +3,7 @@
         <div class="u-entity">
             <img class="u-entity-icon" :src="getMountIcon(entityID)" alt="" />
             <div class="u-entity-name">{{ getEntityName(entityID) }}</div>
+            <el-button link class="u-close" @click="close">×</el-button>
         </div>
         <el-table class="u-table" :data="data" :border="false">
             <el-table-column label="招式" width="100" :align="'left'">
@@ -33,8 +34,13 @@ const props = defineProps({
     },
 });
 const { entityID } = toRefs(props);
-const { statType } = toRefs(global);
+const { statType, focusEntities } = toRefs(global);
 
+const close = () => {
+    focusEntities.value = focusEntities.value.filter((x) => {
+        return x !== entityID.value;
+    });
+};
 const data = ref([]);
 
 watch(
@@ -78,6 +84,7 @@ watch(
     border-radius: 20px;
     .size(380px, 380px);
     padding: 20px;
+    .pr;
     .u-entity {
         display: flex;
         align-items: center;
@@ -87,7 +94,13 @@ watch(
         }
         .u-entity-name {
             .bold;
+            flex-grow: 1;
             color: white;
+        }
+        .u-close {
+            .fz(24px);
+            .size(24px, 24px);
+            color: #717273;
         }
     }
 

@@ -2,61 +2,72 @@
     <div class="m-entity-view-target">
         <div class="u-left">
             <div class="w-card">
-                <div class="w-card-title">
-                    <span>{{ targetLabel }}列表</span>
-                </div>
-                <el-table
-                    class="u-table"
-                    :data="currentData"
-                    :border="false"
-                    @sort-change="sort"
-                    @row-click="click"
-                    :row-class-name="rowClass"
-                >
-                    <el-table-column label="心法" width="48" :align="'center'">
-                        <template #default="{ row }">
-                            <div class="u-mount-icon">
-                                <img :src="getMountIcon(row.target)" alt="" />
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="targetLabel" width="112">
-                        <template #default="{ row }">
-                            <span>{{ getEntityName(row.target) }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="value" label="数值" width="148" sortable="custom">
-                        <template #default="{ row }">
-                            <span>{{ row.value }}</span>
-                            <span> ({{ displayPercent(row.valueRate) }})</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="count" label="次数" width="70" sortable="custom"></el-table-column>
-                    <el-table-column prop="critRate" label="会心" width="104" sortable="custom">
-                        <template #default="{ row }">
-                            <span>{{ row.criticalCount }}</span>
-                            <span> ({{ displayPercent(row.criticalRate) }})</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="min" label="最小值" width="90" sortable="custom"></el-table-column>
-                    <el-table-column prop="max" label="最大值" width="98" sortable="custom"></el-table-column>
-                    <el-table-column prop="avg" label="平均值" width="98" sortable="custom">
-                        <template #default="{ row }">
-                            <span>{{ displayDigits(row.avg) }}</span>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <el-pagination
-                    class="w-pagination"
-                    small
-                    background
-                    layout="pager"
-                    :page-size="pageSize"
-                    :total="total"
-                    :hide-on-single-page="true"
-                    :current-page="currentPage"
-                    @update:currentPage="currentPage = $event"
-                ></el-pagination>
+                <template v-if="currentData.length === 0">
+                    <div class="u-left-empty">
+                        <img class="u-left-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
+                        <div>
+                            <div>在上方选择一个单位后</div>
+                            <div>此处会展示该单位的详细技能数</div>
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="w-card-title">
+                        <span>{{ targetLabel }}列表</span>
+                    </div>
+                    <el-table
+                        class="u-table"
+                        :data="currentData"
+                        :border="false"
+                        @sort-change="sort"
+                        @row-click="click"
+                        :row-class-name="rowClass"
+                    >
+                        <el-table-column label="心法" width="48" :align="'center'">
+                            <template #default="{ row }">
+                                <div class="u-mount-icon">
+                                    <img :src="getMountIcon(row.target)" alt="" />
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column :label="targetLabel" width="112">
+                            <template #default="{ row }">
+                                <span>{{ getEntityName(row.target) }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="value" label="数值" width="148" sortable="custom">
+                            <template #default="{ row }">
+                                <span>{{ row.value }}</span>
+                                <span> ({{ displayPercent(row.valueRate) }})</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="count" label="次数" width="70" sortable="custom"></el-table-column>
+                        <el-table-column prop="critRate" label="会心" width="104" sortable="custom">
+                            <template #default="{ row }">
+                                <span>{{ row.criticalCount }}</span>
+                                <span> ({{ displayPercent(row.criticalRate) }})</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="min" label="最小值" width="90" sortable="custom"></el-table-column>
+                        <el-table-column prop="max" label="最大值" width="98" sortable="custom"></el-table-column>
+                        <el-table-column prop="avg" label="平均值" width="98" sortable="custom">
+                            <template #default="{ row }">
+                                <span>{{ displayDigits(row.avg) }}</span>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <el-pagination
+                        class="w-pagination"
+                        small
+                        background
+                        layout="pager"
+                        :page-size="pageSize"
+                        :total="total"
+                        :hide-on-single-page="true"
+                        :current-page="currentPage"
+                        @update:currentPage="currentPage = $event"
+                    ></el-pagination>
+                </template>
             </div>
             <entity-skill-log-detail></entity-skill-log-detail>
         </div>
@@ -173,6 +184,20 @@ watch(
     display: flex;
     gap: 20px;
     .size(1440px, 800px);
+
+    .u-left-empty {
+        display: flex;
+        align-items: center;
+        .bold;
+        padding: 30px;
+        .fz(20px, 36px);
+        color: #717273;
+    }
+
+    .u-left-empty__icon {
+        .size(95px, 95px);
+        .mr(32px);
+    }
 
     & > .u-left {
         display: flex;

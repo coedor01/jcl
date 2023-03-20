@@ -1,58 +1,79 @@
 <template>
     <div class="m-entity-skill-log w-card">
-        <div v-if="target" class="w-card-title">
-            目标为 <span class="u-light">{{ titleName }}</span> 的技能列表
-        </div>
-        <div v-else-if="effect" class="w-card-title">
-            招式 <span class="u-light">{{ titleName }}</span> 的结算记录
-        </div>
-        <div v-else class="w-card-title">-</div>
-        <el-table class="u-table" :data="currentData" :border="false" :row-class-name="rowClass" @row-click="selectLog">
-            <el-table-column prop="index" label="#" align="center" :width="columnWidth[0]"></el-table-column>
-            <el-table-column label="时间" :width="columnWidth[1]">
-                <template #default="{ row }">
-                    <span>{{ displayDigits(row.micro / 1000) + "s" }}</span>
+        <template v-if="currentData.length === 0">
+            <div class="u-empty" :class="`u-empty__${viewType}`">
+                <img class="u-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
+                <template v-if="viewType === 'effect'">
+                    <div>在左侧选择一个技能后</div>
+                    <div>此处会展示该技能的所有释放记录</div>
                 </template>
-            </el-table-column>
-            <el-table-column v-if="viewType === 'target'" label="图标" align="center" :width="columnWidth[2]">
-                <template #default="{ row }">
-                    <div class="u-effect-icon">
-                        <img :src="getResourceIcon(row.effect)" alt="" />
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column v-if="viewType === 'effect'" label="目标" :width="columnWidth[2]">
-                <template #default="{ row }">
-                    <span>{{ getEntityName(row.target) }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="招式" :width="columnWidth[3]">
-                <template #default="{ row }">
-                    <span>{{ getResourceName(row.effect, { showID: true }) }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="实际数值" :width="columnWidth[4]">
-                <template #default="{ row }">
-                    <span>{{ row.value }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="会心" :width="columnWidth[5]">
-                <template #default="{ row }">
-                    <span>{{ row.isCritical ? "会心" : "-" }}</span>
-                </template>
-            </el-table-column>
-        </el-table>
-        <el-pagination
-            class="w-pagination"
-            small
-            background
-            layout="pager"
-            :page-size="pageSize"
-            :total="total"
-            :hide-on-single-page="true"
-            :current-page="currentPage"
-            @update:currentPage="currentPage = $event"
-        ></el-pagination>
+                <div v-else-if="viewType === 'target'">
+                    <div>在左侧选择一个目标后</div>
+                    <div>此处会展示对目标施展的所有技能</div>
+                </div>
+            </div>
+        </template>
+        <template v-else>
+            <div v-if="viewType === 'target'" class="w-card-title">
+                目标为 <span class="u-light">{{ titleName }}</span> 的技能列表
+            </div>
+            <div v-else-if="viewType === 'effect'" class="w-card-title">
+                招式 <span class="u-light">{{ titleName }}</span> 的结算记录
+            </div>
+            <div v-else class="w-card-title">-</div>
+            <el-table
+                class="u-table"
+                :data="currentData"
+                :border="false"
+                :row-class-name="rowClass"
+                @row-click="selectLog"
+            >
+                <el-table-column prop="index" label="#" align="center" :width="columnWidth[0]"></el-table-column>
+                <el-table-column label="时间" :width="columnWidth[1]">
+                    <template #default="{ row }">
+                        <span>{{ displayDigits(row.micro / 1000) + "s" }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column v-if="viewType === 'target'" label="图标" align="center" :width="columnWidth[2]">
+                    <template #default="{ row }">
+                        <div class="u-effect-icon">
+                            <img :src="getResourceIcon(row.effect)" alt="" />
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column v-if="viewType === 'effect'" label="目标" :width="columnWidth[2]">
+                    <template #default="{ row }">
+                        <span>{{ getEntityName(row.target) }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="招式" :width="columnWidth[3]">
+                    <template #default="{ row }">
+                        <span>{{ getResourceName(row.effect, { showID: true }) }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="实际数值" :width="columnWidth[4]">
+                    <template #default="{ row }">
+                        <span>{{ row.value }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="会心" :width="columnWidth[5]">
+                    <template #default="{ row }">
+                        <span>{{ row.isCritical ? "会心" : "-" }}</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination
+                class="w-pagination"
+                small
+                background
+                layout="pager"
+                :page-size="pageSize"
+                :total="total"
+                :hide-on-single-page="true"
+                :current-page="currentPage"
+                @update:currentPage="currentPage = $event"
+            ></el-pagination>
+        </template>
     </div>
 </template>
 
@@ -136,6 +157,38 @@ const rowClass = ({ row }) => {
                     }
                 }
             }
+        }
+    }
+
+    .u-empty {
+        display: flex;
+        align-items: center;
+        padding: 30px;
+        .fz(20px, 36px);
+        .bold;
+        color: #717273;
+    }
+
+    .u-empty__icon {
+        .to-left;
+        .size(95px, 95px);
+    }
+
+    .u-empty__effect {
+        flex-grow: 1;
+        justify-content: center;
+        flex-direction: column;
+        .u-empty__icon {
+            .mb(32px);
+        }
+    }
+
+    .u-empty__target {
+        display: flex;
+        flex-direction: row;
+
+        .u-empty__icon {
+            .mr(32px);
         }
     }
 }

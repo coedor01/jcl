@@ -1,72 +1,87 @@
 <template>
     <div class="m-entity-skill-detail u-card">
-        <div class="u-left">
-            <div class="u-card-title">技能详情</div>
-            <div class="u-effect-infos" v-if="detail">
-                <div class="u-effect-info">
-                    <span>招式：</span>
-                    <img :src="getResourceIcon(detail.effect)" />
-                    <span>{{ getResourceName(detail.effect, { showID: true }) }}</span>
-                </div>
-                <div class="u-effect-info">
-                    <span>来源：</span>
-                    <img :src="getMountIcon(detail.caster)" />
-                    <span>{{ getEntityName(detail.caster) }}#{{ detail.caster }}</span>
-                </div>
-                <div class="u-effect-info">
-                    <span>施展次数：</span>
-                    <span>第 {{ detail.index }} 次</span>
-                </div>
-                <div class="u-effect-info">
-                    <span>施展时间：</span>
-                    <span>{{ displayDigits(detail.micro / 1000) }} s</span>
-                </div>
-                <div class="u-effect-info">
-                    <span>实际数值：</span>
-                    <span>{{ detail.value }}</span>
-                </div>
-                <div class="u-effect-info">
-                    <span>目标：</span>
-                    <img :src="getMountIcon(detail.target)" />
-                    <span>{{ getEntityName(detail.target) }}#{{ detail.target }}</span>
-                </div>
-                <div class="u-effect-info">
-                    <span>备注：</span>
-                    <span v-if="detail.isCritical">会心</span>
-                    <span v-else> - </span>
+        <template v-if="!detail">
+            <div class="u-empty" :class="`u-empty__${type}`">
+                <img class="u-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
+                <template v-if="type === 'effect'">
+                    <div>在上方选择一条记录后</div>
+                    <div>此处会展示该次技能释放的所有详细数据</div>
+                </template>
+                <div v-else-if="type === 'target'">
+                    <div>在右侧选择一个目标后</div>
+                    <div>此处会展示该次技能释放的所有详细数据</div>
                 </div>
             </div>
-        </div>
-        <div class="u-right">
-            <div class="w-card">
-                <div class="w-card-title">携带BUFF列表</div>
-                <div class="u-buff-list">
-                    <div
-                        v-for="(buff, index) in currentData"
-                        :key="index"
-                        class="u-buff"
-                        :title="getResourceName('buff:' + buff.split('*')[0], { showID: true })"
-                    >
-                        <img class="u-buff-icon" :src="getResourceIcon('buff:' + buff.split('*')[0])" />
-                        <span class="u-buff-stack">{{ buff.split("*")[1] }}</span>
-                        <span class="u-buff-name">{{
-                            getResourceName("buff:" + buff.split("*")[0], { showID: true })
-                        }}</span>
+        </template>
+        <template v-else>
+            <div class="u-left">
+                <div class="u-card-title">技能详情</div>
+                <div class="u-effect-infos" v-if="detail">
+                    <div class="u-effect-info">
+                        <span>招式：</span>
+                        <img :src="getResourceIcon(detail.effect)" />
+                        <span>{{ getResourceName(detail.effect, { showID: true }) }}</span>
+                    </div>
+                    <div class="u-effect-info">
+                        <span>来源：</span>
+                        <img :src="getMountIcon(detail.caster)" />
+                        <span>{{ getEntityName(detail.caster) }}#{{ detail.caster }}</span>
+                    </div>
+                    <div class="u-effect-info">
+                        <span>施展次数：</span>
+                        <span>第 {{ detail.index }} 次</span>
+                    </div>
+                    <div class="u-effect-info">
+                        <span>施展时间：</span>
+                        <span>{{ displayDigits(detail.micro / 1000) }} s</span>
+                    </div>
+                    <div class="u-effect-info">
+                        <span>实际数值：</span>
+                        <span>{{ detail.value }}</span>
+                    </div>
+                    <div class="u-effect-info">
+                        <span>目标：</span>
+                        <img :src="getMountIcon(detail.target)" />
+                        <span>{{ getEntityName(detail.target) }}#{{ detail.target }}</span>
+                    </div>
+                    <div class="u-effect-info">
+                        <span>备注：</span>
+                        <span v-if="detail.isCritical">会心</span>
+                        <span v-else> - </span>
                     </div>
                 </div>
-                <el-pagination
-                    class="w-pagination"
-                    small
-                    background
-                    layout="pager"
-                    :page-size="pageSize"
-                    :total="total"
-                    :hide-on-single-page="true"
-                    :current-page="currentPage"
-                    @update:currentPage="currentPage = $event"
-                ></el-pagination>
             </div>
-        </div>
+            <div class="u-right">
+                <div class="w-card">
+                    <div class="w-card-title">携带BUFF列表</div>
+                    <div class="u-buff-list">
+                        <div
+                            v-for="(buff, index) in currentData"
+                            :key="index"
+                            class="u-buff"
+                            :title="getResourceName('buff:' + buff.split('*')[0], { showID: true })"
+                        >
+                            <img class="u-buff-icon" :src="getResourceIcon('buff:' + buff.split('*')[0])" />
+                            <span class="u-buff-stack">{{ buff.split("*")[1] }}</span>
+                            <span class="u-buff-name">{{
+                                getResourceName("buff:" + buff.split("*")[0], { showID: true })
+                            }}</span>
+                        </div>
+                    </div>
+                    <el-pagination
+                        class="w-pagination"
+                        small
+                        background
+                        layout="pager"
+                        :page-size="pageSize"
+                        :total="total"
+                        :hide-on-single-page="true"
+                        :current-page="currentPage"
+                        @update:currentPage="currentPage = $event"
+                    ></el-pagination>
+                </div>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -101,7 +116,38 @@ const { currentPage, currentData, total } = usePaginate(buffs, pageSize);
         margin: 0;
     }
 
-    & > div {
+    .u-empty {
+        .flex-center;
+        .fz(20px, 36px);
+        .bold;
+        flex-grow: 1;
+        color: #b0acba;
+    }
+
+    .u-empty__icon {
+        filter: brightness(1.5);
+        .size(95px, 95px);
+    }
+
+    .u-empty__effect {
+        flex-grow: 1;
+        flex-direction: column;
+        .u-empty__icon {
+            .mb(32px);
+        }
+    }
+
+    .u-empty__target {
+        flex-grow: 1;
+        flex-direction: row-reverse;
+        text-align: right;
+        .u-empty__icon {
+            .to-right;
+            .ml(32px);
+        }
+    }
+
+    & > div:not(.u-empty) {
         width: 50%;
     }
 

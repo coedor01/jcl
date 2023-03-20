@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, computed, toRefs, onMounted } from "vue";
+import { ref, computed, toRefs } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
@@ -141,9 +141,6 @@ const rowClass = ({ row }) => {
     }
     return "";
 };
-onMounted(() => {
-    if (data.value.length !== 0 && entity.value === null) selectEntity(data.value[0]);
-});
 </script>
 
 <style lang="less">

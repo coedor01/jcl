@@ -1,61 +1,72 @@
 <template>
     <div class="m-entity-view-effect">
         <div class="u-left w-card">
-            <div class="w-card-title">技能列表</div>
-            <el-table
-                class="u-table"
-                :data="currentData"
-                :border="false"
-                @sort-change="sort"
-                @row-click="click"
-                :row-class-name="rowClass"
-            >
-                <el-table-column label="图标" width="48" :align="'center'">
-                    <template #default="{ row }">
-                        <div class="u-effect-icon">
-                            <img :src="getResourceIcon(row.effect)" alt="" />
-                        </div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="招式" width="168">
-                    <template #default="{ row }">
-                        <span :title="getResourceName(row.effect, { showID: true })">{{
-                            getResourceName(row.effect, { showID: true })
-                        }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="count" label="次数" width="80" sortable="custom"></el-table-column>
-                <el-table-column prop="value" label="数值" width="156" sortable="custom">
-                    <template #default="{ row }">
-                        <span>{{ row.value }}</span>
-                        <span> ({{ displayPercent(row.valueRate) }})</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="critRate" label="会心" width="120" sortable="custom">
-                    <template #default="{ row }">
-                        <span>{{ row.criticalCount }}</span>
-                        <span> ({{ displayPercent(row.criticalRate) }})</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="min" label="最小值" width="90" sortable="custom"></el-table-column>
-                <el-table-column prop="max" label="最大值" width="98" sortable="custom"></el-table-column>
-                <el-table-column prop="avg" label="平均值" width="98" sortable="custom">
-                    <template #default="{ row }">
-                        <span>{{ displayDigits(row.avg) }}</span>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <el-pagination
-                class="w-pagination"
-                small
-                background
-                layout="pager"
-                :page-size="pageSize"
-                :total="total"
-                :hide-on-single-page="true"
-                :current-page="currentPage"
-                @update:currentPage="currentPage = $event"
-            ></el-pagination>
+            <template v-if="currentData.length === 0">
+                <div class="u-left-empty">
+                    <img class="u-left-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
+                    <div>
+                        <div>在上方选择一个单位后</div>
+                        <div>此处会展示该单位的详细技能数</div>
+                    </div>
+                </div>
+            </template>
+            <template v-else>
+                <div class="w-card-title">技能列表</div>
+                <el-table
+                    class="u-table"
+                    :data="currentData"
+                    :border="false"
+                    @sort-change="sort"
+                    @row-click="click"
+                    :row-class-name="rowClass"
+                >
+                    <el-table-column label="图标" width="48" :align="'center'">
+                        <template #default="{ row }">
+                            <div class="u-effect-icon">
+                                <img :src="getResourceIcon(row.effect)" alt="" />
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="招式" width="168">
+                        <template #default="{ row }">
+                            <span :title="getResourceName(row.effect, { showID: true })">{{
+                                getResourceName(row.effect, { showID: true })
+                            }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="count" label="次数" width="80" sortable="custom"></el-table-column>
+                    <el-table-column prop="value" label="数值" width="156" sortable="custom">
+                        <template #default="{ row }">
+                            <span>{{ row.value }}</span>
+                            <span> ({{ displayPercent(row.valueRate) }})</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="critRate" label="会心" width="120" sortable="custom">
+                        <template #default="{ row }">
+                            <span>{{ row.criticalCount }}</span>
+                            <span> ({{ displayPercent(row.criticalRate) }})</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="min" label="最小值" width="90" sortable="custom"></el-table-column>
+                    <el-table-column prop="max" label="最大值" width="98" sortable="custom"></el-table-column>
+                    <el-table-column prop="avg" label="平均值" width="98" sortable="custom">
+                        <template #default="{ row }">
+                            <span>{{ displayDigits(row.avg) }}</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-pagination
+                    class="w-pagination"
+                    small
+                    background
+                    layout="pager"
+                    :page-size="pageSize"
+                    :total="total"
+                    :hide-on-single-page="true"
+                    :current-page="currentPage"
+                    @update:currentPage="currentPage = $event"
+                ></el-pagination>
+            </template>
         </div>
         <div class="u-right">
             <entity-skill-log :logs="logs"></entity-skill-log>
@@ -169,6 +180,20 @@ watch(
     width: 1440px;
     & > .u-left {
         .size(900px, 800px);
+
+        .u-left-empty {
+            display: flex;
+            align-items: center;
+            .bold;
+            padding: 30px;
+            .fz(20px, 36px);
+            color: #717273;
+        }
+
+        .u-left-empty__icon {
+            .size(95px, 95px);
+            .mr(32px);
+        }
 
         .u-table {
             flex-grow: 1;

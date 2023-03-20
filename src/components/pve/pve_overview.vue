@@ -22,6 +22,11 @@
             <el-scrollbar max-height="1000px">
                 <div class="u-focus-list">
                     <TransitionGroup name="u-focus" tag="div">
+                        <div class="u-focus-empty" v-if="focusEntities.length === 0">
+                            <img class="u-focus-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
+                            <div>在左侧选择一个实体后</div>
+                            <div>此处会展示该实体的详细技能数</div>
+                        </div>
                         <div class="u-focus" v-for="(entity, index) in focusEntities" :key="index">
                             <overview-focus :entityID="entity"></overview-focus>
                         </div>
@@ -117,6 +122,23 @@ const switchType = (tab) => {
         .u-focus-list {
             width: 100%;
             overflow-x: hidden;
+
+            .u-focus-empty {
+                .flex-center;
+                .size(420px);
+                .r(20px);
+                .bold;
+                .fz(20px, 36px);
+                flex-direction: column;
+                background: #131517;
+                color: #717273;
+            }
+
+            .u-focus-empty__icon {
+                .to-left;
+                .size(95px, 95px);
+                .mb(32px);
+            }
 
             .u-focus:not(:first-of-type) {
                 margin-top: 20px;

@@ -172,7 +172,7 @@ const rowClass = ({ row }) => {
     .u-select {
         display: flex;
         flex-direction: column;
-        height: 312px;
+        height: 252px;
         .u-table {
             flex-grow: 1;
             .u-check-icon {

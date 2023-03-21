@@ -7,6 +7,10 @@
                 <span class="u-entity-info">ID {{ entity }}</span>
                 <span class="u-entity-info">参战时长 {{ displayDuration(end.sec) }}</span>
             </span>
+            <div class="u-buff-help">
+                <el-icon :size="16"><InfoFilled /></el-icon>
+                条形图上的数字表示层数变化，*号表示非自然消失，鼠标悬浮可查看详细信息
+            </div>
         </div>
         <div class="u-chart">
             <v-chart v-if="items.length" autoresize theme="dark" :option="option" class="u-chart"></v-chart>
@@ -22,6 +26,7 @@ import { displayDuration, getEntityName, getRandomColor, getResource, getResourc
 import { toRefs, computed } from "vue";
 import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
+import { iconLink } from "@jx3box/jx3box-common/js/utils";
 
 const store = useStore();
 const { entity, selectedBuffs } = toRefs(usePve());
@@ -55,6 +60,8 @@ const renderItem = (params, api) => {
     const stackLogs = JSON.parse(api.value(4));
     let lastLeft = Number.MIN_SAFE_INTEGER;
     for (let time in stackLogs) {
+        const stackNum = stackLogs[time];
+        if (stackNum === 1) continue;
         const point = api.coord([time, categoryIndex]);
         const showText = point[0] > visibleRect.x && point[0] < visibleRect.x + visibleRect.width;
         if (showText && point[0] - lastLeft > 12) {
@@ -62,7 +69,7 @@ const renderItem = (params, api) => {
             children.push({
                 type: "text",
                 style: {
-                    text: stackLogs[time],
+                    text: stackNum,
                     x: point[0] + 3.5,
                     y: point[1] + 10,
                     textAlign: "center",
@@ -81,7 +88,7 @@ const renderItem = (params, api) => {
         children.push({
             type: "text",
             style: {
-                text: "〰",
+                text: "*",
                 x: end[0] + 3.5,
                 y: end[1],
                 textAlign: "center",
@@ -114,6 +121,24 @@ const data = computed(() => {
             },
             times: buffLogs,
         });
+    }
+    return result;
+});
+const iconStyles = computed(() => {
+    let result = {
+        paddingRight: {
+            padding: [0, 10, 0, 0],
+        },
+    };
+    for (let k in data.value) {
+        const info = data.value[k].info;
+        result["icon" + k] = {
+            backgroundColor: {
+                image: iconLink(info.icon),
+            },
+            height: 32,
+            width: 32,
+        };
     }
     return result;
 });
@@ -184,6 +209,12 @@ const option = computed(() => ({
         axisTick: {
             show: false,
         },
+        axisLabel: {
+            formatter: function (val, index) {
+                return `{paddingRight|${val}}{icon${index}|}`;
+            },
+            rich: iconStyles.value,
+        },
     },
     series: [
         {
@@ -216,6 +247,13 @@ const option = computed(() => ({
         .u-entity-info {
             .mr(24px);
         }
+    }
+    .u-buff-help {
+        .flex-center;
+        gap: 12px;
+        .fz(14px, 18px);
+        float: right;
+        color: #b29fff;
     }
 
     .u-chart {

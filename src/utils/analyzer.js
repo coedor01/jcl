@@ -92,6 +92,7 @@ const defaultResult = {
         buff: [],
     },
 };
+
 // 分析器
 export class Analyzer {
     constructor(raw) {
@@ -113,10 +114,8 @@ export class Analyzer {
             globalSays: [],
         };
     }
-
     // 到下一个时间节点
     nextStep() {}
-
     // 直接解析到头，获取整个JCL文件的结果，返回一个生成器
     getAll() {
         let that = this;

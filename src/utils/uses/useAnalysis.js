@@ -39,7 +39,6 @@ export function useAnalysis() {
                     // window.$store = data;
                     store.result = Object.freeze(data);
                     ready.value = true;
-                    worker.terminate();
                 }
             };
             worker.postMessage({ action: "getAll" });

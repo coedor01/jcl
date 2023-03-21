@@ -64,7 +64,7 @@ const renderItem = (params, api) => {
                 style: {
                     text: stackLogs[time],
                     x: point[0] + 3.5,
-                    y: point[1],
+                    y: point[1] + 10,
                     textAlign: "center",
                     textVerticalAlign: "middle",
                     textShadowColor: "#000",

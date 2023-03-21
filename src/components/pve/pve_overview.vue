@@ -23,9 +23,10 @@
                 <div class="u-focus-list">
                     <TransitionGroup name="u-focus" tag="div">
                         <div class="u-focus-empty" v-if="focusEntities.length === 0">
-                            <img class="u-focus-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
-                            <div>在左侧选择一个实体后</div>
-                            <div>此处会展示该实体的详细技能数</div>
+                            <empty-guide
+                                :rotate="-90"
+                                :tips="['在左侧选择一个实体后', '此处会展示该实体的详细技能数']"
+                            ></empty-guide>
                         </div>
                         <div class="u-focus" v-for="(entity, index) in focusEntities" :key="index">
                             <overview-focus :entityID="entity"></overview-focus>
@@ -42,6 +43,7 @@ import OverviewChart from "./overview_chart.vue";
 import OverviewPie from "./overview_pie.vue";
 import OverviewList from "./overview_list.vue";
 import OverviewFocus from "./overview_focus.vue";
+import EmptyGuide from "@/components/common/empty_guide.vue";
 
 import { toRefs } from "vue";
 import { usePve } from "@/store/pve";
@@ -127,17 +129,7 @@ const switchType = (tab) => {
                 .flex-center;
                 .size(420px);
                 .r(20px);
-                .bold;
-                .fz(20px, 36px);
-                flex-direction: column;
                 background: #131517;
-                color: #717273;
-            }
-
-            .u-focus-empty__icon {
-                .to-left;
-                .size(95px, 95px);
-                .mb(32px);
             }
 
             .u-focus:not(:first-of-type) {

@@ -2,7 +2,7 @@
     <div class="m-logs-filter w-card">
         <div class="u-export-button" @click="exportBox.open()">
             <el-icon><CopyDocument /></el-icon>
-            导出JCL
+            导出Excel文件
         </div>
         <div class="w-card-title">建议过滤</div>
         <div class="u-filters">
@@ -291,16 +291,16 @@ onMounted(() => {
         .bold;
         .flex-center;
         .pointer;
-        color: #b3b3b3;
         right: 10px;
         top: 10px;
         gap: 8px;
         padding: 10px;
         border-radius: 8px;
         transition: all 0.2s ease-in-out;
+        background-color: #0f5773;
 
         &:hover {
-            background-color: #0f5773;
+            filter: brightness(1.5);
         }
     }
 

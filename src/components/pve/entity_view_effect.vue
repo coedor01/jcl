@@ -2,13 +2,13 @@
     <div class="m-entity-view-effect">
         <div class="u-left w-card">
             <template v-if="currentData.length === 0">
-                <div class="u-left-empty">
-                    <img class="u-left-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
-                    <div>
-                        <div>在上方选择一个单位后</div>
-                        <div>此处会展示该单位的详细技能数</div>
-                    </div>
-                </div>
+                <empty-guide
+                    text-align="left"
+                    to="row"
+                    position="flex-start"
+                    :grow="false"
+                    :tips="['在上方选择一个单位后', '此处会展示该单位的详细技能数']"
+                ></empty-guide>
             </template>
             <template v-else>
                 <div class="w-card-title">技能列表</div>
@@ -76,6 +76,7 @@
 </template>
 
 <script setup>
+import EmptyGuide from "@/components/common/empty_guide.vue";
 import { ref, watch, toRefs } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
@@ -180,20 +181,6 @@ watch(
     width: 1440px;
     & > .u-left {
         .size(900px, 800px);
-
-        .u-left-empty {
-            display: flex;
-            align-items: center;
-            .bold;
-            padding: 30px;
-            .fz(20px, 36px);
-            color: #717273;
-        }
-
-        .u-left-empty__icon {
-            .size(95px, 95px);
-            .mr(32px);
-        }
 
         .u-table {
             flex-grow: 1;

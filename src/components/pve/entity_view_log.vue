@@ -1,17 +1,20 @@
 <template>
     <div class="m-entity-skill-log w-card">
         <template v-if="currentData.length === 0">
-            <div class="u-empty" :class="`u-empty__${viewType}`">
-                <img class="u-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
-                <template v-if="viewType === 'effect'">
-                    <div>在左侧选择一个技能后</div>
-                    <div>此处会展示该技能的所有释放记录</div>
-                </template>
-                <div v-else-if="viewType === 'target'">
-                    <div>在左侧选择一个目标后</div>
-                    <div>此处会展示对目标施展的所有技能</div>
-                </div>
-            </div>
+            <empty-guide
+                v-if="viewType === 'effect'"
+                :rotate="-90"
+                :tips="['在左侧选择一个技能后', '此处会展示该技能的所有释放记录']"
+            ></empty-guide>
+            <empty-guide
+                v-if="viewType === 'target'"
+                text-align="left"
+                position="flex-start"
+                :rotate="-90"
+                to="row"
+                :grow="false"
+                :tips="['在左侧选择一个目标后', '此处会展示对目标施展的所有技能']"
+            ></empty-guide>
         </template>
         <template v-else>
             <div v-if="viewType === 'target'" class="w-card-title">
@@ -78,6 +81,7 @@
 </template>
 
 <script setup>
+import EmptyGuide from "@/components/common/empty_guide.vue";
 import { getResource, getEntityName, displayDigits, getResourceIcon, getResourceName } from "@/utils/common";
 import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
@@ -157,38 +161,6 @@ const rowClass = ({ row }) => {
                     }
                 }
             }
-        }
-    }
-
-    .u-empty {
-        display: flex;
-        align-items: center;
-        padding: 30px;
-        .fz(20px, 36px);
-        .bold;
-        color: #717273;
-    }
-
-    .u-empty__icon {
-        .to-left;
-        .size(95px, 95px);
-    }
-
-    .u-empty__effect {
-        flex-grow: 1;
-        justify-content: center;
-        flex-direction: column;
-        .u-empty__icon {
-            .mb(32px);
-        }
-    }
-
-    .u-empty__target {
-        display: flex;
-        flex-direction: row;
-
-        .u-empty__icon {
-            .mr(32px);
         }
     }
 }

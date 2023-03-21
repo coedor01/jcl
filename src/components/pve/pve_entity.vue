@@ -8,27 +8,40 @@
                 <entity-tabs></entity-tabs>
                 <div class="u-right-bottom">
                     <div class="w-card">
-                        <!-- 切换伤害/治疗/BUFF分析 -->
-                        <div class="m-type-tabs">
-                            <div
-                                class="u-tab"
-                                v-for="(tab, index) in tabs"
-                                :key="index"
-                                :class="{ 'is-active': entityTab == tab.name }"
-                                @click="switchTab(tab.name)"
+                        <template v-if="!entity">
+                            <empty-guide
+                                to="row"
+                                :rotate="-90"
+                                text-align="left"
+                                position="flex-start"
+                                align="flex-end"
+                                :tips="['在左侧选择一个实体后', '此处会展示该实体的六个维度分析']"
                             >
-                                <span>{{ tab.title }}</span>
-                            </div>
-                        </div>
-                        <template v-if="entityTab === 'buff'">
-                            <entity-buff-table></entity-buff-table>
-                        </template>
-                        <template v-else-if="entityTab === 'skill'">
-                            <entity-skill-chart></entity-skill-chart>
+                            </empty-guide>
                         </template>
                         <template v-else>
-                            <!-- 单位图表以及总览 -->
-                            <entity-chart></entity-chart>
+                            <!-- 切换伤害/治疗/BUFF分析 -->
+                            <div class="m-type-tabs">
+                                <div
+                                    class="u-tab"
+                                    v-for="(tab, index) in tabs"
+                                    :key="index"
+                                    :class="{ 'is-active': entityTab == tab.name }"
+                                    @click="switchTab(tab.name)"
+                                >
+                                    <span>{{ tab.title }}</span>
+                                </div>
+                            </div>
+                            <template v-if="entityTab === 'buff'">
+                                <entity-buff-table></entity-buff-table>
+                            </template>
+                            <template v-else-if="entityTab === 'skill'">
+                                <entity-skill-chart></entity-skill-chart>
+                            </template>
+                            <template v-else>
+                                <!-- 单位图表以及总览 -->
+                                <entity-chart></entity-chart>
+                            </template>
                         </template>
                     </div>
                     <entity-skill-filter v-if="entityTab === 'skill'"></entity-skill-filter>
@@ -67,6 +80,7 @@
 import { toRefs } from "vue";
 import { usePve } from "@/store/pve";
 
+import EmptyGuide from "@/components/common/empty_guide.vue";
 import EntityTabs from "./entity_tabs.vue";
 import EntitySelect from "./entity_select.vue";
 import EntityChart from "./entity_view_chart.vue";
@@ -82,7 +96,7 @@ const typeComponent = {
     effect: EntityViewSkill,
     target: EntityViewTarget,
 };
-const { viewType, entityTab } = toRefs(usePve());
+const { viewType, entityTab, entity } = toRefs(usePve());
 
 const tabs = [
     {

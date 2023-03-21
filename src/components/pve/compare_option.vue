@@ -58,6 +58,7 @@
                     :class="{ 'is-active': compareMode === item.name }"
                     @click="compareMode = item.name"
                 >
+                    <div class="u-icon"><img :src="item.icon" alt="" /></div>
                     <div class="u-title">{{ item.title }}</div>
                     <div class="u-subtitle">对比</div>
                 </div>
@@ -79,18 +80,22 @@ export default {
             {
                 title: "伤害",
                 name: "damage",
+                icon: require("@/assets/img/stat/damage.svg"),
             },
             {
                 title: "治疗",
                 name: "treat",
+                icon: require("@/assets/img/stat/treat.svg"),
             },
             {
                 title: "承伤",
                 name: "beDamaged",
+                icon: require("@/assets/img/stat/beDamaged.svg"),
             },
             {
                 title: "承疗",
                 name: "beTreated",
+                icon: require("@/assets/img/stat/beTreated.svg"),
             },
         ],
     }),
@@ -98,7 +103,9 @@ export default {
         ...mapWritableState(usePve, ["compareEntity", "compareMode"]),
         entities() {
             const store = useStore();
-            return Object.values(store.result.entities).slice(1);
+            return Object.values(store.result.entities)
+                .slice(1)
+                .filter((player) => player.type === "player");
         },
     },
     methods: {
@@ -217,45 +224,52 @@ export default {
             display: flex;
             gap: 10px;
             padding: 15px 0;
+        }
 
-            .u-tab {
-                .pointer;
-                .flex-center;
-                .bold;
-                gap: 10px;
-                padding: 10px;
-                flex-shrink: 0;
-                flex-grow: 1;
-                background: #000000;
-                border-radius: 10px;
-                color: #b3b3b3;
-                transition: all 0.3s ease-in-out;
+        .u-tab {
+            .pointer;
+            .flex-center;
+            .bold;
+            gap: 5px;
+            padding: 10px;
+            flex-shrink: 0;
+            flex-grow: 1;
+            background: #000000;
+            border-radius: 10px;
+            color: #b3b3b3;
+            transition: all 0.3s ease-in-out;
 
-                &:not(.is-active) .u-title {
-                    .size(17px, 42px);
-                }
-                &:not(.is-active) .u-subtitle {
+            &:not(.is-active) .u-title {
+                .size(17px, 42px);
+            }
+            &:not(.is-active) {
+                .u-subtitle,
+                .u-icon {
                     display: none;
                 }
+            }
 
-                &.is-active {
-                    transition: flex-grow 0.3s ease-in-out;
-                    flex-grow: 1.4;
-                    background: #7650f8;
-                    color: white;
-                    flex-direction: column;
-                    justify-content: flex-start;
-                    align-items: flex-start;
+            &.is-active {
+                transition: flex-grow 0.3s ease-in-out;
+                flex-grow: 1.4;
+                background: #7650f8;
+                color: white;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
 
-                    .u-title {
-                        .fz(30px, 40px);
-                    }
+                .u-title {
+                    .fz(30px, 40px);
+                }
 
-                    .u-subtitle {
-                        .fz(16px, 21px);
-                    }
+                .u-subtitle {
+                    .fz(16px, 21px);
                 }
             }
+        }
+
+        .u-icon {
+            .size(20px);
         }
     }
 }

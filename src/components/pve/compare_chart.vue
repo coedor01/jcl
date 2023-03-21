@@ -1,14 +1,28 @@
 <template>
     <div class="m-compare-chart w-card">
-        <div class="w-card-title">伤害曲线</div>
-        <div class="u-chart">
-            <v-chart ref="echart" theme="dark" :option="option" autoresize />
-        </div>
+        <template v-if="yData.length === 0">
+            <empty-guide
+                :rotate="-90"
+                position="flex-start"
+                to="row"
+                text-align="left"
+                :tips="['在左侧选择单位后', '此处会展示单位的数值曲线']"
+                :grow="false"
+            ></empty-guide>
+        </template>
+        <template v-else>
+            <div class="w-card-title">伤害曲线</div>
+            <div class="u-chart">
+                <v-chart ref="echart" theme="dark" :option="option" autoresize />
+            </div>
+        </template>
     </div>
 </template>
 
 <script>
 import VChart from "vue-echarts";
+
+import EmptyGuide from "@/components/common/empty_guide.vue";
 
 import { mapState } from "pinia";
 import { useStore } from "@/store";
@@ -19,6 +33,7 @@ export default {
     name: "CompareChart",
     components: {
         VChart,
+        EmptyGuide,
     },
     data() {
         return {};

@@ -1,17 +1,17 @@
 <template>
     <div class="m-entity-skill-detail u-card">
         <template v-if="!detail">
-            <div class="u-empty" :class="`u-empty__${type}`">
-                <img class="u-empty__icon" src="@/assets/img/common/circle_arrow.svg" />
-                <template v-if="type === 'effect'">
-                    <div>在上方选择一条记录后</div>
-                    <div>此处会展示该次技能释放的所有详细数据</div>
-                </template>
-                <div v-else-if="type === 'target'">
-                    <div>在右侧选择一个目标后</div>
-                    <div>此处会展示该次技能释放的所有详细数据</div>
-                </div>
-            </div>
+            <empty-guide
+                v-if="type === 'effect'"
+                :tips="['在上方选择一条记录后', '此处会展示该次技能释放的所有详细数据']"
+            ></empty-guide>
+            <empty-guide
+                v-else-if="type === 'target'"
+                to="row-reverse"
+                :rotate="90"
+                text-align="right"
+                :tips="['在右侧选择一个目标后', '此处会展示该次技能释放的所有详细数据']"
+            ></empty-guide>
         </template>
         <template v-else>
             <div class="u-left">
@@ -86,6 +86,7 @@
 </template>
 
 <script setup>
+import EmptyGuide from "@/components/common/empty_guide.vue";
 import { getEntityName, displayDigits, getResourceIcon, getResourceName, getMountIcon } from "@/utils/common";
 import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
@@ -116,35 +117,8 @@ const { currentPage, currentData, total } = usePaginate(buffs, pageSize);
         margin: 0;
     }
 
-    .u-empty {
-        .flex-center;
-        .fz(20px, 36px);
-        .bold;
-        flex-grow: 1;
-        color: #b0acba;
-    }
-
-    .u-empty__icon {
+    .m-empty-guide {
         filter: brightness(1.5);
-        .size(95px, 95px);
-    }
-
-    .u-empty__effect {
-        flex-grow: 1;
-        flex-direction: column;
-        .u-empty__icon {
-            .mb(32px);
-        }
-    }
-
-    .u-empty__target {
-        flex-grow: 1;
-        flex-direction: row-reverse;
-        text-align: right;
-        .u-empty__icon {
-            .to-right;
-            .ml(32px);
-        }
     }
 
     & > div:not(.u-empty) {

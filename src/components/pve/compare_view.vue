@@ -7,90 +7,58 @@
             </div>
         </div>
         <div class="u-skills w-card">
-            <div class="w-card-title">技能列表</div>
-            <el-table
-                class="u-table"
-                :data="currentData"
-                :border="false"
-                @sort-change="sortSkill"
-                @row-click="selectSkill"
-                :row-class-name="rowClass"
+            <empty-guide
+                v-if="currentData.length === 0"
+                :rotate="index === 1 ? 0 : -45"
+                to="row"
+                text-align="left"
+                :tips="
+                    index === 1
+                        ? ['在上方选择单位后', '此处会展示第一个单位的技能列表']
+                        : ['在左上方选择单位后', '此处会展示第二个单位的技能列表']
+                "
             >
-                <el-table-column label="图标" width="48" :align="'center'">
-                    <template #default="{ row }">
-                        <div class="u-effect-icon">
-                            <img :src="getResourceIcon(row.effect)" alt="" />
-                        </div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="招式" width="200">
-                    <template #default="{ row }">
-                        <span :title="getResourceName(row.effect, { showID: true })">{{
-                            getResourceName(row.effect, { showID: true })
-                        }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="count" label="次数" width="60" sortable="custom"></el-table-column>
-                <el-table-column prop="value" label="数值" width="160" sortable="custom">
-                    <template #default="{ row }">
-                        <span>{{ row.value }}</span>
-                        <span> ({{ displayPercent(row.valueRate) }})</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="critRate" label="会心" width="100" sortable="custom">
-                    <template #default="{ row }">
-                        <span>{{ row.criticalCount }}</span>
-                        <span> ({{ displayPercent(row.criticalRate) }})</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="avg" label="平均值" width="100" sortable="custom">
-                    <template #default="{ row }">
-                        <span>{{ displayDigits(row.avg) }}</span>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <el-pagination
-                class="w-pagination"
-                small
-                background
-                layout="pager"
-                :page-size="pageSize"
-                :total="total"
-                :hide-on-single-page="true"
-                :current-page="currentPage"
-                @update:currentPage="currentPage = $event"
-            ></el-pagination>
-        </div>
-        <div class="u-skill-more">
-            <div class="u-skill-logs w-card">
-                <div v-if="effect" class="w-card-title">招式 {{ getResourceName(effect) }} 的结算记录</div>
-                <div v-else class="w-card-title">-</div>
+            </empty-guide>
+            <template v-else>
+                <div class="w-card-title">技能列表</div>
                 <el-table
                     class="u-table"
-                    :data="currentLogData"
+                    :data="currentData"
                     :border="false"
-                    :row-class-name="logRowClass"
-                    @row-click="selectLog"
+                    @sort-change="sortSkill"
+                    @row-click="selectSkill"
+                    :row-class-name="rowClass"
                 >
-                    <el-table-column prop="index" label="#" align="center" :width="40"></el-table-column>
-                    <el-table-column label="时间" width="60">
+                    <el-table-column label="图标" width="48" :align="'center'">
                         <template #default="{ row }">
-                            <span>{{ displayDigits(row.micro / 1000) + "s" }}</span>
+                            <div class="u-effect-icon">
+                                <img :src="getResourceIcon(row.effect)" alt="" />
+                            </div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="目标" width="70">
+                    <el-table-column label="招式" width="200">
                         <template #default="{ row }">
-                            <span>{{ getEntityName(row.target) }}</span>
+                            <span :title="getResourceName(row.effect, { showID: true })">{{
+                                getResourceName(row.effect, { showID: true })
+                            }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="实际数值" width="100">
+                    <el-table-column prop="count" label="次数" width="60" sortable="custom"></el-table-column>
+                    <el-table-column prop="value" label="数值" width="160" sortable="custom">
                         <template #default="{ row }">
                             <span>{{ row.value }}</span>
+                            <span> ({{ displayPercent(row.valueRate) }})</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="会心" width="50">
+                    <el-table-column prop="critRate" label="会心" width="100" sortable="custom">
                         <template #default="{ row }">
-                            <span>{{ row.isCritical ? "会心" : "-" }}</span>
+                            <span>{{ row.criticalCount }}</span>
+                            <span> ({{ displayPercent(row.criticalRate) }})</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="avg" label="平均值" width="100" sortable="custom">
+                        <template #default="{ row }">
+                            <span>{{ displayDigits(row.avg) }}</span>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -99,85 +67,151 @@
                     small
                     background
                     layout="pager"
-                    :page-size="logPageSize"
-                    :total="totalLog"
+                    :page-size="pageSize"
+                    :total="total"
                     :hide-on-single-page="true"
-                    :current-page="currentLogPage"
-                    @update:currentPage="currentLogPage = $event"
+                    :current-page="currentPage"
+                    @update:currentPage="currentPage = $event"
                 ></el-pagination>
-            </div>
-            <div class="u-skill-detail u-card" :class="`u-index-${index}`">
-                <div class="u-top">
-                    <div class="u-card-title">技能详情</div>
-                    <div class="u-effect-infos" v-if="detail">
-                        <div class="u-effect-info">
-                            <span>招式：</span>
-                            <img :src="getResourceIcon(detail.effect)" />
-                            <span>{{ getResourceName(detail.effect, { showID: true }) }}</span>
-                        </div>
-                        <div class="u-effect-info">
-                            <span>来源：</span>
-                            <img :src="getMountIcon(detail.caster)" />
-                            <span>{{ getEntityName(detail.caster) }}#{{ detail.caster }}</span>
-                        </div>
-                        <div class="u-effect-info">
-                            <span>施展次数：</span>
-                            <span>第 {{ detail.index }} 次</span>
-                        </div>
-                        <div class="u-effect-info">
-                            <span>施展时间：</span>
-                            <span>{{ displayDigits(detail.micro / 1000) }} s</span>
-                        </div>
-                        <div class="u-effect-info">
-                            <span>实际数值：</span>
-                            <span>{{ detail.value }}</span>
-                        </div>
-                        <div class="u-effect-info">
-                            <span>目标：</span>
-                            <img :src="getMountIcon(detail.target)" />
-                            <span>{{ getEntityName(detail.target) }}#{{ detail.target }}</span>
-                        </div>
-                        <div class="u-effect-info">
-                            <span>备注：</span>
-                            <span v-if="detail.isCritical">会心</span>
-                            <span v-else> - </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-card">
-                    <div class="w-card-title">携带BUFF列表</div>
-                    <div class="u-buff-list">
-                        <div
-                            v-for="(buff, index) in currentBuffData"
-                            :key="index"
-                            class="u-buff"
-                            :title="getResourceName('buff:' + buff.split('*')[0], { showID: true })"
-                        >
-                            <img class="u-buff-icon" :src="getResourceIcon('buff:' + buff.split('*')[0])" />
-                            <span class="u-buff-stack">{{ buff.split("*")[1] }}</span>
-                            <span class="u-buff-name">{{
-                                getResourceName("buff:" + buff.split("*")[0], { showID: true })
-                            }}</span>
-                        </div>
-                    </div>
+            </template>
+        </div>
+        <div class="u-skill-more">
+            <div class="u-skill-logs w-card">
+                <empty-guide
+                    v-if="currentLogData.length === 0"
+                    :tips="['在上方选择一个技能后', '此处会展示该技能的所有记录']"
+                >
+                </empty-guide>
+                <template v-else>
+                    <div v-if="effect" class="w-card-title">招式 {{ getResourceName(effect) }} 的结算记录</div>
+                    <div v-else class="w-card-title">-</div>
+                    <el-table
+                        class="u-table"
+                        :data="currentLogData"
+                        :border="false"
+                        :row-class-name="logRowClass"
+                        @row-click="selectLog"
+                    >
+                        <el-table-column prop="index" label="#" align="center" :width="40"></el-table-column>
+                        <el-table-column label="时间" width="60">
+                            <template #default="{ row }">
+                                <span>{{ displayDigits(row.micro / 1000) + "s" }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="目标" width="70">
+                            <template #default="{ row }">
+                                <span>{{ getEntityName(row.target) }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="实际数值" width="100">
+                            <template #default="{ row }">
+                                <span>{{ row.value }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="会心" width="50">
+                            <template #default="{ row }">
+                                <span>{{ row.isCritical ? "会心" : "-" }}</span>
+                            </template>
+                        </el-table-column>
+                    </el-table>
                     <el-pagination
                         class="w-pagination"
                         small
                         background
                         layout="pager"
-                        :page-size="buffPageSize"
-                        :total="totalBuff"
+                        :page-size="logPageSize"
+                        :total="totalLog"
                         :hide-on-single-page="true"
-                        :current-page="currentBuffPage"
-                        @update:currentPage="currentBuffPage = $event"
+                        :current-page="currentLogPage"
+                        @update:currentPage="currentLogPage = $event"
                     ></el-pagination>
-                </div>
+                </template>
+            </div>
+            <div class="u-skill-detail u-card" :class="`u-index-${index}`">
+                <empty-guide
+                    v-if="!detail"
+                    :rotate="index === 1 ? -90 : 90"
+                    :tips="
+                        index === 1
+                            ? ['在左侧选择一个技能后', '展示技能的所有详细数据']
+                            : ['在右侧选择一个技能后', '展示技能的所有详细数据']
+                    "
+                >
+                </empty-guide>
+                <template v-else>
+                    <div class="u-top">
+                        <div class="u-card-title">技能详情</div>
+                        <div class="u-effect-infos" v-if="detail">
+                            <div class="u-effect-info">
+                                <span>招式：</span>
+                                <img :src="getResourceIcon(detail.effect)" />
+                                <span>{{ getResourceName(detail.effect, { showID: true }) }}</span>
+                            </div>
+                            <div class="u-effect-info">
+                                <span>来源：</span>
+                                <img :src="getMountIcon(detail.caster)" />
+                                <span>{{ getEntityName(detail.caster) }}#{{ detail.caster }}</span>
+                            </div>
+                            <div class="u-effect-info">
+                                <span>施展次数：</span>
+                                <span>第 {{ detail.index }} 次</span>
+                            </div>
+                            <div class="u-effect-info">
+                                <span>施展时间：</span>
+                                <span>{{ displayDigits(detail.micro / 1000) }} s</span>
+                            </div>
+                            <div class="u-effect-info">
+                                <span>实际数值：</span>
+                                <span>{{ detail.value }}</span>
+                            </div>
+                            <div class="u-effect-info">
+                                <span>目标：</span>
+                                <img :src="getMountIcon(detail.target)" />
+                                <span>{{ getEntityName(detail.target) }}#{{ detail.target }}</span>
+                            </div>
+                            <div class="u-effect-info">
+                                <span>备注：</span>
+                                <span v-if="detail.isCritical">会心</span>
+                                <span v-else> - </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-card">
+                        <div class="w-card-title">携带BUFF列表</div>
+                        <div class="u-buff-list">
+                            <div
+                                v-for="(buff, index) in currentBuffData"
+                                :key="index"
+                                class="u-buff"
+                                :title="getResourceName('buff:' + buff.split('*')[0], { showID: true })"
+                            >
+                                <img class="u-buff-icon" :src="getResourceIcon('buff:' + buff.split('*')[0])" />
+                                <span class="u-buff-stack">{{ buff.split("*")[1] }}</span>
+                                <span class="u-buff-name">{{
+                                    getResourceName("buff:" + buff.split("*")[0], { showID: true })
+                                }}</span>
+                            </div>
+                        </div>
+                        <el-pagination
+                            class="w-pagination"
+                            small
+                            background
+                            layout="pager"
+                            :page-size="buffPageSize"
+                            :total="totalBuff"
+                            :hide-on-single-page="true"
+                            :current-page="currentBuffPage"
+                            @update:currentPage="currentBuffPage = $event"
+                        ></el-pagination>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
+import EmptyGuide from "@/components/common/empty_guide.vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import {
@@ -304,7 +338,6 @@ const selectSkill = (row) => {
         logs.value.forEach((item, index) => {
             item.index = index + 1;
         });
-        detail.value = logs.value[0];
     }
 };
 const sortSkill = ({ prop, order }) => {
@@ -324,7 +357,7 @@ const selectLog = (row) => {
     detail.value = row;
 };
 const logRowClass = ({ row }) => {
-    return row.index === detail.value.index ? "is-focus" : "";
+    return row.index === detail.value?.index ? "is-focus" : "";
 };
 //watch
 watch(
@@ -339,205 +372,5 @@ watch(
 </script>
 
 <style lang="less">
-.m-compare-view {
-    --compare-view-color-primary-1: #1474c3;
-    --compare-view-color-secondary-1: #2b4b66;
-    --compare-view-color-primary-2: #a50852;
-    --compare-view-color-secondary-2: #633d4f;
-
-    &.u-index-1 {
-        .u-overview {
-            border: 4px solid var(--compare-view-color-primary-1);
-        }
-
-        .u-card {
-            background: var(--compare-view-color-secondary-1);
-        }
-
-        .u-table .el-table__header-wrapper {
-            background-color: var(--compare-view-color-primary-1);
-        }
-    }
-
-    &.u-index-2 {
-        .u-overview {
-            border: 4px solid var(--compare-view-color-primary-2);
-        }
-
-        .u-card {
-            background: var(--compare-view-color-secondary-2);
-        }
-
-        .u-table .el-table__header-wrapper {
-            background-color: var(--compare-view-color-primary-2);
-        }
-
-        .u-skill-more {
-            flex-direction: row-reverse;
-        }
-    }
-
-    .u-overview {
-        .size(650px, 89px);
-        padding: 0 30px;
-        background: #24292e;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-evenly;
-
-        .u-overview-item {
-            .fz(14px, 18px);
-            .bold;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            color: white;
-        }
-    }
-
-    .u-skills {
-        .mt(20px);
-        height: 360px;
-    }
-
-    .u-skills .u-table {
-        flex-grow: 1;
-
-        .u-effect-icon {
-            .flex-center;
-            img {
-                .size(23px);
-            }
-        }
-        .el-table__row {
-            cursor: pointer;
-        }
-        .el-table__row.is-focus {
-            .el-table__cell:first-of-type {
-                div.cell {
-                    background: transparent;
-                }
-            }
-
-            .el-table__cell:nth-of-type(2) {
-                div.cell {
-                    border-radius: 6px 0 0 6px;
-                }
-            }
-        }
-    }
-
-    .u-compare-table {
-        flex-grow: 1;
-    }
-
-    .u-skill-logs {
-        .size(320px, 405px);
-    }
-
-    .u-skill-more {
-        display: flex;
-        gap: 20px;
-        .mt(20px);
-
-        .w-card {
-            padding-bottom: 5px;
-        }
-
-        .u-table {
-            flex-grow: 1;
-        }
-
-        .w-pagination {
-            justify-content: center;
-        }
-    }
-
-    .u-card {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        .size(310px, 410px);
-        padding: 20px 20px 0 20px;
-        border-radius: 20px;
-
-        .u-card-title {
-            .fz(14px, 18px);
-            color: #b3b3b3;
-            margin: 0;
-        }
-
-        & > .u-top {
-            flex-shrink: 0;
-            height: 200px;
-        }
-
-        & > .w-card {
-            flex-grow: 1;
-            border-radius: 20px 20px 0 0;
-            padding: 10px 10px 5px 10px;
-        }
-    }
-
-    .u-effect-infos {
-        .bold;
-        .fz(14px, 24px);
-        .color(white);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        padding: 10px 0;
-        height: 160px;
-
-        .u-effect-info {
-            display: flex;
-            align-items: center;
-            .ellipsis;
-
-            img {
-                .size(24px);
-                .mr(8px);
-            }
-        }
-    }
-
-    .u-buff-list {
-        flex-grow: 1;
-        display: flex;
-        align-content: flex-start;
-        flex-wrap: wrap;
-        gap: 10px;
-        color: #b3b3b3;
-        .fz(12px, 16px);
-        .bold;
-        .u-buff {
-            .size(120px, 18px);
-            flex-grow: 1;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            position: relative;
-            white-space: nowrap;
-
-            .u-buff-icon {
-                .size(24px);
-                .mr(4px);
-                display: block;
-            }
-
-            .u-buff-stack {
-                position: absolute;
-                left: 14px;
-                top: 10px;
-                color: white;
-            }
-
-            .u-buff-name {
-                .ellipsis;
-            }
-        }
-    }
-}
+@import "@/assets/css/pve/compare_view.less";
 </style>

@@ -6,45 +6,42 @@
             <div class="u-right">
                 <!-- 候选列表，切换当前选择单位的组件 -->
                 <entity-tabs></entity-tabs>
-                <div class="u-right-bottom">
-                    <div class="w-card">
-                        <template v-if="!entity">
-                            <empty-guide
-                                to="row"
-                                :rotate="-90"
-                                text-align="left"
-                                position="flex-start"
-                                align="flex-end"
-                                :tips="['在左侧选择一个实体后', '此处会展示该实体的六个维度分析']"
+                <div class="w-card">
+                    <template v-if="!entity">
+                        <empty-guide
+                            to="row"
+                            :rotate="-90"
+                            text-align="left"
+                            position="flex-start"
+                            align="flex-end"
+                            :tips="['在左侧选择一个单位后', '此处会展示该单位的六个维度分析']"
+                        >
+                        </empty-guide>
+                    </template>
+                    <template v-else>
+                        <!-- 切换伤害/治疗/BUFF分析 -->
+                        <div class="m-type-tabs">
+                            <div
+                                class="u-tab"
+                                v-for="(tab, index) in tabs"
+                                :key="index"
+                                :class="{ 'is-active': entityTab == tab.name }"
+                                @click="switchTab(tab.name)"
                             >
-                            </empty-guide>
+                                <span>{{ tab.title }}</span>
+                            </div>
+                        </div>
+                        <template v-if="entityTab === 'buff'">
+                            <entity-buff-table></entity-buff-table>
+                        </template>
+                        <template v-else-if="entityTab === 'skill'">
+                            <entity-skill-chart></entity-skill-chart>
                         </template>
                         <template v-else>
-                            <!-- 切换伤害/治疗/BUFF分析 -->
-                            <div class="m-type-tabs">
-                                <div
-                                    class="u-tab"
-                                    v-for="(tab, index) in tabs"
-                                    :key="index"
-                                    :class="{ 'is-active': entityTab == tab.name }"
-                                    @click="switchTab(tab.name)"
-                                >
-                                    <span>{{ tab.title }}</span>
-                                </div>
-                            </div>
-                            <template v-if="entityTab === 'buff'">
-                                <entity-buff-table></entity-buff-table>
-                            </template>
-                            <template v-else-if="entityTab === 'skill'">
-                                <entity-skill-chart></entity-skill-chart>
-                            </template>
-                            <template v-else>
-                                <!-- 单位图表以及总览 -->
-                                <entity-chart></entity-chart>
-                            </template>
+                            <!-- 单位图表以及总览 -->
+                            <entity-chart></entity-chart>
                         </template>
-                    </div>
-                    <entity-skill-filter v-if="entityTab === 'skill'"></entity-skill-filter>
+                    </template>
                 </div>
             </div>
         </div>
@@ -67,30 +64,26 @@
                         按目标显示
                     </div>
                 </div>
-                <!-- 下面的面板 -->
-                <keep-alive>
-                    <component :is="typeComponent[viewType]"></component>
-                </keep-alive>
+                <component :is="typeComponent[viewType]"></component>
             </template>
         </div>
     </div>
 </template>
 
 <script setup>
-import { toRefs } from "vue";
+import { toRefs, defineAsyncComponent } from "vue";
 import { usePve } from "@/store/pve";
 
 import EmptyGuide from "@/components/common/empty_guide.vue";
-import EntityTabs from "./entity_tabs.vue";
-import EntitySelect from "./entity_select.vue";
-import EntityChart from "./entity_view_chart.vue";
-import EntityViewSkill from "./entity_view_effect.vue";
-import EntityViewTarget from "./entity_view_target.vue";
-import EntityBuffTable from "./entity_buff_table.vue";
-import EntityBuffChart from "./entity_buff_chart.vue";
-import EntitySkillChart from "./entity_skill_chart.vue";
-import EntitySkillTimeline from "./entity_skill_timeline.vue";
-import EntitySkillFilter from "./entity_skill_filter.vue";
+const EntityTabs = defineAsyncComponent(() => import("./entity_tabs.vue"));
+const EntitySelect = defineAsyncComponent(() => import("./entity_select.vue"));
+const EntityChart = defineAsyncComponent(() => import("./entity_view_chart.vue"));
+const EntityViewSkill = defineAsyncComponent(() => import("./entity_view_effect.vue"));
+const EntityViewTarget = defineAsyncComponent(() => import("./entity_view_target.vue"));
+const EntityBuffTable = defineAsyncComponent(() => import("./entity_buff_table.vue"));
+const EntityBuffChart = defineAsyncComponent(() => import("./entity_buff_chart.vue"));
+const EntitySkillChart = defineAsyncComponent(() => import("./entity_skill_chart.vue"));
+const EntitySkillTimeline = defineAsyncComponent(() => import("./entity_skill_timeline.vue"));
 
 const typeComponent = {
     effect: EntityViewSkill,
@@ -163,16 +156,10 @@ const switchTab = (tab) => {
         height: 480px;
     }
 
-    .u-right-bottom {
+    .u-right > .w-card {
         flex-grow: 1;
         display: flex;
         gap: 20px;
-
-        & > .w-card:first-of-type {
-            flex-grow: 1;
-            gap: 10px;
-            min-width: 0;
-        }
     }
 
     .m-type-tabs {

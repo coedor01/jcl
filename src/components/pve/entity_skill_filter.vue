@@ -64,6 +64,7 @@ import { useStore } from "@/store";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { toRefs, watch, ref } from "vue";
 import { getRandomColor, getResource } from "@/utils/common";
+import { cloneDeep } from "lodash";
 
 const { entity, selectedSkills } = toRefs(usePve());
 const store = useStore();
@@ -91,13 +92,15 @@ const updateData = () => {
                 name,
                 ids: [id],
                 color: colorGenerator.next().value,
+                icon: resource.icon,
             };
             selectedSkills.value[name] = {
                 name,
                 ...result[name],
-                stat: ["cast", "hit", "miss"],
+                stat: [],
             };
         } else {
+            if (!result[name].icon) result[name].icon = resource.icon;
             result[name].ids.push(id);
             selectedSkills.value[name].ids.push(id);
         }
@@ -133,9 +136,11 @@ watch(
     [entity, () => store.result],
     () => {
         updateData();
-        for (let d of data.value.slice(3)) {
-            click(d, { no: 0 });
+        let skill = cloneDeep(selectedSkills.value);
+        for (let d of data.value.slice(0, 3)) {
+            skill[d.name].stat = ["cast", "hit", "miss"];
         }
+        selectedSkills.value = skill;
     },
     { immediate: true }
 );
@@ -143,7 +148,8 @@ watch(
 
 <style lang="less">
 .m-entity-skill-filters {
-    width: 270px;
+    .size(230px, 370px);
+    border: 1px solid #2d3236;
     flex-shrink: 0;
 
     .u-table {

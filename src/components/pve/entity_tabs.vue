@@ -54,6 +54,7 @@ const remove = (id) => {
     align-items: center;
     gap: 20px;
     .mb(20px);
+    flex-shrink: 0;
     height: 48px;
 
     .u-lists {

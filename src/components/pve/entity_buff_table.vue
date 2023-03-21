@@ -180,10 +180,11 @@ watch(
 .m-entity-buff-table {
     display: flex;
     flex-direction: column;
+
     flex-grow: 1;
 
     .u-table {
-        height: 298px;
+        flex-grow: 1;
         .u-buff-icon {
             .size(18px);
             .db;

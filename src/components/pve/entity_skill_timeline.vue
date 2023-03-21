@@ -8,12 +8,20 @@
                 <el-radio-button :label="45">每行45s</el-radio-button>
                 <el-radio-button :label="60">每行60s</el-radio-button>
             </el-radio-group>
+            <div class="u-setting-trigger">
+                <el-icon><Setting /></el-icon>
+                选择需要观察的技能
+                <entity-skill-filter class="u-setting-poper"></entity-skill-filter>
+            </div>
         </div>
-        <canvas-timeline :data="data" :time="time" :linetime="linetime"></canvas-timeline>
+        <div class="u-canvas-wrapper">
+            <canvas-timeline :data="data" :time="time" :linetime="linetime"></canvas-timeline>
+        </div>
     </div>
 </template>
 
 <script setup>
+import EntitySkillFilter from "./entity_skill_filter.vue";
 import CanvasTimeline from "../common/canvas_timeline.vue";
 
 import { computed, toRefs, ref } from "vue";
@@ -90,6 +98,7 @@ const data = computed(() => {
     .w-card-title {
         display: flex;
         align-items: center;
+        justify-content: space-between;
 
         .u-title {
             .mr(20px);
@@ -105,6 +114,43 @@ const data = computed(() => {
     .el-radio-button .el-radio-button__inner {
         border: none;
         background-color: transparent;
+    }
+
+    .u-setting-trigger {
+        .pr;
+        .flex-center;
+        .pointer;
+        gap: 4px;
+        color: #a798e6;
+    }
+
+    .u-setting-trigger:hover {
+        .u-setting-poper {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+
+    .u-setting-poper {
+        // 悬浮效果
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0.15s, opacity 0.15s linear;
+
+        // 定位
+        .pa;
+        bottom: calc(100% + 42px);
+        right: -20px;
+
+        z-index: 20;
+    }
+
+    .u-canvas-wrapper {
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-height: 1200px;
+        height: auto;
+        .scrollbar(#131517, 10px);
     }
 }
 </style>

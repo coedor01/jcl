@@ -1,6 +1,6 @@
 <template>
     <div class="m-timeline-wrapper" :style="{ height: `${height}px` }" ref="wrapper">
-        <canvas id="timeline-canvas" :height="height" :width="width"></canvas>
+        <canvas id="timeline-canvas"></canvas>
         <div ref="tooltip" class="u-tooltip">
             <div class="u-tooltip-item" v-for="(v, k) in tooltipData" :key="k">
                 <span>{{ k }}: </span>
@@ -166,7 +166,7 @@ export default {
         moveTooltip: function (pointer, height) {
             const tooltip = this.$refs.tooltip;
             let x = Math.max(0, Math.min(pointer.x - 80, 960));
-            let y = pointer.y - height - 48;
+            let y = Math.max(60, pointer.y - height - 48);
             tooltip.style.left = x + "px";
             tooltip.style.top = y + "px";
         },
@@ -196,6 +196,7 @@ export default {
 <style lang="less">
 .m-timeline-wrapper {
     max-width: 1440px;
+    overflow: hidden;
     position: relative;
     .u-tooltip {
         position: absolute;

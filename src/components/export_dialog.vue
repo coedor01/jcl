@@ -27,6 +27,7 @@ import { Loading, CircleCheckFilled, CircleCloseFilled, Checked } from "@element
 import { ref } from "vue";
 import { useStore } from "@/store";
 import { saveAs } from "file-saver";
+import ExportWorker from "@/utils/workers/export.worker.js";
 
 const store = useStore();
 
@@ -55,7 +56,7 @@ const updateStatus = (desc, status, processing) => {
 const start = () => {
     clearProgress();
     const filename = (store.file ? store.file.name : store.info?.title) + "-JX3BOX-Export.csv";
-    exporter.value = new Worker(new URL("../utils/workers/export.worker.js", import.meta.url));
+    exporter.value = new ExportWorker();
     exporter.value.onmessage = (e) => {
         const { type, data } = e.data;
         if (type === "statusUpdated") {

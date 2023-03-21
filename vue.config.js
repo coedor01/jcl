@@ -68,13 +68,13 @@ module.exports = {
         types.forEach((type) => addStyleResource(config.module.rule("less").oneOf(type)));
 
         //💖 worker loader
-        // config.module
-        //     .rule("worker-loader")
-        //     .test(/\.worker\.js$/)
-        //     .use("worker-loader")
-        //     .loader("worker-loader")
-        //     .options({ inline: "fallback" })
-        //     .end();
+        config.module
+            .rule("worker")
+            .test(/\.worker\.js$/)
+            .use("worker-loader")
+            .loader("worker-loader")
+            .options({ inline: "fallback" })
+            .end();
     },
 };
 

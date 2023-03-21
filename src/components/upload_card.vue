@@ -67,6 +67,7 @@ import { ElMessage } from "element-plus";
 import { useStore } from "@/store";
 import { ref, onMounted, computed } from "vue";
 import OSS from "ali-oss";
+import PakoWorker from "@/utils/workers/pako.worker.js";
 
 const store = useStore();
 
@@ -86,7 +87,7 @@ const form = ref({
 const deflatedData = ref(null);
 const deflateProgress = ref(-1);
 const deflate = () => {
-    const worker = new Worker(new URL("../utils/workers/pako.worker.js", import.meta.url));
+    const worker = new PakoWorker();
     worker.onmessage = (e) => {
         const {
             data: { type, data },

@@ -2,7 +2,7 @@
  * @Author: X3ZvaWQ x3zvawq@gmail.com
  * @Date: 2023-03-22 09:38:41
  * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
- * @LastEditTime: 2023-03-22 15:29:52
+ * @LastEditTime: 2023-03-22 16:18:43
  * @FilePath: /jcl/src/utils/commonNoStore.js
  * @Description:
  */
@@ -83,7 +83,7 @@ export function getEntity(id, store) {
 
 export function getEntityName(id, store, { showID = false, showOrder = false } = {}) {
     const entity = getEntity(id, store);
-    if (!entity) return "天外来客";
+    if (!entity || !entity.id) return "天外来客";
     if (!entity.name) return `#${entity.id}`;
     let result = entity.name;
 

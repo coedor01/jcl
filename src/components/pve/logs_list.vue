@@ -1,7 +1,7 @@
 <template>
     <div class="m-logs-list w-card" v-loading="loading">
         <div class="w-card-title">列表</div>
-        <el-table class="u-table" :data="currentData" :border="false" :fit="true">
+        <el-table class="u-table" :data="currentData" :border="false">
             <el-table-column prop="index" label="#" width="60"> </el-table-column>
             <el-table-column label="时间" width="60">
                 <template #default="{ row }">
@@ -51,9 +51,15 @@
                     {{ row.remark }}
                 </template>
             </el-table-column>
-            <el-table-column v-if="logDebug" width="24">
+            <el-table-column width="24">
                 <template #default="{ row }">
-                    <el-button @click="consoleLog(row)" size="mini" link :icon="InfoFilled"></el-button>
+                    <el-button
+                        v-show="logDebug"
+                        @click="consoleLog(row)"
+                        size="small"
+                        link
+                        :icon="InfoFilled"
+                    ></el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -97,6 +103,8 @@ const updateData = () => {
         loading.value = false;
     });
 };
+const throttleUpdateData = throttle(updateData, 1000);
+
 defineExpose({ updateData });
 
 // 组件方法
@@ -112,7 +120,7 @@ watch(
     logFilter,
     () => {
         if (logAutoApply.value) {
-            throttle(updateData, 1000)();
+            throttleUpdateData();
         }
     },
     { deep: true, immediate: true }

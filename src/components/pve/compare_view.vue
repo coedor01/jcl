@@ -242,7 +242,7 @@ const data = ref([]);
 const pageSize = ref(8);
 const { currentData, currentPage, total } = usePaginate(data, pageSize);
 // 技能日志列表
-const logPageSize = ref(12);
+const logPageSize = ref(9);
 const { currentData: currentLogData, currentPage: currentLogPage, total: totalLog } = usePaginate(logs, logPageSize);
 // 技能详情
 const buffPageSize = ref(8);

@@ -2,7 +2,7 @@
  * @Author: X3ZvaWQ x3zvawq@gmail.com
  * @Date: 2023-03-22 08:47:25
  * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
- * @LastEditTime: 2023-03-22 15:35:39
+ * @LastEditTime: 2023-03-22 16:00:19
  * @FilePath: /jcl/src/components/pve/entity_view_log.vue
 -->
 
@@ -120,8 +120,8 @@ const pageSize = computed(() => {
     return 9;
 });
 const columnWidth = computed(() => {
-    if (viewType.value === "target") return [48, 60, 36, 240, 112, 64];
-    return [42, 54, 120, 120, 90, 36];
+    if (viewType.value === "target") return [48, 64, 36, 240, 118, 64];
+    return [42, 54, 100, 146, 90, 36];
 });
 const { total, currentPage, currentData } = usePaginate(data, pageSize);
 

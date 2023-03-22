@@ -33,7 +33,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="招式" width="168">
+                    <el-table-column label="招式" width="180">
                         <template #default="{ row }">
                             <span :title="getResourceName(row.effect, { showID: true })">{{
                                 getResourceName(row.effect, { showID: true })
@@ -41,7 +41,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="count" label="次数" width="80" sortable="custom"></el-table-column>
-                    <el-table-column prop="value" label="数值" width="156" sortable="custom">
+                    <el-table-column prop="value" label="数值" width="158" sortable="custom">
                         <template #default="{ row }">
                             <span>{{ row.value }}</span>
                             <span> ({{ displayPercent(row.valueRate) }})</span>

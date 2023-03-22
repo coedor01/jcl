@@ -1,6 +1,6 @@
 <template>
     <div class="p-jcl">
-        <common-header></common-header>
+        <jcl-header></jcl-header>
         <router-view />
         <nav-helper></nav-helper>
     </div>
@@ -8,10 +8,10 @@
 
 <script>
 import NavHelper from "@/components/nav_helper.vue";
-import CommonHeader from "@/components/header/common_header.vue";
+import JclHeader from "@/components/header/jcl_header.vue";
 export default {
     name: "App",
-    components: { CommonHeader, NavHelper },
+    components: { JclHeader, NavHelper },
     data: function () {
         return {};
     },

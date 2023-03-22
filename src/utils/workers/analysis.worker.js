@@ -1,3 +1,11 @@
+/*
+ * @Author: X3ZvaWQ x3zvawq@gmail.com
+ * @Date: 2023-02-27 20:19:49
+ * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
+ * @LastEditTime: 2023-03-22 11:02:49
+ * @FilePath: /jcl/src/utils/workers/analysis.worker.js
+ * @Description:
+ */
 import { Analyzer } from "@/utils/analyzer";
 import { getResource as _getResourceFromApi } from "@/services/resource.js";
 import { uniq } from "lodash-es";
@@ -59,7 +67,7 @@ onmessage = async ({ data: { action, data } }) => {
         const { raw, params } = data;
         analyzer = new Analyzer(raw, params);
         updateResult("init", true);
-    } else if (action == "getAll") {
+    } else if (action == "get_all") {
         const counter = analyzer.getAll();
         let finished = false;
         while (!finished) {
@@ -75,6 +83,8 @@ onmessage = async ({ data: { action, data } }) => {
                 updateResult("all", value);
             }
         }
-    } /*  else if (action == "step") {
-    } */
+    } else {
+        const methodName = action.replace(/_([a-z])/g, (_, p1) => p1.toUpperCase());
+        postMessage(analyzer[methodName](data));
+    }
 };

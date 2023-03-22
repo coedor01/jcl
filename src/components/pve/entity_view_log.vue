@@ -1,3 +1,11 @@
+<!--
+ * @Author: X3ZvaWQ x3zvawq@gmail.com
+ * @Date: 2023-03-22 08:47:25
+ * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
+ * @LastEditTime: 2023-03-22 15:35:39
+ * @FilePath: /jcl/src/components/pve/entity_view_log.vue
+-->
+
 <template>
     <div class="m-entity-skill-log w-card">
         <template v-if="currentData.length === 0">
@@ -82,7 +90,8 @@
 
 <script setup>
 import EmptyGuide from "@/components/common/empty_guide.vue";
-import { getResource, getEntityName, displayDigits, getResourceIcon, getResourceName } from "@/utils/common";
+import { displayDigits } from "@/utils/commonNoStore";
+import { getResource, getEntityName, getResourceIcon, getResourceName } from "@/utils/common";
 import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { usePve } from "@/store/pve";

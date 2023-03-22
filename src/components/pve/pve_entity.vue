@@ -154,12 +154,12 @@ const switchTab = (tab) => {
         flex-direction: column;
         width: 1060px;
         height: 480px;
-    }
 
-    .u-right > .w-card {
-        flex-grow: 1;
-        display: flex;
-        gap: 20px;
+        & > .w-card {
+            flex-grow: 1;
+            display: flex;
+            gap: 20px;
+        }
     }
 
     .m-type-tabs {

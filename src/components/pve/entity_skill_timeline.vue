@@ -35,6 +35,7 @@ const { end } = store.result;
 const time = computed(() => end.sec + 10);
 const linetime = ref(15);
 const data = computed(() => {
+    console.time("111");
     const source = store.result.skill?.[entity.value]?.logs;
     if (!source) return [];
     if (!source) return [];
@@ -89,6 +90,8 @@ const data = computed(() => {
         content: "战斗结束",
         time: end.sec ?? result[result.length - 1].time + 2,
     });
+    console.timeEnd("111");
+
     return result;
 });
 </script>
@@ -148,7 +151,7 @@ const data = computed(() => {
     .u-canvas-wrapper {
         overflow-y: auto;
         overflow-x: hidden;
-        max-height: 1200px;
+        max-height: 800px;
         height: auto;
         .scrollbar(#131517, 10px);
     }

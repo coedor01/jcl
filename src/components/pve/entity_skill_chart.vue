@@ -1,7 +1,7 @@
 <template>
     <div class="m-entity-skill-chart">
         <v-chart v-if="categories.length" autoresize theme="dark" :option="option"></v-chart>
-        <span class="u-empty" v-else>右侧选择需要查看的技能</span>
+        <span class="u-empty" v-else>请在下方选择需要查看的技能</span>
     </div>
 </template>
 

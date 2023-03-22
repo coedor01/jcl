@@ -1,12 +1,12 @@
 <template>
-    <div class="c-header" :class="{ isOverlay: isOverlay }">
-        <div class="c-header-inner">
-            <div class="c-header-inner__left">
-                <a class="c-header-logo" href="/jcl">
+    <div class="c-jcl-header" :class="{ isOverlay: isOverlay }">
+        <div class="c-jcl-header-inner">
+            <div class="c-jcl-header-inner__left">
+                <a class="c-jcl-header-logo" href="/jcl">
                     <img class="u-img" src="@/assets/img/battle.svg" />
                     <span class="u-name">战斗分析</span>
                 </a>
-                <div class="c-header-nav">
+                <div class="c-jcl-header-nav">
                     <template v-for="(nav, index) in navs" :key="index">
                         <router-link v-if="nav.enable" class="u-nav" :to="{ name: nav.name }">
                             {{ nav.title }}
@@ -17,7 +17,7 @@
                     </template>
                 </div>
             </div>
-            <div class="c-header-user">
+            <div class="c-jcl-header-user">
                 <template v-if="isLogin">
                     <div class="u-user">
                         <img class="u-avatar" :src="userdata?.avatar" />
@@ -33,7 +33,7 @@
                 </template>
 
                 <a class="u-login" v-else :href="login_url">登录|注册</a>
-                <router-link class="u-upload" to="/analysis">分析数据</router-link>
+                <router-link class="u-analysis" to="/analysis">分析数据</router-link>
             </div>
         </div>
     </div>
@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style lang="less">
-.c-header {
+.c-jcl-header {
     width: 100%;
     height: 100px;
     position: fixed;
@@ -109,7 +109,7 @@ export default {
         background-color: rgba(0, 0, 0, 0.8);
     }
 }
-.c-header-inner {
+.c-jcl-header-inner {
     .flex;
     justify-content: space-between;
     margin: auto;
@@ -117,12 +117,12 @@ export default {
     height: 100%;
     padding: 10px 30px;
 }
-.c-header-inner__left {
+.c-jcl-header-inner__left {
     .flex;
     align-items: center;
     gap: 30px;
 }
-.c-header-logo {
+.c-jcl-header-logo {
     .flex-center;
     gap: 10px;
     .u-img {
@@ -157,7 +157,7 @@ export default {
     border-radius: 50px;
 }
 
-.c-header-nav {
+.c-jcl-header-nav {
     .flex;
     gap: 30px;
 
@@ -178,7 +178,7 @@ export default {
     }
 }
 
-.c-header-user {
+.c-jcl-header-user {
     .flex;
     align-items: center;
 
@@ -188,14 +188,12 @@ export default {
             color: @pink;
         }
     }
-
-    .u-upload {
+    .u-analysis {
         background-color: #fa5fa6;
         color: #fff;
         .header-button();
         .ml(20px);
     }
-
     .u-user {
         .flex;
         align-items: center;

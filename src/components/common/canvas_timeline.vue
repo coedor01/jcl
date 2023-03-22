@@ -133,6 +133,7 @@ export default {
         },
         render: function () {
             if (!this.canvas) return;
+            console.time("render");
             this.canvas.setDimensions({
                 width: this.width,
                 height: this.height,
@@ -140,6 +141,7 @@ export default {
             this.canvas.clear();
             this.renderLines();
             this.renderItems();
+            console.timeEnd("render");
         },
         initCanvas: function () {
             this.canvas = new fabric.Canvas("timeline-canvas", {

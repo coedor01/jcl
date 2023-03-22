@@ -87,7 +87,8 @@
 
 <script setup>
 import EmptyGuide from "@/components/common/empty_guide.vue";
-import { getEntityName, displayDigits, getResourceIcon, getResourceName, getMountIcon } from "@/utils/common";
+import { getEntityName, getResourceIcon, getResourceName, getMountIcon } from "@/utils/common";
+import { displayDigits } from "@/utils/commonNoStore";
 import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { usePve } from "@/store/pve";

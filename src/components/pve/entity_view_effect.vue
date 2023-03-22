@@ -1,6 +1,6 @@
 <template>
     <div class="m-entity-view-effect">
-        <div class="u-left w-card">
+        <div class="u-left w-card" v-loading="loading">
             <template v-if="currentData.length === 0">
                 <empty-guide
                     text-align="left"
@@ -11,7 +11,13 @@
                 ></empty-guide>
             </template>
             <template v-else>
-                <div class="w-card-title">技能列表</div>
+                <div class="w-card-title">
+                    <span>技能列表</span>
+                    <span v-if="currentWindow" class="u-window-tip">
+                        当前查看的是 {{ currentWindow - 5 }} ~ {{ currentWindow }} 之间的记录
+                        <div class="u-clear-window" @click="currentWindow = null">×</div>
+                    </span>
+                </div>
                 <el-table
                     class="u-table"
                     :data="currentData"
@@ -69,7 +75,7 @@
             </template>
         </div>
         <div class="u-right">
-            <entity-skill-log :logs="logs"></entity-skill-log>
+            <entity-skill-log></entity-skill-log>
             <entity-skill-log-detail></entity-skill-log-detail>
         </div>
     </div>
@@ -81,73 +87,43 @@ import { ref, watch, toRefs } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
-import { displayDigits, displayPercent, getResourceIcon, getResourceName } from "@/utils/common";
+import { getResourceIcon, getResourceName } from "@/utils/common";
+import { displayDigits, displayPercent } from "@/utils/commonNoStore";
+import getWorkerResponse from "@/utils/worker";
 
 import EntitySkillLog from "./entity_view_log.vue";
 import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
 const store = useStore();
-const { entityTab, entity, currentWindow, effect, logs, log: detail } = toRefs(usePve());
-
-// data
-const data = ref([]);
-const pageSize = ref(22);
-const { currentPage, currentData, total } = usePaginate(data, pageSize);
+const { entityTab, entity, currentWindow, effect, logs, log } = toRefs(usePve());
 
 // 行点击事件
 const click = (row) => {
     if (effect.value === row.effect) return;
     effect.value = row.effect;
     logs.value = row.logs;
+    log.value = row.logs[0];
 };
 // 行样式
 const rowClass = ({ row }) => {
     return effect.value === row.effect ? "is-focus" : "";
 };
-// 更新数据方法
+// 数据相关
+const loading = ref(false);
+const data = ref([]);
+const pageSize = ref(22);
+const { currentPage, currentData, total } = usePaginate(data, pageSize);
 const updateData = () => {
-    const { stats } = store.result;
-    const source =
-        currentWindow.value === null
-            ? stats[entityTab.value]?.[entity.value]?.all
-            : stats[entityTab.value]?.[entity.value]?.windows?.[currentWindow.value];
-    if (!source) {
-        data.value = [];
-        return;
-    }
-    let result = {};
-
-    let total = 0;
-    for (let detail of source.details) {
-        //这个target不一定是目标的ID，在承伤/承疗的时候表现为来源ID
-        const effect = detail.effect;
-        if (!result[effect])
-            result[effect] = {
-                count: 0, // 伤害次数
-                criticalCount: 0, //会心次数
-                value: 0, //总伤害量
-                min: 1e10, //最小伤害值
-                max: -1e10, //最大伤害值
-                logs: [], // 详细伤害日志
-            };
-        result[effect].count++;
-        result[effect].value += detail.value;
-        total += detail.value;
-        result[effect].min = Math.min(result[effect].min, detail.value);
-        result[effect].max = Math.max(result[effect].max, detail.value);
-        if (detail.isCritical) result[effect].criticalCount++;
-        result[effect].logs.push(detail);
-    }
-    for (let effect in result) {
-        let r = result[effect];
-        r.criticalRate = (r.criticalCount / r.count) * 100;
-        r.valueRate = (r.value / total) * 100;
-        r.avg = r.value / r.count;
-        r.effect = effect;
-    }
-    data.value = Object.values(result);
-    data.value = data.value.sort((a, b) => b.value - a.value);
+    loading.value = true;
+    getWorkerResponse("get_pve_entity_view_effect", {
+        entityTab: entityTab.value,
+        entity: entity.value,
+        currentWindow: currentWindow.value,
+    }).then((result) => {
+        data.value = result;
+        loading.value = false;
+    });
 };
 const sort = ({ prop, order }) => {
     data.value = data.value.sort((a, b) => {
@@ -166,9 +142,6 @@ watch(
     [() => store.result, currentWindow, entity, entityTab],
     () => {
         updateData();
-        effect.value = data.value[0]?.effect;
-        logs.value = data.value[0]?.logs;
-        detail.value = logs.value?.[0];
     },
     { immediate: true }
 );
@@ -180,6 +153,18 @@ watch(
     gap: 20px;
     width: 1440px;
     & > .u-left {
+        .w-card-title {
+            display: flex;
+            gap: 40px;
+        }
+        .u-window-tip {
+            .flex-center;
+            gap: 8px;
+        }
+        .u-clear-window {
+            .pointer;
+        }
+
         .size(900px, 800px);
 
         .u-table {

@@ -1,5 +1,5 @@
 <template>
-    <div class="m-compare-view" :class="`u-index-${index}`">
+    <div class="m-compare-view" :class="`u-index-${index}`" v-loading="loading">
         <div class="u-overview">
             <div v-for="(item, index) in overview" :key="index" class="u-overview-item">
                 <span>{{ item.title }}</span>
@@ -212,19 +212,12 @@
 
 <script setup>
 import EmptyGuide from "@/components/common/empty_guide.vue";
-import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
-import {
-    displayDigits,
-    displayDuration,
-    displayPercent,
-    getResourceIcon,
-    getResourceName,
-    getMountIcon,
-    getEntityName,
-} from "@/utils/common";
+import { getResourceIcon, getResourceName, getMountIcon, getEntityName } from "@/utils/common";
+import { displayDigits, displayPercent } from "@/utils/commonNoStore";
 import { toRefs, ref, computed, watch } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
+import getWorkerResponse from "@/utils/worker";
 // props
 const props = defineProps({
     index: {
@@ -233,13 +226,18 @@ const props = defineProps({
     },
 });
 const { index } = toRefs(props);
-
+const { compareEntity, compareMode } = toRefs(usePve());
+const entity = computed(() => {
+    return compareEntity.value[index.value - 1];
+});
 // data
+const loading = ref(false);
 const effect = ref(null);
 const logs = ref([]);
 const detail = ref(null);
 
 // 技能列表
+const overview = ref([]);
 const data = ref([]);
 const pageSize = ref(8);
 const { currentData, currentPage, total } = usePaginate(data, pageSize);
@@ -258,72 +256,19 @@ const {
     total: totalBuff,
 } = usePaginate(buff, buffPageSize);
 
-// computed
-const { compareEntity, compareMode } = toRefs(usePve());
-const { result } = toRefs(useStore());
-const entity = computed(() => compareEntity.value[index.value - 1]);
-const source = computed(() => result.value?.stats?.[compareMode.value]?.[entity.value]?.all);
-const overview = computed(() => {
-    if (!source.value) return;
-    const fightTime = result.value.end.sec;
-    const displayTime = displayDuration(fightTime);
-    return [
-        {
-            title: "战斗时长",
-            value: displayTime,
-        },
-        {
-            title: "总次数",
-            value: source.value.count,
-        },
-        {
-            title: "总伤害",
-            value: source.value.value ? source.value.value.toLocaleString() : 0,
-        },
-        {
-            title: "每秒数值",
-            value: displayDigits(source.value.value / fightTime),
-        },
-        {
-            title: "会心率",
-            value: displayPercent((source.value.criticalCount / source.value.count) * 100),
-        },
-    ];
-});
-
-// methods
 const updateData = () => {
-    if (!source.value || !source.value.details) return [];
-    let result = {};
-    for (let detail of source.value.details) {
-        const effect = detail.effect;
-        if (!result[effect]) {
-            result[effect] = {
-                count: 0, // 伤害次数
-                criticalCount: 0, //会心次数
-                value: 0, //总伤害量
-                min: 1e10, //最小伤害值
-                max: 1e-10, //最大伤害值
-                logs: [], // 详细伤害日志
-                effect,
-            };
-        }
-        result[effect].count++;
-        result[effect].value += detail.value;
-        result[effect].min = Math.min(result[effect].min, detail.value);
-        result[effect].max = Math.max(result[effect].max, detail.value);
-        result[effect].logs.push(detail);
-        if (detail.isCritical) result[effect].criticalCount++;
-    }
-    result = Object.values(result).sort((a, b) => b.value - a.value);
-    //计算结果->给表格展示的数据
-    for (let res of result) {
-        res.criticalRate = (res.criticalCount / res.count) * 100;
-        res.valueRate = (res.value / source.value.value) * 100;
-        res.avg = res.value / res.count;
-    }
-    data.value = result;
+    loading.value = true;
+    getWorkerResponse("get_pve_compare", {
+        compareMode: compareMode.value,
+        entity: entity.value,
+    }).then((res) => {
+        data.value = res.data;
+        overview.value = res.overview;
+        loading.value = false;
+    });
 };
+
+// 各种表格交互/样式
 const rowClass = ({ row }) => {
     return row.effect === effect.value ? "is-focus" : "";
 };
@@ -361,7 +306,7 @@ const logRowClass = ({ row }) => {
 };
 //watch
 watch(
-    [source, entity],
+    [compareMode, entity],
     () => {
         updateData();
     },

@@ -68,7 +68,8 @@ import { ref, computed, toRefs } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
-import { displayDigits, getEntityName } from "@/utils/common";
+import { getEntityName } from "@/utils/common";
+import { displayDigits } from "@/utils/commonNoStore";
 const store = useStore();
 
 // 单位过滤器相关
@@ -129,7 +130,7 @@ const { currentPage, currentData, total } = usePaginate(data, pageSize);
 const selectEntity = (row) => {
     if (entityList.value.includes(row.id)) {
         entityList.value = entityList.value.filter((id) => id !== row.id);
-        if (entity.value?.id === row.id) entity.value = null;
+        if (entity.value === row.id) entity.value = null;
     } else {
         entityList.value.push(row.id);
         entity.value = row.id;

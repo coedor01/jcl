@@ -2,6 +2,7 @@
     <div class="m-overview-list">
         <p class="u-title">单位详情</p>
         <el-table
+            v-loading="loading"
             class="u-table"
             :data="currentData"
             :border="false"
@@ -58,16 +59,19 @@
 <script setup>
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
-import { getMountIcon, getEntityName, displayDigits, displayPercent } from "@/utils/common";
+import { getMountIcon, getEntityName } from "@/utils/common";
+import { displayDigits, displayPercent } from "@/utils/commonNoStore";
 import { usePaginate } from "@/utils/uses/usePaginate";
 
 import { ref, watch, toRefs } from "vue";
-import { pick, sortBy } from "lodash-es";
+import { sortBy } from "lodash-es";
+import getWorkerResponse from "@/utils/worker";
 
 const global = usePve();
 const store = useStore();
 
 // 数据
+const loading = ref(false);
 const data = ref([]);
 const { focusEntities, statType } = toRefs(global);
 const { currentPage, currentData, total } = usePaginate(data, ref(25));
@@ -96,41 +100,20 @@ const rowClass = ({ row }) => {
     }
     return "";
 };
+const updateData = () => {
+    loading.value = true;
+    getWorkerResponse("get_pve_overview_list", { statType: statType.value }).then((result) => {
+        loading.value = false;
+        data.value = result;
+        sort({ prop: "value", order: "descending" });
+        currentPage.value = 1;
+    });
+};
 // watch
 watch(
     [() => store.result, statType],
     () => {
-        const { entities, stats, end } = store.result;
-        if (!stats) return [];
-        const source = stats[statType.value];
-        if (!source) return [];
-        let result = [];
-        let teamTotal = 0;
-        let maxValue = 0;
-        for (let entity in source) {
-            let entityData = {
-                ...pick(source[entity].all, ["count", "value", "max", "min", "criticalCount"]),
-                ...pick(entities[entity], ["name", "id", "mount"]),
-            };
-            entityData.vps = entityData.value / end.sec;
-            if (entityData.mount) {
-                teamTotal += entityData.value;
-                maxValue = Math.max(maxValue, entityData.value);
-            }
-            result.push(entityData);
-        }
-        for (let entity of result) {
-            if (entity.mount) {
-                entity["rate"] = (entity.value / teamTotal) * 100;
-                entity["length"] = (entity.value / maxValue) * 100;
-            } else {
-                entity["rate"] = 0;
-                entity["length"] = 0;
-            }
-        }
-        data.value = result;
-        sort({ prop: "value", order: "descending" });
-        currentPage.value = 1;
+        updateData();
     },
     { immediate: true }
 );

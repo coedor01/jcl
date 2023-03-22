@@ -1,17 +1,20 @@
 <template>
-    <div class="m-entity-chart">
-        <div class="u-chart">
-            <v-chart ref="echart" theme="dark" :option="option" autoresize />
-        </div>
-        <div class="u-overview">
-            <span v-if="overview.name" class="u-overview-item">{{ overview.name }}</span>
-            <span class="u-overview-item">ID {{ overview.id }}</span>
-            <span class="u-overview-item">参战时长 {{ displayDuration(overview.duration) }}</span>
-            <span class="u-overview-item">总次数 {{ overview.count || "-" }}</span>
-            <span class="u-overview-item">总数值 {{ overview.value || "-" }}</span>
-            <span class="u-overview-item">每秒数值 {{ displayDigits(overview.vps) }}</span>
-            <span class="u-overview-item">会心率 {{ displayPercent(overview.critRate) }}</span>
-        </div>
+    <div class="m-entity-chart" v-loading="loading">
+        <div v-if="xData.length === 0" class="u-empty-tip">该单位没有相关数据</div>
+        <template v-else>
+            <div class="u-chart">
+                <v-chart ref="echart" theme="dark" :option="option" autoresize @click="handleChartClick" />
+            </div>
+            <div class="u-overview">
+                <span v-if="overview.name" class="u-overview-item">{{ overview.name }}</span>
+                <span class="u-overview-item">ID {{ overview.id }}</span>
+                <span class="u-overview-item">参战时长 {{ displayDuration(overview.duration) }}</span>
+                <span class="u-overview-item">总次数 {{ overview.count || "-" }}</span>
+                <span class="u-overview-item">总数值 {{ overview.value || "-" }}</span>
+                <span class="u-overview-item">每秒数值 {{ displayDigits(overview.vps) }}</span>
+                <span class="u-overview-item">会心率 {{ displayPercent(overview.critRate) }}</span>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -19,58 +22,23 @@
 import { graphic } from "echarts/core";
 import VChart from "vue-echarts";
 
-import { computed, toRefs } from "vue";
-import { displayDuration, displayDigits, displayPercent, getEntityColor } from "@/utils/common";
-import { pick } from "lodash-es";
+import { computed, toRefs, ref, watch } from "vue";
+import { getEntityColor } from "@/utils/common";
+import { displayDuration, displayDigits, displayPercent } from "@/utils/commonNoStore";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
+import getWorkerResponse from "@/utils/worker";
 const store = useStore();
 
-const { entity, entityTab } = toRefs(usePve());
-
-const overview = computed(() => {
-    const { entities, stats, end } = store.result;
-    const entityObj = entities[entity.value];
-    let result = { ...pick(entityObj, ["name", "id"]) };
-    const stat = stats[entityTab.value];
-    const source = stat[entity.value]?.all;
-    if (!source) return result;
-    const duration = end.sec;
-    const vps = source.value / duration;
-    const critRate = source.criticalCount / source.count;
-    const displayValue = source.value ? source.value.toLocaleString() : "-";
-    return {
-        ...result,
-        ...pick(source, ["count"]),
-        value: displayValue,
-        duration,
-        vps,
-        critRate,
-    };
-}, [store.result]);
+const { entity, entityTab, currentWindow } = toRefs(usePve());
 
 const entityColor = computed(() => getEntityColor(entity.value));
-// 横轴数据
-const chartData = computed(() => {
-    const source = store.result.stats?.[entityTab.value]?.[entity.value]?.windows;
-    const { end } = store.result;
-    if (!source) return [];
-    // 构造横轴
-    let xData = [];
-    let max = Math.ceil(end.sec / 5) * 5;
-    let min = 0;
-    while (min <= max) {
-        xData.push(min);
-        min += 5;
-    }
-    // 构造纵轴
-    let yData = [];
-    for (let x of xData) {
-        let y = source[x]?.value / 5 || 0;
-        yData.push(y);
-    }
-    return { xData, yData };
-}, [store.result]);
+
+// 图表数据处理、更新
+const loading = ref(false);
+const overview = ref([]);
+const xData = ref([]);
+const yData = ref([]);
 const option = computed(() => {
     return {
         grid: {
@@ -90,7 +58,7 @@ const option = computed(() => {
         xAxis: {
             type: "category",
             boundaryGap: [0.1, 0.1],
-            data: chartData.value.xData,
+            data: xData.value,
             triggerEvent: true,
         },
         yAxis: {
@@ -118,11 +86,33 @@ const option = computed(() => {
                         },
                     ]),
                 },
-                data: chartData.value.yData,
+                data: yData.value,
             },
         ],
     };
 });
+const updateData = () => {
+    loading.value = true;
+    getWorkerResponse("get_pve_entity_stat_chart", {
+        entity: entity.value,
+        entityTab: entityTab.value,
+    }).then((data) => {
+        xData.value = data.xData;
+        yData.value = data.yData;
+        overview.value = data.overview;
+        loading.value = false;
+    });
+};
+watch([entity, entityTab, () => store.result], updateData, { immediate: true });
+
+// 表格点击事件
+const handleChartClick = (e) => {
+    if (e.targetType == "axisLabel") {
+        currentWindow.value = e.value;
+    } else if (e.componentSubType == "line") {
+        currentWindow.value = xData.value[e.dataIndex];
+    }
+};
 </script>
 
 <style lang="less" scoped>
@@ -141,6 +131,13 @@ const option = computed(() => {
         justify-content: space-around;
         color: #8b96a2;
         .fz(14px, 18px);
+    }
+
+    .u-empty-tip {
+        flex-grow: 1;
+        .flex-center;
+        .bold;
+        color: #b3b3b3;
     }
 }
 </style>

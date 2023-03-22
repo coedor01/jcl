@@ -1,14 +1,15 @@
 <template>
-    <div class="m-overview-chart">
+    <div class="m-overview-chart" v-loading="loading">
         <v-chart ref="echart" theme="dark" :option="option" autoresize @legendselectchanged="handleSelect" />
     </div>
 </template>
 
 <script setup>
 import VChart from "vue-echarts";
-import { computed, toRefs } from "vue";
+import { computed, ref, toRefs, watch } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
+import getWorkerResponse from "@/utils/worker";
 
 const store = useStore();
 const global = usePve();
@@ -23,73 +24,9 @@ const focusNames = computed(() => {
         return entity.name ?? "#" + entity.id;
     });
 });
-// 横轴数据
-const xData = computed(() => {
-    let result = [];
-    const { end } = store.result;
-    if (!end) return result;
-    let max = Math.ceil(end.sec / 5) * 5;
-    let min = 0;
-    while (min <= max) {
-        result.push(min);
-        min += 5;
-    }
-    return result;
-}, [store.result]);
-// 纵轴数据
-const yData = computed(() => {
-    let result = {};
-    const defaultSeries = {
-        type: "line",
-        smooth: true,
-        showSymbol: false,
-    };
-    const { entities, stats } = store.result;
-    const source = stats?.[statType.value];
-    if (!source) return [];
-    // 已有数据的统计
-    for (let id in source) {
-        if (!entities[id]) continue;
-        const { name, color } = entities[id];
-        if (!name || id == 0) continue;
-        if (result[name]) {
-            // 同名单位，合并数据
-            let newData = [];
-            for (let x of xData.value) newData.push(result[name].data[x] + source[id].windows[x]?.value ?? 0);
-            result[name].data = newData;
-            result[name].total += source[id].all.value;
-        } else {
-            // 新单位，纳入统计
-            let newData = [];
-            for (let x of xData.value) newData.push(source[id].windows[x]?.value ?? 0);
-            result[name] = {
-                ...defaultSeries,
-                itemStyle: { color },
-                name,
-                data: newData,
-                total: source[id].all.value,
-            };
-        }
-    }
-    result = Object.values(result).filter((item) => item.data.some((v) => v > 0));
-    // 全局统计
-    let r = {
-        ...defaultSeries,
-        name: "【全局】",
-        data: [],
-    };
-    let datas = result.map((item) => item.data);
-    for (let i = 0; i < xData.value.length; i++) {
-        let sum = 0;
-        for (let d of datas) {
-            if (Number(d[i])) sum += d[i];
-        }
-        r.data.push(sum);
-    }
-    result.unshift(r);
-    result.sort((a, b) => b.total - a.total);
-    return result;
-}, [store.result, statType]);
+const loading = ref(false);
+const xData = ref([]);
+const yData = ref([]);
 // legend的名字
 const legendNames = computed(() => {
     return yData.value.map((x) => x.name);
@@ -145,6 +82,16 @@ const handleSelect = ({ name, selected }) => {
         focusEntities.value = focusEntities.value.filter((x) => !ids.includes(x));
     }
 };
+
+const updateData = () => {
+    loading.value = true;
+    getWorkerResponse("get_pve_overview_chart", { statType: statType.value }).then((data) => {
+        xData.value = data.xData;
+        yData.value = data.yData;
+        loading.value = false;
+    });
+};
+watch([() => store.result, statType], updateData, { immediate: true });
 </script>
 
 <style lang="less" scoped>

@@ -1,5 +1,5 @@
 <template>
-    <div class="m-compare-chart w-card">
+    <div class="m-compare-chart w-card" v-loading="loading">
         <template v-if="yData.length === 0">
             <empty-guide
                 :rotate="-90"
@@ -25,9 +25,9 @@ import VChart from "vue-echarts";
 import EmptyGuide from "@/components/common/empty_guide.vue";
 
 import { mapState } from "pinia";
-import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
-import { getEntityColor, getEntityName } from "@/utils/common";
+import getWorkerResponse from "@/utils/worker";
+import { cloneDeep } from "lodash";
 
 export default {
     name: "CompareChart",
@@ -35,50 +35,13 @@ export default {
         VChart,
         EmptyGuide,
     },
-    data() {
-        return {};
-    },
+    data: () => ({
+        loading: false,
+        xData: [],
+        yData: [],
+    }),
     computed: {
         ...mapState(usePve, ["compareEntity", "compareMode"]),
-        ...mapState(useStore, ["result"]),
-        xData() {
-            let result = [];
-            const end = this.result?.end?.sec ?? 180;
-            const max = Math.ceil(end / 5) * 5;
-            let min = 0;
-            while (min <= max) {
-                result.push(min);
-                min += 5;
-            }
-            return result;
-        },
-        yData() {
-            const defaultSeries = {
-                type: "line",
-                smooth: true,
-                showSymbol: false,
-            };
-            const result = [];
-            const type = this.compareMode;
-            const source = this.result?.stats?.[type];
-            for (let id of this.compareEntity) {
-                if (!id) continue;
-                const name = getEntityName(id);
-                const color = getEntityColor(id);
-                let data = [];
-                const windows = source?.[id]?.windows;
-                for (let x of this.xData) {
-                    data.push(windows?.[x]?.value ?? 0);
-                }
-                result.push({
-                    name,
-                    data,
-                    ...defaultSeries,
-                    itemStyle: { color },
-                });
-            }
-            return result;
-        },
         option() {
             return {
                 backgroundColor: "transparent",
@@ -109,6 +72,34 @@ export default {
                 ],
                 series: this.yData,
             };
+        },
+    },
+    methods: {
+        updateData() {
+            this.loading = true;
+            getWorkerResponse("get_pve_compare_chart", {
+                compareEntity: cloneDeep(this.compareEntity),
+                compareMode: this.compareMode,
+            }).then((result) => {
+                this.xData = result.xData;
+                this.yData = result.yData;
+                this.loading = false;
+            });
+        },
+    },
+    watch: {
+        compareEntity: {
+            handler() {
+                this.updateData();
+            },
+            immediate: true,
+            deep: true,
+        },
+        compareMode: {
+            handler() {
+                this.updateData();
+            },
+            immediate: true,
         },
     },
 };

@@ -37,7 +37,7 @@ import { ref, computed, onMounted, toRefs } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { getMaps, getBannerIndex } from "@/services/img";
-import { displayDuration, displayBigNumber } from "@/utils/common";
+import { displayDuration, displayBigNumber } from "@/utils/commonNoStore";
 import { moment } from "@jx3box/jx3box-common/js/moment";
 import jx3box_url from "@jx3box/jx3box-common/data/jx3box.json";
 import { useRouter } from "vue-router";

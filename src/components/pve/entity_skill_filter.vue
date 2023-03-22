@@ -1,5 +1,5 @@
 <template>
-    <div class="m-entity-skill-filters w-card">
+    <div class="m-entity-skill-filters w-card" v-loading="loading">
         <div class="w-card-title">技能统计设置</div>
         <el-table class="u-table" :data="currentData" :border="false" @cell-click="click">
             <el-table-column label="招式" :width="100">
@@ -63,49 +63,28 @@ import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { toRefs, watch, ref } from "vue";
-import { getRandomColor, getResource } from "@/utils/common";
-import { cloneDeep } from "lodash";
+import getWorkerResponse from "@/utils/worker";
 
 const { entity, selectedSkills } = toRefs(usePve());
 const store = useStore();
 
+const loading = ref(false);
 const data = ref([]);
 const pageSize = ref(8);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
 
 // 获取可供选择的数据
 const updateData = () => {
-    selectedSkills.value = {};
-    const source = store.result.skill?.[entity.value]?.skills;
-    if (!source) {
-        data.value = [];
-        return;
-    }
-    const colorGenerator = getRandomColor();
-    let result = {};
-    for (let id in source) {
-        const resource = getResource("skill:" + id);
-        if (!resource || !resource.name) continue;
-        const name = resource.name;
-        if (result[name] === undefined) {
-            result[name] = {
-                name,
-                ids: [id],
-                color: colorGenerator.next().value,
-                icon: resource.icon,
-            };
-            selectedSkills.value[name] = {
-                name,
-                ...result[name],
-                stat: [],
-            };
-        } else {
-            if (!result[name].icon) result[name].icon = resource.icon;
-            result[name].ids.push(id);
-            selectedSkills.value[name].ids.push(id);
-        }
-    }
-    data.value = Object.values(result);
+    loading.value = true;
+    getWorkerResponse("get_pve_entity_skill", {
+        entity: entity.value,
+    }).then((result) => {
+        data.value = result.data;
+        const _selected = result.selectedSkills;
+        for (let d of data.value.slice(0, 3)) _selected[d.name].stat = ["cast", "hit", "miss"];
+        selectedSkills.value = _selected;
+        loading.value = false;
+    });
 };
 // 处理用户选中/取消选中
 const click = (row, column) => {
@@ -136,11 +115,6 @@ watch(
     [entity, () => store.result],
     () => {
         updateData();
-        let skill = cloneDeep(selectedSkills.value);
-        for (let d of data.value.slice(0, 3)) {
-            skill[d.name].stat = ["cast", "hit", "miss"];
-        }
-        selectedSkills.value = skill;
     },
     { immediate: true }
 );

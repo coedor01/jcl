@@ -12,7 +12,7 @@
                 条形图上的数字表示层数变化，*号表示非自然消失，鼠标悬浮可查看详细信息
             </div>
         </div>
-        <div class="u-chart">
+        <div class="u-chart" v-loading="loading">
             <v-chart v-if="items.length" autoresize theme="dark" :option="option" class="u-chart"></v-chart>
             <span v-else class="u-empty">上侧选择需要查看的BUFF</span>
         </div>
@@ -22,11 +22,13 @@
 <script setup>
 import { graphic } from "echarts/core";
 import VChart from "vue-echarts";
-import { displayDuration, getEntityName, getRandomColor, getResource, getResourceName } from "@/utils/common";
-import { toRefs, computed } from "vue";
+import { getEntityName } from "@/utils/common";
+import { displayDuration } from "@/utils/commonNoStore";
+import { toRefs, computed, ref, watch } from "vue";
 import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
-import { iconLink } from "@jx3box/jx3box-common/js/utils";
+import getWorkerResponse from "@/utils/worker";
+import { cloneDeep } from "lodash";
 
 const store = useStore();
 const { entity, selectedBuffs } = toRefs(usePve());
@@ -106,65 +108,6 @@ const renderItem = (params, api) => {
     };
 };
 
-const data = computed(() => {
-    const colorGenerator = getRandomColor();
-    const source = store.result.buff?.[entity.value] || {};
-    let result = [];
-    for (let id of selectedBuffs.value) {
-        let buffLogs = source[id]?.logs;
-        if (!buffLogs) continue;
-        result.push({
-            info: {
-                key: id,
-                color: colorGenerator.next().value,
-                ...getResource("buff:" + id),
-            },
-            times: buffLogs,
-        });
-    }
-    return result;
-});
-const iconStyles = computed(() => {
-    let result = {
-        paddingRight: {
-            padding: [0, 10, 0, 0],
-        },
-    };
-    for (let k in data.value) {
-        const info = data.value[k].info;
-        result["icon" + k] = {
-            backgroundColor: {
-                image: iconLink(info.icon),
-            },
-            height: 32,
-            width: 32,
-        };
-    }
-    return result;
-});
-const categories = computed(() => {
-    return data.value.map((item) => getResourceName("buff:" + item.info.key));
-});
-const items = computed(() => {
-    let result = [];
-    let index = 0;
-    for (let { info, times } of data.value) {
-        for (let time of times) {
-            const isDelete = time.end != time.shouldEnd && time.end != end.micro;
-            result.push({
-                index,
-                name: getResourceName("buff:" + info.key),
-                value: [info.key, time.start, time.end, index, JSON.stringify(time.stackLogs), isDelete],
-                detail: time,
-                itemStyle: {
-                    color: info.color,
-                },
-            });
-        }
-        index++;
-    }
-    return result;
-});
 const option = computed(() => ({
     backgroundColor: "transparent",
     theme: "dark",
@@ -231,6 +174,27 @@ const option = computed(() => ({
         },
     ],
 }));
+
+// 数据相关
+const loading = ref(false);
+const data = ref([]);
+const iconStyles = ref({});
+const categories = ref([]);
+const items = ref([]);
+const updateData = () => {
+    loading.value = true;
+    getWorkerResponse("get_pve_entity_buff_chart", {
+        entity: entity.value,
+        selectedBuffs: cloneDeep(selectedBuffs.value),
+    }).then((result) => {
+        data.value = result.data;
+        iconStyles.value = result.iconStyles;
+        categories.value = result.categories;
+        items.value = result.items;
+        loading.value = false;
+    });
+};
+watch([entity, selectedBuffs], updateData, { immediate: true, deep: true });
 </script>
 
 <style lang="less" scoped>

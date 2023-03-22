@@ -81,20 +81,19 @@
 
 <script setup>
 import { iconLink } from "@jx3box/jx3box-common/js/utils";
-import { getResourceName, getResourceIcon, displayPercent, displayDigits } from "@/utils/common";
+import { getResourceName } from "@/utils/common";
+import { displayPercent, displayDigits } from "@/utils/commonNoStore";
 import { ref, toRefs, watch } from "vue";
 import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { sortBy } from "lodash-es";
+import getWorkerResponse from "@/utils/worker";
 
 const store = useStore();
 const { entity, selectedBuffs } = toRefs(usePve());
 
-const data = ref([]);
-const pageSize = ref(8);
-const { currentPage, currentData, total } = usePaginate(data, pageSize);
-
+// 表格样式/交互
 const rowClass = ({ row }) => {
     if (selectedBuffs.value.includes(row.id)) {
         return "is-focus";
@@ -110,44 +109,6 @@ const click = (row) => {
         selectedBuffs.value = sortBy(selectedBuffs.value, (element) => sortList.indexOf(element));
     }
 };
-const updateData = () => {
-    const { buff, end } = store.result;
-    const source = buff[entity.value];
-    if (!source) return [];
-    let result = [];
-    for (let key in source) {
-        const buff = source[key];
-        let getCount = 0;
-        let deleteCount = 0;
-        let maxStack = 0;
-        let maxDuration = Number.MIN_SAFE_INTEGER;
-        let minDuration = Number.MAX_SAFE_INTEGER;
-        let totalDuration = 0;
-        for (let log of buff.logs) {
-            const duration = (log.end - log.start) / 1000;
-            getCount += 1;
-            maxStack = Math.max(maxStack, log.stack, ...Object.values(log.stackLogs ?? {}));
-            maxDuration = Math.max(maxDuration, duration);
-            minDuration = Math.min(minDuration, duration);
-            totalDuration += duration;
-            if (log.end != log.shouldEnd) deleteCount += 1;
-        }
-        let aveDuration = totalDuration / getCount;
-        let coverage = (totalDuration / (end.micro / 1000)) * 100;
-        result.push({
-            id: key,
-            icon: getResourceIcon("buff:" + key, { url: false }),
-            getCount,
-            deleteCount,
-            maxStack,
-            maxDuration,
-            minDuration,
-            aveDuration,
-            coverage,
-        });
-        data.value = result;
-    }
-};
 const sort = ({ prop, order }) => {
     data.value = data.value.sort((a, b) => {
         if (order === "ascending") {
@@ -161,19 +122,27 @@ const sort = ({ prop, order }) => {
         item.index = index++;
     }
 };
-watch(
-    [entity, () => store.result],
-    () => {
-        updateData();
+
+// 数据处理相关
+const loading = ref(false);
+const data = ref([]);
+const pageSize = ref(8);
+const { currentPage, currentData, total } = usePaginate(data, pageSize);
+const updateData = () => {
+    loading.value = true;
+    getWorkerResponse("get_pve_entity_buff", { entity: entity.value }).then((result) => {
+        data.value = result;
         sort({ prop: "icon", order: "descending" });
         if (selectedBuffs.value.length === 0) {
             selectedBuffs.value = data.value.slice(0, 8).map((x) => x.id);
         }
-    },
-    {
-        immediate: true,
-    }
-);
+        loading.value = false;
+    });
+};
+
+watch([entity, () => store.result], updateData, {
+    immediate: true,
+});
 </script>
 
 <style lang="less">

@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useStore } from "@/store/index.js";
 import { usePve } from "@/store/pve.js";
-import { getRandomColor } from "../common.js";
+import { getRandomColor } from "@/utils/commonNoStore";
 import AnalyzerWorker from "@/utils/workers/analysis.worker.js";
 
 export function useAnalysis() {
@@ -42,7 +42,7 @@ export function useAnalysis() {
                     ready.value = true;
                 }
             };
-            worker.postMessage({ action: "getAll" });
+            worker.postMessage({ action: "get_all" });
         });
     };
 

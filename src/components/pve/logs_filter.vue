@@ -200,6 +200,7 @@ onMounted(() => {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+        padding: 5px 0;
     }
 
     .u-select-line {
@@ -297,10 +298,10 @@ onMounted(() => {
         padding: 10px;
         border-radius: 8px;
         transition: all 0.2s ease-in-out;
-        background-color: #0f5773;
+        background-color: #3d454d;
 
         &:hover {
-            filter: brightness(1.5);
+            background-color: #f0b400;
         }
     }
 

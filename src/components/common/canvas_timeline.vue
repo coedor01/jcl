@@ -106,10 +106,10 @@ export default {
                 }
                 const nameText = new fabric.Text(item.content, {
                     fontWeight: "100",
-                    stroke: this.color,
+                    stroke: "#aaa",
                     left: left,
                     top: top - 16,
-                    fontSize: 14,
+                    fontSize: 12,
                     selectable: false,
                 });
                 let digits = {
@@ -123,7 +123,7 @@ export default {
                     stroke: this.color,
                     left: left,
                     top: top + 14,
-                    fontSize: 14,
+                    fontSize: 12,
                     selectable: false,
                 });
                 this.canvas.add(nameText);

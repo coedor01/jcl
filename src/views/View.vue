@@ -8,17 +8,17 @@
                 <div class="m-view-logs">
                     <div v-if="downProgress">
                         <el-icon v-if="downProgress != 100" class="is-loading"> <Loading /> </el-icon>
-                        <el-icon v-else> <Checked /> </el-icon>
+                        <el-icon v-else><Select /></el-icon>
                         下载数据文件
                     </div>
                     <div v-if="inflateProgress">
                         <el-icon v-if="inflateProgress != 100" class="is-loading"> <Loading /> </el-icon>
-                        <el-icon v-else> <Checked /> </el-icon>
+                        <el-icon v-else><Select /></el-icon>
                         解压数据文件
                     </div>
                     <div v-if="inflateProgress === 100">
                         <el-icon v-if="analysisProgress != 100" class="is-loading"> <Loading /> </el-icon>
-                        <el-icon v-else> <Checked /> </el-icon>
+                        <el-icon v-else><Select /></el-icon>
                         分析JCL
                     </div>
                     <div v-if="analysisProgress === 100">

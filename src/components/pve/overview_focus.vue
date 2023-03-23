@@ -86,6 +86,9 @@ watch(
             .fz(24px);
             .size(24px, 24px);
             color: #717273;
+            &:hover {
+                color: #fff;
+            }
         }
     }
 

@@ -10,7 +10,7 @@
             </el-radio-group>
             <div class="u-setting-trigger">
                 <el-icon><Setting /></el-icon>
-                选择需要观察的技能
+                选择技能
                 <entity-skill-filter class="u-setting-poper"></entity-skill-filter>
             </div>
         </div>
@@ -110,7 +110,7 @@ const data = computed(() => {
 
     .el-radio-button.is-active {
         .el-radio-button__inner {
-            background-color: #7650f8;
+            background-color: @light-purple;
             border-radius: 4px;
         }
     }
@@ -124,7 +124,10 @@ const data = computed(() => {
         .flex-center;
         .pointer;
         gap: 4px;
-        color: #a798e6;
+        color: #fff;
+        background-color: @dark-purple;
+        padding: 3px 8px;
+        .r(3px);
     }
 
     .u-setting-trigger:hover {

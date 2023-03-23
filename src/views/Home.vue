@@ -9,8 +9,6 @@
         </div>
         <div class="m-big-battle">
             <img src="@/assets/img/battle.svg" alt="" />
-            <Bottom></Bottom>
-            <Footer></Footer>
         </div>
     </div>
 </template>

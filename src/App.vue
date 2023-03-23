@@ -3,6 +3,7 @@
         <jcl-header></jcl-header>
         <router-view />
         <nav-helper></nav-helper>
+        <Footer></Footer>
     </div>
 </template>
 

@@ -283,6 +283,10 @@ onMounted(() => {
                 filter: brightness(0.8) grayscale(1);
             }
 
+            &:not(.is-active):hover {
+                filter: brightness(0.5);
+            }
+
             .u-tab-icon {
                 .size(45px, 35px);
                 .db;

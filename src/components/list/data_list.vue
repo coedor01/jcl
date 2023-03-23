@@ -279,7 +279,7 @@ watch(
         .color(#BFB0FF);
         display: flex;
         align-items: center;
-        height: 40px;
+        // height: 40px;
 
         &:not(:last-child) {
             border-bottom: 1px solid rgba(191, 176, 255, 0.2);
@@ -344,6 +344,7 @@ watch(
             align-items: center;
             gap: 4px;
             flex-grow: 1;
+            padding: 10px 0;
 
             &:hover {
                 filter: brightness(1.5);

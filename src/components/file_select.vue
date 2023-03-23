@@ -24,17 +24,19 @@
                 ref="upload"
             >
                 <upload-filled class="u-upload-icon" />
-                <div v-if="!store.file.name" class="u-select-file">点击选择文件</div>
+                <div v-if="!store.file.name" class="u-select-file">选择或拖拽文件</div>
                 <div v-else class="u-file-info">
                     <div class="u-upload-filename">{{ store.file.name }}</div>
-                    <div class="u-filemeta">{{ fileType }}</div>
-                    <div class="u-filemeta">{{ fileSize }}</div>
+                    <!-- <div class="u-filemeta">{{ fileType }}</div> -->
+                    <div class="u-filemeta">
+                        文件大小:<b>{{ fileSize }}</b>
+                    </div>
                 </div>
                 <template #tip>
                     <div class="u-upload-help">
                         <el-icon :size="16"><info-filled /></el-icon>
-                        <span>仅支持JCL文件</span>
-                        <a href="/tool/22456" target="_blank"> JCL文件获取指南 </a>
+                        <span>仅支持<b>*.jcl</b>文件</span>
+                        <a href="/tool/22456" target="_blank">获取指南</a>
                     </div>
                 </template>
             </el-upload>
@@ -102,11 +104,11 @@ const fileSize = computed(() => {
         ? (store.file.size / 1024 / 1024).toFixed(2) + " M"
         : (store.file.size / 1024).toFixed(2) + " K";
 });
-const fileType = computed(() => {
-    if (!store.file.name) return;
-    if (store.file.name.endsWith(".jcl")) return "JCL - JX3 Combat Log";
-    return "不支持的文件类型";
-});
+// const fileType = computed(() => {
+//     if (!store.file.name) return;
+//     // if (store.file.name.endsWith(".jcl")) return "JCL - JX3 Combat Log";
+//     return "不支持的文件类型";
+// });
 // event
 const fileChange = (file) => {
     store.file = file.raw;

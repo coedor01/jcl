@@ -197,6 +197,7 @@ export default {
     .u-user {
         .flex;
         align-items: center;
+        justify-content: flex-end;
         gap: 10px;
         .size(160px, 60px);
         .pr;

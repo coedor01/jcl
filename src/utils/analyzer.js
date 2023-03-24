@@ -570,19 +570,19 @@ export class Analyzer {
             },
             {
                 title: "总次数",
-                value: source.value.count,
+                value: source.count,
             },
             {
                 title: "总伤害",
-                value: source.value.value ? source.value.value.toLocaleString() : 0,
+                value: source.value ? source.value.toLocaleString() : 0,
             },
             {
                 title: "每秒数值",
-                value: displayDigits(source.value.value / fightTime),
+                value: displayDigits(source.value / fightTime),
             },
             {
                 title: "会心率",
-                value: displayPercent((source.value.criticalCount / source.value.count) * 100),
+                value: displayPercent((source.criticalCount / source.count) * 100),
             },
         ];
         const data = [];

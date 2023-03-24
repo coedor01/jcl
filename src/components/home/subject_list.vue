@@ -53,7 +53,7 @@ export default {
         types: [
             {
                 icon: require("@/assets/img/home/action.svg"),
-                title: "团队行为分析 ",
+                title: "团队行为分析",
                 tips: "团队成员全时间链行为分析、动作细节",
                 subject: "team",
                 enable: true,
@@ -63,7 +63,7 @@ export default {
                 title: "首领行为分析",
                 tips: "首领与小怪技能类型/数量/伤害/时间轴等分析",
                 subject: "boss",
-                enable: true,
+                enable: false,
             },
             {
                 icon: require("@/assets/img/home/pvp.svg"),

@@ -35,7 +35,6 @@ const { end } = store.result;
 const time = computed(() => end.sec + 10);
 const linetime = ref(15);
 const data = computed(() => {
-    console.time("111");
     const source = store.result.skill?.[entity.value]?.logs;
     if (!source) return [];
     if (!source) return [];
@@ -90,7 +89,6 @@ const data = computed(() => {
         content: "战斗结束",
         time: end.sec ?? result[result.length - 1].time + 2,
     });
-    console.timeEnd("111");
 
     return result;
 });
@@ -145,7 +143,7 @@ const data = computed(() => {
 
         // 定位
         .pa;
-        bottom: calc(100% + 42px);
+        top: calc(100%);
         right: -20px;
 
         z-index: 20;

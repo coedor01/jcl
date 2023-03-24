@@ -29,7 +29,7 @@ const data = computed(() => {
         }
         const name = idNameMap[log.id];
         const selectedSkill = selectedSkills.value[name];
-        if (!selectedSkill || !selectedSkill.stat.includes(log.skillType)) continue;
+        if (!selectedSkill) continue;
         if (!result[name]) {
             result[name] = {
                 color: selectedSkill.color,

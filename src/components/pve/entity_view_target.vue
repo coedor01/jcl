@@ -100,7 +100,7 @@ import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
 const store = useStore();
-const { entityTab, entity, currentWindow, target, logs, log } = toRefs(usePve());
+const { entityTab, entity, currentWindow, target, effect, logs, log } = toRefs(usePve());
 
 // computed
 const targetLabel = computed(() => {
@@ -126,6 +126,10 @@ const pageSize = ref(9);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
 const updateData = () => {
     loading.value = true;
+    target.value = null;
+    effect.value = null;
+    logs.value = [];
+    log.value = null;
     getWorkerResponse("get_pve_entity_view_target", {
         entityTab: entityTab.value,
         entity: entity.value,

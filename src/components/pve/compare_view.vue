@@ -258,6 +258,9 @@ const {
 
 const updateData = () => {
     loading.value = true;
+    effect.value = null;
+    logs.value = [];
+    detail.value = null;
     getWorkerResponse("get_pve_compare", {
         compareMode: compareMode.value,
         entity: entity.value,

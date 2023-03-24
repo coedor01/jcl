@@ -1,6 +1,6 @@
 <template>
     <div class="m-entity-skill-filters w-card" v-loading="loading">
-        <div class="w-card-title">技能统计设置</div>
+        <div class="w-card-title">时间轴绘制设置</div>
         <el-table class="u-table" :data="currentData" :border="false" @cell-click="click">
             <el-table-column label="招式" :width="100">
                 <template #default="{ row }">
@@ -81,7 +81,8 @@ const updateData = () => {
     }).then((result) => {
         data.value = result.data;
         const _selected = result.selectedSkills;
-        for (let d of data.value.slice(0, 3)) _selected[d.name].stat = ["cast", "hit", "miss"];
+        for (let d of data.value) _selected[d.name].stat = ["cast"];
+        for (let d of data.value.slice(0, 1)) _selected[d.name].stat = ["cast", "hit", "miss"];
         selectedSkills.value = _selected;
         loading.value = false;
     });

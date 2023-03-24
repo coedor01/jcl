@@ -105,7 +105,7 @@ const click = (row) => {
         selectedBuffs.value = selectedBuffs.value.filter((id) => id !== row.id);
     } else {
         selectedBuffs.value.push(row.id);
-        const sortList = data.value.map((x) => x.id);
+        const sortList = data.value.map((x) => x.id).reverse();
         selectedBuffs.value = sortBy(selectedBuffs.value, (element) => sortList.indexOf(element));
     }
 };
@@ -130,6 +130,7 @@ const pageSize = ref(8);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
 const updateData = () => {
     loading.value = true;
+    selectedBuffs.value = [];
     getWorkerResponse("get_pve_entity_buff", { entity: entity.value }).then((result) => {
         data.value = result;
         sort({ prop: "icon", order: "descending" });

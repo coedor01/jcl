@@ -26,10 +26,15 @@
                 <upload-filled class="u-upload-icon" />
                 <div v-if="!store.file.name" class="u-select-file">选择或拖拽文件</div>
                 <div v-else class="u-file-info">
-                    <div class="u-upload-filename">{{ store.file.name }}</div>
+                    <div class="u-upload-filename">
+                        <span>{{ store.file.name }}</span>
+                        <span class="u-file-clear" @click.stop="store.file = ''"
+                            ><el-icon><Close></Close></el-icon
+                        ></span>
+                    </div>
                     <!-- <div class="u-filemeta">{{ fileType }}</div> -->
                     <div class="u-filemeta">
-                        文件大小:<b>{{ fileSize }}</b>
+                        文件大小: <b>{{ fileSize }}</b>
                     </div>
                 </div>
                 <template #tip>
@@ -109,6 +114,7 @@ const fileSize = computed(() => {
 //     // if (store.file.name.endsWith(".jcl")) return "JCL - JX3 Combat Log";
 //     return "不支持的文件类型";
 // });
+
 // event
 const fileChange = (file) => {
     store.file = file.raw;
@@ -121,6 +127,7 @@ const start = () => {
         return;
     }
     store.result = {};
+    store.info = {};
     new Promise((resolve) => {
         let reader = new FileReader();
         reader.onload = (e) => {

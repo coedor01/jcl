@@ -12,6 +12,9 @@
                     effect="dark"
                     clearable
                 >
+                    <template v-if="mountIcon[0]" #prefix>
+                        <img class="u-mount-icon" :src="mountIcon[0]" alt="" />
+                    </template>
                     <el-option
                         v-for="(entity, index) in entities"
                         :key="index"
@@ -34,6 +37,9 @@
                     effect="dark"
                     clearable
                 >
+                    <template v-if="mountIcon[1]" #prefix>
+                        <img class="u-mount-icon" :src="mountIcon[1]" alt="" />
+                    </template>
                     <el-option
                         v-for="(entity, index) in entities"
                         :key="index"
@@ -107,6 +113,12 @@ export default {
                 .slice(1)
                 .filter((player) => player.type === "player");
         },
+        mountIcon() {
+            return this.compareEntity.map((id) => {
+                if (!id) return null;
+                return getMountIcon(id);
+            });
+        },
     },
     methods: {
         getMountIcon,
@@ -126,6 +138,7 @@ export default {
         .size(320px, 190px);
 
         .el-select .el-input.is-focus .el-input__wrapper {
+            position: relative;
             box-shadow: none;
         }
         .el-select .el-input .el-input__wrapper {
@@ -140,6 +153,11 @@ export default {
             &.is-focus {
                 box-shadow: none !important;
             }
+        }
+
+        .el-input__prefix {
+            position: absolute;
+            left: 16px;
         }
 
         .el-input__inner {
@@ -198,6 +216,10 @@ export default {
                     }
                 }
             }
+        }
+
+        .u-mount-icon {
+            .size(32px);
         }
 
         .u-vs {

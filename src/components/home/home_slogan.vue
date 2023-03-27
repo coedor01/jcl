@@ -17,13 +17,30 @@
             <a class="u-tip" href="/collection/235" target="_blank">*需要了解更多的资讯来使用JCL</a>
         </div>
         <div class="u-icon">
-            <div class="u-bg"></div>
-            <img class="u-img" draggable="false" src="@/assets/img/battle.svg" />
+            <video class="u-video" :src="ani_url" autoplay loop></video>
         </div>
     </div>
 </template>
 
-<script setup></script>
+<script>
+import globalVars from "@jx3box/jx3box-common/data/jx3box.json";
+export default {
+    name: "home_slogan",
+    props: [],
+    components: {},
+    data: function () {
+        return {
+            globalVars,
+            ani_url: globalVars.__cdn + "video/jcl/battle_v2.2160.mp4",
+        };
+    },
+    computed: {},
+    watch: {},
+    methods: {},
+    created: function () {},
+    mounted: function () {},
+};
+</script>
 
 <style lang="less" scoped>
 @import "@/assets/css/home/home_slogan.less";

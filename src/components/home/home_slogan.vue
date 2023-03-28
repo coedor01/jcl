@@ -17,7 +17,7 @@
             <a class="u-tip" href="/collection/235" target="_blank">*需要了解更多的资讯来使用JCL</a>
         </div>
         <div class="u-icon">
-            <video class="u-video" :src="ani_url" autoplay loop></video>
+            <video class="u-video" :src="ani_url" autoplay loop muted></video>
         </div>
     </div>
 </template>

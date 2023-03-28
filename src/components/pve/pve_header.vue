@@ -118,6 +118,7 @@ const displayOverview = computed(() => {
     let target = "-";
     let maxBeDamaged = 0;
     for (let entity in stats.beDamaged) {
+        if (!entities[entity]) continue;
         if (entities[entity].type === "player") continue;
         const beDamagedValue = stats.beDamaged[entity].all.value;
         if (beDamagedValue > maxBeDamaged) {

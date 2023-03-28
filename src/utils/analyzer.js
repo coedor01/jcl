@@ -809,7 +809,7 @@ export class Analyzer {
         if (this.current.type === 1) {
             let { start, client, map, server } = this.current.detail;
             // JCL文件所属的客户端
-            if (["classic_yq", "classic_exp"].includes(client)) this.result.client = client;
+            if (["classic_yq", "classic_exp"].includes(client)) this.result.client = "origin";
             // 地图
             this.result.map = map;
             this.result.server = server.split("_")[1];

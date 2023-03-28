@@ -21,6 +21,7 @@ const focusNames = computed(() => {
     const { entities } = store.result;
     return focusEntities.value.map((x) => {
         const entity = entities[x];
+        if (!entity) return "未知单位";
         return entity.name ?? "#" + entity.id;
     });
 });

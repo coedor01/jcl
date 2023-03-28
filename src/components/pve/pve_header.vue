@@ -155,7 +155,7 @@ const banner = computed(() => {
     if (!imgIndex.value) return null;
     if (!displayOverview.value.length) return null;
     const target = displayOverview.value[0].value;
-    return imgIndex.value[target];
+    return imgIndex.value[target] ?? imgIndex.value["默认"];
 });
 const headerBackground = computed(() => {
     if (banner.value) {

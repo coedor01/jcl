@@ -18,14 +18,17 @@
 </template>
 
 <script setup>
-import { toRefs, watch, defineAsyncComponent } from "vue";
+import { toRefs, watch /* defineAsyncComponent */ } from "vue";
 import { useRouter } from "vue-router";
 import { usePve } from "@/store/pve";
 import { useStore } from "@/store/index";
 
-const CompareOption = defineAsyncComponent(() => import("./compare_option.vue"));
-const CompareChart = defineAsyncComponent(() => import("./compare_chart.vue"));
-const CompareView = defineAsyncComponent(() => import("./compare_view.vue"));
+import CompareOption from "./compare_option.vue";
+import CompareChart from "./compare_chart.vue";
+import CompareView from "./compare_view.vue";
+// const CompareOption = defineAsyncComponent(() => import("./compare_option.vue"));
+// const CompareChart = defineAsyncComponent(() => import("./compare_chart.vue"));
+// const CompareView = defineAsyncComponent(() => import("./compare_view.vue"));
 
 const router = useRouter();
 const store = useStore();

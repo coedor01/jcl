@@ -41,6 +41,8 @@ import { displayDuration, displayBigNumber } from "@/utils/commonNoStore";
 import { moment } from "@jx3box/jx3box-common/js/moment";
 import jx3box_url from "@jx3box/jx3box-common/data/jx3box.json";
 import { useRouter } from "vue-router";
+import { workerBusy } from "@/utils/worker";
+import { ElMessage } from "element-plus";
 const { __imgPath } = jx3box_url;
 
 const store = useStore();
@@ -168,6 +170,7 @@ const headerBackground = computed(() => {
 
 // event
 const switchTab = (tab) => {
+    if (workerBusy()) return ElMessage.error("当前页面正在处理数据，请稍后再试");
     if (mainTab.value == tab) return;
     mainTab.value = tab;
 };

@@ -146,7 +146,14 @@ const store = useStore();
 const { logFilter, logAutoApply, logDebug } = toRefs(usePve());
 
 // computed
-const entities = computed(() => Object.values(store.result?.entities).slice(1));
+const entities = computed(() => {
+    return Object.values(store.result?.entities).filter((e) => {
+        if (logFilter.value.selectOnlyName && !e.name) return false;
+        if (logFilter.value.selectOnlyNoSon && e.belongID) return false;
+        if (logFilter.value.selectOnlyNoRepeat && e.appearOrder > 1) return false;
+        return true;
+    });
+});
 const maxTime = computed(() => store?.result?.end?.sec + 5 || 120);
 const keywordStr = ref("");
 const hideKeywordStr = ref("");

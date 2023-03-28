@@ -35,3 +35,7 @@ export default async function getWorkerResponse(action, data) {
         processQueue();
     });
 }
+
+export function workerBusy() {
+    return busy;
+}

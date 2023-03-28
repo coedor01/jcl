@@ -71,19 +71,28 @@
 </template>
 
 <script setup>
-import { toRefs, defineAsyncComponent } from "vue";
+import { toRefs /* defineAsyncComponent */ } from "vue";
 import { usePve } from "@/store/pve";
 
 import EmptyGuide from "@/components/common/empty_guide.vue";
-const EntityTabs = defineAsyncComponent(() => import("./entity_tabs.vue"));
-const EntitySelect = defineAsyncComponent(() => import("./entity_select.vue"));
-const EntityChart = defineAsyncComponent(() => import("./entity_view_chart.vue"));
-const EntityViewSkill = defineAsyncComponent(() => import("./entity_view_effect.vue"));
-const EntityViewTarget = defineAsyncComponent(() => import("./entity_view_target.vue"));
-const EntityBuffTable = defineAsyncComponent(() => import("./entity_buff_table.vue"));
-const EntityBuffChart = defineAsyncComponent(() => import("./entity_buff_chart.vue"));
-const EntitySkillChart = defineAsyncComponent(() => import("./entity_skill_chart.vue"));
-const EntitySkillTimeline = defineAsyncComponent(() => import("./entity_skill_timeline.vue"));
+import EntityTabs from "./entity_tabs.vue";
+import EntitySelect from "./entity_select.vue";
+import EntityChart from "./entity_view_chart.vue";
+import EntityViewSkill from "./entity_view_effect.vue";
+import EntityViewTarget from "./entity_view_target.vue";
+import EntityBuffTable from "./entity_buff_table.vue";
+import EntityBuffChart from "./entity_buff_chart.vue";
+import EntitySkillChart from "./entity_skill_chart.vue";
+import EntitySkillTimeline from "./entity_skill_timeline.vue";
+// const EntityTabs = defineAsyncComponent(() => import("./entity_tabs.vue"));
+// const EntitySelect = defineAsyncComponent(() => import("./entity_select.vue"));
+// const EntityChart = defineAsyncComponent(() => import("./entity_view_chart.vue"));
+// const EntityViewSkill = defineAsyncComponent(() => import("./entity_view_effect.vue"));
+// const EntityViewTarget = defineAsyncComponent(() => import("./entity_view_target.vue"));
+// const EntityBuffTable = defineAsyncComponent(() => import("./entity_buff_table.vue"));
+// const EntityBuffChart = defineAsyncComponent(() => import("./entity_buff_chart.vue"));
+// const EntitySkillChart = defineAsyncComponent(() => import("./entity_skill_chart.vue"));
+// const EntitySkillTimeline = defineAsyncComponent(() => import("./entity_skill_timeline.vue"));
 
 const typeComponent = {
     effect: EntityViewSkill,

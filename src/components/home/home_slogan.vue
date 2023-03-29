@@ -31,7 +31,7 @@ export default {
     data: function () {
         return {
             globalVars,
-            ani_url: globalVars.__cdn + "video/jcl/battle_v2.2160.mp4",
+            ani_url: globalVars.__cdn + "video/jcl/battle_v4.2160.mp4",
         };
     },
     computed: {},

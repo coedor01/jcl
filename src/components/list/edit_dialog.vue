@@ -1,5 +1,12 @@
 <template>
-    <el-dialog v-model="dialogVisible" width="50%" append-to-body class="m-edit-dialog" :close-on-click-modal="false">
+    <el-dialog
+        v-model="dialogVisible"
+        width="50%"
+        append-to-body
+        class="m-edit-dialog"
+        :close-on-click-modal="false"
+        :destroy-on-close="true"
+    >
         <template #header>
             <p class="u-title">{{ item.title }}</p>
         </template>

@@ -6,6 +6,7 @@
         :close-on-click-modal="false"
         :align-center="true"
         :lock-scroll="false"
+        :destroy-on-close="true"
         class="m-export-dialog"
     >
         <div class="m-dialog-body">

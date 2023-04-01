@@ -112,8 +112,9 @@ export default {
 .c-jcl-header-inner {
     .flex;
     justify-content: space-between;
+    box-sizing: border-box;
     margin: auto;
-    width: 1440px;
+    width: @main-width;
     height: 100%;
     padding: 10px 30px;
 }
@@ -138,6 +139,7 @@ export default {
         line-height: 34px;
 
         color: #ffffff;
+        white-space: nowrap;
     }
 }
 

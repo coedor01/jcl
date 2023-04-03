@@ -64,7 +64,9 @@
                         按目标显示
                     </div>
                 </div>
-                <component :is="typeComponent[viewType]"></component>
+                <keep-alive>
+                    <component :is="typeComponent[viewType]"></component>
+                </keep-alive>
             </template>
         </div>
     </div>

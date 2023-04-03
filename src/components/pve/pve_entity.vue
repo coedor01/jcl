@@ -78,7 +78,7 @@ import EmptyGuide from "@/components/common/empty_guide.vue";
 import EntityTabs from "./entity_tabs.vue";
 import EntitySelect from "./entity_select.vue";
 import EntityChart from "./entity_view_chart.vue";
-import EntityViewSkill from "./entity_view_effect.vue";
+import EntityViewEffect from "./entity_view_effect.vue";
 import EntityViewTarget from "./entity_view_target.vue";
 import EntityBuffTable from "./entity_buff_table.vue";
 import EntityBuffChart from "./entity_buff_chart.vue";
@@ -86,7 +86,7 @@ import EntitySkillChart from "./entity_skill_chart.vue";
 import EntitySkillTimeline from "./entity_skill_timeline.vue";
 
 const typeComponent = {
-    effect: EntityViewSkill,
+    effect: EntityViewEffect,
     target: EntityViewTarget,
 };
 const { viewType, entityTab, entity } = toRefs(usePve());

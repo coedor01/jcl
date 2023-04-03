@@ -148,7 +148,7 @@ watch(
         if (oldEntity && newEntity !== oldEntity) clearLogs();
         updateData();
     },
-    { immediate: true }
+    { immediate: true, flush: "post" }
 );
 </script>
 

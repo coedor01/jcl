@@ -2,11 +2,11 @@
     <div class="m-entity-skill-detail u-card">
         <template v-if="!detail">
             <empty-guide
-                v-if="type === 'effect'"
+                v-if="viewType === 'effect'"
                 :tips="['在上方选择一条记录后', '此处会展示该次技能释放的所有详细数据']"
             ></empty-guide>
             <empty-guide
-                v-else-if="type === 'target'"
+                v-else-if="viewType === 'target'"
                 to="row-reverse"
                 :rotate="90"
                 text-align="right"
@@ -93,14 +93,19 @@ import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { usePve } from "@/store/pve";
 
-const { log: detail, viewType: type } = toRefs(usePve());
+const { viewType, effectLog, targetLog } = toRefs(usePve());
 
+const detail = computed(() => {
+    if (viewType.value === "effect") return effectLog.value;
+    if (viewType.value === "target") return targetLog.value;
+    return null;
+});
 const buffs = computed(() => {
-    if (!detail || !detail.value) return [];
+    if (!detail.value) return [];
     return detail.value.buffs;
 });
 const pageSize = computed(() => {
-    if (type.value === "target") return 10;
+    if (viewType.value === "target") return 10;
     return 7;
 });
 const { currentPage, currentData, total } = usePaginate(buffs, pageSize);

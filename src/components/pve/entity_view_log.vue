@@ -96,7 +96,7 @@ import { computed, toRefs } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { usePve } from "@/store/pve";
 // data
-const { viewType, target, effect, logs, log: detail } = toRefs(usePve());
+const { viewType, target, effect, targetLogs, targetLog, effectLogs, effectLog } = toRefs(usePve());
 
 // computed
 const titleName = computed(() => {
@@ -108,12 +108,15 @@ const titleName = computed(() => {
     } else return "";
 });
 const data = computed(() => {
-    if (!logs.value) return [];
+    const source = [];
+    if (viewType.value === "target") source.push(...targetLogs.value);
+    else if (viewType.value === "effect") source.push(...effectLogs.value);
+    if (!source.length) return [];
     let index = 0;
-    for (let log of logs.value) {
+    for (let log of source) {
         log.index = ++index;
     }
-    return logs.value;
+    return source;
 });
 const pageSize = computed(() => {
     if (viewType.value === "target") return 19;
@@ -126,10 +129,15 @@ const columnWidth = computed(() => {
 const { total, currentPage, currentData } = usePaginate(data, pageSize);
 
 const selectLog = (row) => {
-    detail.value = row;
+    if (viewType.value === "target") targetLog.value = row;
+    else if (viewType.value === "effect") effectLog.value = row;
 };
 const rowClass = ({ row }) => {
-    if (row.index === detail.value?.index) return "is-focus";
+    if (viewType.value === "target") {
+        if (row.index === targetLog.value?.index) return "is-focus";
+    } else if (viewType.value === "effect") {
+        if (row.index === effectLog.value?.index) return "is-focus";
+    }
 };
 </script>
 

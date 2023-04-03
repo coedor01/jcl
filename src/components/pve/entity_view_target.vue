@@ -88,7 +88,6 @@
 <script setup>
 import EmptyGuide from "@/components/common/empty_guide.vue";
 import { ref, watch, computed, toRefs } from "vue";
-import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { getMountIcon, getEntityName } from "@/utils/common";
@@ -99,8 +98,7 @@ import EntitySkillLog from "./entity_view_log.vue";
 import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
-const store = useStore();
-const { entityTab, entity, currentWindow, target, effect, logs, log } = toRefs(usePve());
+const { entityTab, entity, currentWindow, target, targetLogs, targetLog } = toRefs(usePve());
 
 // computed
 const targetLabel = computed(() => {
@@ -111,8 +109,8 @@ const targetLabel = computed(() => {
 const click = (row) => {
     if (target.value === row.target) return;
     target.value = row.target;
-    logs.value = row.logs;
-    log.value = row.logs[0];
+    targetLogs.value = row.logs;
+    targetLog.value = row.logs[0];
 };
 // 行样式
 const rowClass = ({ row }) => {
@@ -126,10 +124,6 @@ const pageSize = ref(9);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
 const updateData = () => {
     loading.value = true;
-    target.value = null;
-    effect.value = null;
-    logs.value = [];
-    log.value = null;
     getWorkerResponse("get_pve_entity_view_target", {
         entityTab: entityTab.value,
         entity: entity.value,
@@ -138,6 +132,7 @@ const updateData = () => {
     }).then((result) => {
         data.value = result;
         loading.value = false;
+        sort({ prop: "value", order: "descending" });
     });
 };
 const sort = ({ prop, order }) => {
@@ -149,9 +144,15 @@ const sort = ({ prop, order }) => {
         }
     });
 };
+const clearLogs = () => {
+    target.value = "";
+    targetLogs.value = [];
+    targetLog.value = null;
+};
 watch(
-    [() => store.result, currentWindow, entity, entityTab],
-    () => {
+    [entity, currentWindow, entityTab],
+    ([newEntity], [oldEntity]) => {
+        if (oldEntity && newEntity != oldEntity) clearLogs();
         updateData();
     },
     { immediate: true }

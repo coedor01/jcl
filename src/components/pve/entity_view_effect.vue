@@ -84,7 +84,6 @@
 <script setup>
 import EmptyGuide from "@/components/common/empty_guide.vue";
 import { ref, watch, toRefs } from "vue";
-import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { getResourceIcon, getResourceName } from "@/utils/common";
@@ -95,15 +94,14 @@ import EntitySkillLog from "./entity_view_log.vue";
 import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
-const store = useStore();
-const { entityTab, entity, currentWindow, effect, target, logs, log } = toRefs(usePve());
+const { entityTab, entity, currentWindow, effect, effectLogs, effectLog } = toRefs(usePve());
 
 // 行点击事件
 const click = (row) => {
     if (effect.value === row.effect) return;
     effect.value = row.effect;
-    logs.value = row.logs;
-    log.value = row.logs[0];
+    effectLogs.value = row.logs;
+    effectLog.value = row.logs[0];
 };
 // 行样式
 const rowClass = ({ row }) => {
@@ -116,10 +114,6 @@ const pageSize = ref(22);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
 const updateData = () => {
     loading.value = true;
-    target.value = null;
-    effect.value = null;
-    logs.value = [];
-    log.value = null;
     getWorkerResponse("get_pve_entity_view_effect", {
         entityTab: entityTab.value,
         entity: entity.value,
@@ -127,6 +121,7 @@ const updateData = () => {
     }).then((result) => {
         data.value = result;
         loading.value = false;
+        sort({ prop: "value", order: "descending" });
     });
 };
 const sort = ({ prop, order }) => {
@@ -142,9 +137,15 @@ const sort = ({ prop, order }) => {
         item.index = index++;
     }
 };
+const clearLogs = () => {
+    effect.value = null;
+    effectLogs.value = [];
+    effectLog.value = null;
+};
 watch(
-    [() => store.result, currentWindow, entity, entityTab],
-    () => {
+    [entity, currentWindow, entityTab],
+    ([newEntity], [oldEntity]) => {
+        if (oldEntity && newEntity !== oldEntity) clearLogs();
         updateData();
     },
     { immediate: true }

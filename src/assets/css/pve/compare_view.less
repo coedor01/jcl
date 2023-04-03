@@ -86,6 +86,24 @@
                 }
             }
         }
+
+        .el-table__row:not(.is-focus):hover {
+            .el-table__cell:not(:first-of-type) {
+                div.cell {
+                    background: #7650f8aa;
+                }
+                &:nth-of-type(2) {
+                    div.cell {
+                        border-radius: 6px 0 0 6px;
+                    }
+                }
+                &:last-of-type {
+                    div.cell {
+                        border-radius: 0 6px 6px 0;
+                    }
+                }
+            }
+        }
     }
 
     .u-compare-table {
@@ -96,6 +114,29 @@
         .w(320px);
         flex-shrink: 0;
         padding-bottom: 20px !important;
+    }
+
+    .u-skill-logs .u-table {
+        .el-table__row {
+            cursor: pointer;
+        }
+        .el-table__row:not(.is-focus):hover {
+            .el-table__cell {
+                div.cell {
+                    background: #7650f8aa;
+                }
+                &:first-of-type {
+                    div.cell {
+                        border-radius: 6px 0 0 6px;
+                    }
+                }
+                &:last-of-type {
+                    div.cell {
+                        border-radius: 0 6px 6px 0;
+                    }
+                }
+            }
+        }
     }
 
     .u-skill-more {
@@ -166,6 +207,10 @@
                 .mr(8px);
             }
         }
+    }
+
+    .u-effect-detail {
+        gap: 18px;
     }
 
     .u-buff-list {

@@ -91,15 +91,14 @@ import { cloneDeep, throttle } from "lodash";
 import getWorkerResponse from "@/utils/worker";
 
 // 数据相关
-const { logFilter, logAutoApply, logDebug } = toRefs(usePve());
+const { logs, logFilter, logAutoApply, logDebug } = toRefs(usePve());
 const loading = ref(false);
-const data = ref([]);
 const pageSize = ref(30);
-const { currentPage, total, currentData } = usePaginate(data, pageSize);
+const { currentPage, total, currentData } = usePaginate(logs, pageSize);
 const updateData = () => {
     loading.value = true;
     getWorkerResponse("get_pve_logs", { logFilter: cloneDeep(logFilter.value) }).then((res) => {
-        data.value = res;
+        logs.value = res;
         loading.value = false;
     });
 };
@@ -126,7 +125,7 @@ watch(
     { deep: true, immediate: true }
 );
 onMounted(() => {
-    updateData();
+    if (logs.value.length === 0) updateData();
 });
 </script>
 

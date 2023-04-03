@@ -176,7 +176,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-card">
+                    <div class="w-card u-effect-detail">
                         <div class="w-card-title">携带BUFF列表</div>
                         <div class="u-buff-list">
                             <div

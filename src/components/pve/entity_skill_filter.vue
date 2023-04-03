@@ -60,13 +60,11 @@
 
 <script setup>
 import { usePve } from "@/store/pve";
-import { useStore } from "@/store";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { toRefs, watch, ref } from "vue";
 import getWorkerResponse from "@/utils/worker";
 
 const { entity, selectedSkills } = toRefs(usePve());
-const store = useStore();
 
 const loading = ref(false);
 const data = ref([]);
@@ -113,7 +111,7 @@ const click = (row, column) => {
 };
 
 watch(
-    [entity, () => store.result],
+    [entity],
     () => {
         updateData();
     },

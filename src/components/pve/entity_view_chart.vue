@@ -25,10 +25,8 @@ import VChart from "vue-echarts";
 import { computed, toRefs, ref, watch } from "vue";
 import { getEntityColor } from "@/utils/common";
 import { displayDuration, displayDigits, displayPercent } from "@/utils/commonNoStore";
-import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import getWorkerResponse from "@/utils/worker";
-const store = useStore();
 
 const { entity, entityTab, currentWindow } = toRefs(usePve());
 
@@ -103,7 +101,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch([entity, entityTab, () => store.result], updateData, { immediate: true });
+watch([entity, entityTab], updateData, { immediate: true });
 
 // 表格点击事件
 const handleChartClick = (e) => {

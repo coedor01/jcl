@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { toRefs, onMounted, defineComponent, watch /* defineAsyncComponent */ } from "vue";
+import { toRefs, onMounted, defineComponent, watch } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { useRouter } from "vue-router";
@@ -20,13 +20,6 @@ import PveCompare from "@/components/pve/pve_compare.vue";
 import PveLogs from "@/components/pve/pve_logs.vue";
 import UploadCard from "@/components/upload_card.vue";
 import VideoCard from "@/components/video_card.vue";
-// const PveHeader = defineAsyncComponent(() => import("@/components/pve/pve_header.vue"));
-// const PveOverview = defineAsyncComponent(() => import("@/components/pve/pve_overview.vue"));
-// const PveEntity = defineAsyncComponent(() => import("@/components/pve/pve_entity.vue"));
-// const PveCompare = defineAsyncComponent(() => import("@/components/pve/pve_compare.vue"));
-// const PveLogs = defineAsyncComponent(() => import("@/components/pve/pve_logs.vue"));
-// const UploadCard = defineAsyncComponent(() => import("@/components/upload_card.vue"));
-// const VideoCard = defineAsyncComponent(() => import("@/components/video_card.vue"));
 
 const store = useStore();
 const router = useRouter();

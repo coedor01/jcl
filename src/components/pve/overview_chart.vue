@@ -92,7 +92,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch([() => store.result, statType], updateData, { immediate: true });
+watch([statType], updateData, { immediate: true });
 </script>
 
 <style lang="less" scoped>

@@ -85,12 +85,10 @@ import { getResourceName } from "@/utils/common";
 import { displayPercent, displayDigits } from "@/utils/commonNoStore";
 import { ref, toRefs, watch } from "vue";
 import { usePve } from "@/store/pve";
-import { useStore } from "@/store";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { sortBy } from "lodash-es";
 import getWorkerResponse from "@/utils/worker";
 
-const store = useStore();
 const { entity, selectedBuffs } = toRefs(usePve());
 
 // 表格样式/交互
@@ -141,7 +139,7 @@ const updateData = () => {
     });
 };
 
-watch([entity, () => store.result], updateData, {
+watch([entity], updateData, {
     immediate: true,
 });
 </script>

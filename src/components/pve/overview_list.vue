@@ -57,7 +57,6 @@
 </template>
 
 <script setup>
-import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { getMountIcon, getEntityName } from "@/utils/common";
 import { displayDigits, displayPercent } from "@/utils/commonNoStore";
@@ -68,7 +67,6 @@ import { sortBy } from "lodash-es";
 import getWorkerResponse from "@/utils/worker";
 
 const global = usePve();
-const store = useStore();
 
 // 数据
 const loading = ref(false);
@@ -111,7 +109,7 @@ const updateData = () => {
 };
 // watch
 watch(
-    [() => store.result, statType],
+    [statType],
     () => {
         updateData();
     },

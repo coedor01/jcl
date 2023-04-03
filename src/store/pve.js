@@ -15,9 +15,11 @@ export const usePve = defineStore({
         currentWindow: null, // 当前统计窗口
         viewType: "effect", // 单位数值统计，根据目标/技能
         effect: "", // 选中的技能效果
+        effectLogs: [], // 选中的技能效果相关日志
+        effectLog: null, // 选中的技能效果某个日志详情
         target: 0, // 选中的目标
-        logs: [], // 单位数值相关日志
-        log: null, // 单位某个日志详情
+        targetLogs: [], // 选中的目标相关日志
+        targetLog: null, // 选中的目标某个日志详情
         selectedBuffs: [], // 选中的buff
         selectedSkills: {}, // 参与统计的技能
 
@@ -27,6 +29,7 @@ export const usePve = defineStore({
         comparePin: [], // 比较时置顶的技能
 
         // logs
+        logs: [], // 日志列表
         logFilter: {
             hideReact: true,
             hideNoValue: false,
@@ -39,9 +42,9 @@ export const usePve = defineStore({
             selectOnlyNoRepeat: true,
             onlySource: true,
             showTypes: ["say", "skill", "skillCast", "skillResult", "buff", "kill", "scene"],
-        },
-        logAutoApply: false,
-        logDebug: false,
+        }, // 日志过滤器
+        logAutoApply: false, // 自动应用过滤
+        logDebug: false, // 日志调试模式
     }),
     getters: {},
     actions: {},

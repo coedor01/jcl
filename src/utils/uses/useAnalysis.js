@@ -12,6 +12,7 @@ export function useAnalysis() {
     const startAnalysis = () => {
         const raw = store.raw;
         // 创建一个worker并初始化
+        if (store.worker) store.worker.terminate();
         store.worker = new AnalyzerWorker();
         const worker = store.worker;
         return new Promise((resolve) => {

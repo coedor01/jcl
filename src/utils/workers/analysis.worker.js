@@ -2,13 +2,13 @@
  * @Author: X3ZvaWQ x3zvawq@gmail.com
  * @Date: 2023-02-27 20:19:49
  * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
- * @LastEditTime: 2023-03-22 11:02:49
+ * @LastEditTime: 2023-04-12 00:04:29
  * @FilePath: /jcl/src/utils/workers/analysis.worker.js
  * @Description:
  */
 import { Analyzer } from "@/utils/analyzer";
 import { getResource as _getResourceFromApi } from "@/services/resource.js";
-import { uniq } from "lodash-es";
+import { isArray, uniq } from "lodash-es";
 
 const updateResult = (msg, data) => {
     postMessage({ msg, data });
@@ -29,6 +29,7 @@ async function getResourceFromApi(resourceList, client = "std") {
         fields: ["SkillID", "Level", "MaxLevel", "IconID", "Name", "SkillName", "Desc"],
     });
     if (buff_res.data) {
+        buff_res.data = isArray(buff_res.data) ? buff_res.data : [buff_res.data];
         for (let buff of buff_res.data) {
             if (buff.BuffID == 0) continue;
             const key = `buff:${buff.BuffID}_${buff.Level ?? ""}`;
@@ -44,6 +45,7 @@ async function getResourceFromApi(resourceList, client = "std") {
         }
     }
     if (skill_res.data) {
+        skill_res.data = isArray(skill_res.data) ? skill_res.data : [skill_res.data];
         for (let skill of skill_res.data) {
             if (skill.SkillID == 0) continue;
             const key = `skill:${skill.SkillID}_${skill.Level ?? skill.MaxLevel}`;

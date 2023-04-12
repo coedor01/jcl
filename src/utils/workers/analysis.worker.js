@@ -8,10 +8,22 @@
  */
 import { Analyzer } from "@/utils/analyzer";
 import { getResource as _getResourceFromApi } from "@/services/resource.js";
-import { isArray, uniq } from "lodash-es";
+import { isArray, uniq, omit } from "lodash-es";
+// export 要用的
+import { unparse } from "papaparse";
+import iconv from "iconv-lite";
+import { header, writeRowsToSheet } from "@/utils/export.js";
 
 const updateResult = (msg, data) => {
     postMessage({ msg, data });
+};
+
+// 传递导出进度用的，其他地方用不着
+const updateStatus = function (desc, status, processing) {
+    postMessage({
+        type: "statusUpdated",
+        data: { desc, status, processing },
+    });
 };
 
 async function getResourceFromApi(resourceList, client = "std") {
@@ -82,10 +94,28 @@ onmessage = async ({ data: { action, data } }) => {
                 updateResult("progress", 1);
                 let { resources, client } = value;
                 value.resources = await getResourceFromApi(resources, client);
-                updateResult("all", value);
+                updateResult("all", omit(value, "rows"));
             }
         }
+    } else if (action == "export") {
+        const window = { $store: analyzer.result };
+        updateStatus("整理原始数据", 1, 5);
+        const headerValues = header.map((item) => item.value);
+        // 从window中取出所有的资源
+        updateStatus("构建CSV表格", 0);
+        let exporter = writeRowsToSheet(window.$store);
+        let result;
+        while (!(result = exporter.next()).done) updateStatus("构建CSV表格", 0, 5 + result.value * 0.85);
+        // 将数据转换为csv格式
+        let csv = unparse(result.value, { columns: headerValues });
+        updateStatus("构建CSV表格", 1, 90);
+        // 结果写入到u8数组
+        updateStatus("构建完成，下载马上开始", 0);
+        const u8 = iconv.encode(csv, "gbk");
+        csv = null;
+        updateResult("exportResult", u8);
     } else {
+        // get_aa_bb -> getAaBb
         const methodName = action.replace(/_([a-z])/g, (_, p1) => p1.toUpperCase());
         postMessage(analyzer[methodName](data));
     }

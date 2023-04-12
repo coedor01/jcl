@@ -1,4 +1,4 @@
-/* 
+/*
     这个文件用于导出，输入应该是format生成的row
  */
 import moment from "moment";
@@ -149,6 +149,10 @@ const rowAddExtra = (row) => {
         row.contentName = resource.name;
         row.contentRemark = resource.remark;
         row.contentDesc = resource.desc;
+    }
+    for (let key in row) {
+        if (row[key] === undefined || row[key] === null) row[key] = "";
+        if (typeof row[key] === "object" && Object.keys(row[key]).length === 0) row[key] = "";
     }
     return row;
 };

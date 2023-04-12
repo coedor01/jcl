@@ -39,7 +39,6 @@ export function useAnalysis() {
                     global.$reset();
                     // 返回结果
                     //window.$store = data;
-                    delete data.rows;
                     store.result = Object.freeze(data);
                     ready.value = true;
                 }

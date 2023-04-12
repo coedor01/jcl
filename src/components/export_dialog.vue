@@ -28,12 +28,10 @@ import { Loading, CircleCheckFilled, CircleCloseFilled, Checked } from "@element
 import { ref } from "vue";
 import { useStore } from "@/store";
 import { saveAs } from "file-saver";
-import ExportWorker from "@/utils/workers/export.worker.js";
 
 const store = useStore();
 
 const dialogVisible = ref(false);
-const exporter = ref(null);
 const statusMap = ref([]);
 const progress = ref(0);
 const statusIcon = {
@@ -57,24 +55,21 @@ const updateStatus = (desc, status, processing) => {
 const start = () => {
     clearProgress();
     const filename = (store.file ? store.file.name : store.info?.title) + "-JX3BOX-Export.csv";
-    exporter.value = new ExportWorker();
-    exporter.value.onmessage = (e) => {
-        const { type, data } = e.data;
+    const worker = store.worker;
+    worker.onmessage = (e) => {
+        const { msg, type, data } = e.data;
         if (type === "statusUpdated") {
             const { desc, status, processing } = data;
             updateStatus(desc, status, processing);
-        } else if (type === "result") {
+        } else if (msg === "exportResult") {
             updateStatus("构建完成，下载马上开始", 1, 99);
             const blob = new Blob([data], { type: "application/octet-stream" });
             saveAs(blob, filename);
             updateStatus("导出成功", 3, 100);
-            exporter.value.terminate();
-            exporter.value = null;
         }
     };
-
+    worker.postMessage({ action: "export" });
     updateStatus("整理原始数据", 0, 0);
-    exporter.value.postMessage(store.result);
 };
 
 const open = () => {

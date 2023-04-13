@@ -82,7 +82,7 @@ const tabList = [
 ];
 const showTab = computed(() => {
     return tabList.filter((tab) => {
-        if (tab.name === "upload" && store.info != "") return false;
+        if (tab.name === "upload" && store.info.title) return false;
         if (tab.name === "video" && !store.info.video_identifier) return false;
         return true;
     });

@@ -113,7 +113,7 @@ watch(
     () => {
         updateData();
     },
-    { immediate: true }
+    { immediate: true, flush: "post" }
 );
 </script>
 

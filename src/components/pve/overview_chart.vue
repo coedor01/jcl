@@ -92,7 +92,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch([statType], updateData, { immediate: true });
+watch([statType], updateData, { immediate: true, flush: "post" });
 </script>
 
 <style lang="less" scoped>

@@ -103,15 +103,19 @@ const init = async () => {
         });
 };
 
-watch(ready, () => {
-    if (!ready.value) return;
-    const query = router.currentRoute.value.query;
-    if (store.subject === "pvp") {
-        router.push({ name: "pvp", query });
-    } else {
-        router.push({ name: "pve", query });
-    }
-});
+watch(
+    ready,
+    () => {
+        if (!ready.value) return;
+        const query = router.currentRoute.value.query;
+        if (store.subject === "pvp") {
+            router.push({ name: "pvp", query });
+        } else {
+            router.push({ name: "pve", query });
+        }
+    },
+    { flush: "post" }
+);
 onMounted(() => {
     init();
 });

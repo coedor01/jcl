@@ -194,7 +194,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch([entity, selectedBuffs], updateData, { immediate: true, deep: true });
+watch([entity, selectedBuffs], updateData, { immediate: true, deep: true, flush: "post" });
 </script>
 
 <style lang="less" scoped>

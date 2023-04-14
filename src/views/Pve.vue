@@ -99,7 +99,7 @@ watch(
         }
         router.replace({ query });
     },
-    { deep: true }
+    { deep: true, flush: "post" }
 );
 
 defineComponent({

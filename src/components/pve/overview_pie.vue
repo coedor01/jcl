@@ -109,7 +109,7 @@ watch(
     () => {
         updateData();
     },
-    { immediate: true }
+    { immediate: true, flush: "post" }
 );
 // focusEntities变化时同步选中状态
 watch(
@@ -118,7 +118,7 @@ watch(
         if (syncing.value) return;
         syncSelected();
     },
-    { immediate: true, deep: true }
+    { immediate: true, deep: true, flush: "post" }
 );
 </script>
 

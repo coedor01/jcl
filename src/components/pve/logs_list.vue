@@ -122,7 +122,7 @@ watch(
             throttleUpdateData();
         }
     },
-    { deep: true, immediate: true }
+    { deep: true, immediate: true, flush: "post" }
 );
 onMounted(() => {
     if (logs.value.length === 0) updateData();

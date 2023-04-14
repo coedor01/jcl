@@ -199,7 +199,7 @@ watch(
     () => {
         getList();
     },
-    { immediate: true }
+    { immediate: true, flush: "post" }
 );
 </script>
 

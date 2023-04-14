@@ -141,6 +141,7 @@ const updateData = () => {
 
 watch([entity], updateData, {
     immediate: true,
+    flush: "post",
 });
 </script>
 

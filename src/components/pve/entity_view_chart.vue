@@ -101,7 +101,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch([entity, entityTab], updateData, { immediate: true });
+watch([entity, entityTab], updateData, { immediate: true, flush: "post" });
 
 // 表格点击事件
 const handleChartClick = (e) => {

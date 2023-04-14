@@ -314,6 +314,7 @@ watch(
         updateData();
     },
     {
+        flush: "post",
         immediate: true,
     }
 );

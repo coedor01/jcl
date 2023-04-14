@@ -94,12 +94,14 @@ export default {
             },
             immediate: true,
             deep: true,
+            flush: "post",
         },
         compareMode: {
             handler() {
                 this.updateData();
             },
             immediate: true,
+            flush: "post",
         },
     },
 };

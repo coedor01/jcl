@@ -44,7 +44,7 @@ watch(
         if (compareEntity.value[1]) query.entity2 = compareEntity.value[1];
         router.replace({ query });
     },
-    { deep: true }
+    { deep: true, flush: "post" }
 );
 </script>
 

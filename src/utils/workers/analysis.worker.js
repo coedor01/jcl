@@ -2,7 +2,7 @@
  * @Author: X3ZvaWQ x3zvawq@gmail.com
  * @Date: 2023-02-27 20:19:49
  * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
- * @LastEditTime: 2023-04-16 10:46:31
+ * @LastEditTime: 2023-04-16 10:50:07
  * @FilePath: /jcl/src/utils/workers/analysis.worker.js
  * @Description:
  */
@@ -77,7 +77,6 @@ async function getResourceFromApi(resourceList, client = "std") {
 
 let analyzer;
 onmessage = async ({ data: { action, data } }) => {
-    console.log(action, data);
     if (action == "init") {
         const { raw, params } = data;
         analyzer = new Analyzer(raw, params);

@@ -683,8 +683,6 @@ export class Analyzer {
         };
 
         let index = 0;
-        console.log(rows, logFilter);
-
         const result = rows.filter((row) => {
             // 妹什么用的东西直接过滤
             if ([4, 8, 10, 11, 12].includes(row.type)) return false;

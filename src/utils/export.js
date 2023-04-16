@@ -162,9 +162,8 @@ const rowAddExtra = (row) => {
  * @param {*} rows
  * @returns
  */
-export const writeRowsToSheet = function* ($store) {
+export const writeRowsToSheet = function* (rows, $store) {
     store = $store;
-    const rows = $store.rows;
     const length = rows.length;
     const result = [];
     for (let i = 0; i < length; i++) {

@@ -25,11 +25,14 @@
 
 <script setup>
 import { Loading, CircleCheckFilled, CircleCloseFilled, Checked } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 import { useStore } from "@/store";
+import { usePve } from "@/store/pve";
 import { saveAs } from "file-saver";
+import { cloneDeep } from "lodash";
 
 const store = useStore();
+const { logFilter } = toRefs(usePve());
 
 const dialogVisible = ref(false);
 const statusMap = ref([]);
@@ -68,7 +71,7 @@ const start = () => {
             updateStatus("导出成功", 3, 100);
         }
     };
-    worker.postMessage({ action: "export" });
+    worker.postMessage({ action: "export", data: { logFilter: cloneDeep(logFilter.value) } });
     updateStatus("整理原始数据", 0, 0);
 };
 

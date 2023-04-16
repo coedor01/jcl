@@ -215,7 +215,7 @@ import EmptyGuide from "@/components/common/empty_guide.vue";
 import { usePve } from "@/store/pve";
 import { getResourceIcon, getResourceName, getMountIcon, getEntityName } from "@/utils/common";
 import { displayDigits, displayPercent } from "@/utils/commonNoStore";
-import { toRefs, ref, computed, watch } from "vue";
+import { toRefs, ref, computed, watchPostEffect } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import getWorkerResponse from "@/utils/worker";
 // props
@@ -308,16 +308,7 @@ const logRowClass = ({ row }) => {
     return row.index === detail.value?.index ? "is-focus" : "";
 };
 //watch
-watch(
-    [compareMode, entity],
-    () => {
-        updateData();
-    },
-    {
-        flush: "post",
-        immediate: true,
-    }
-);
+watchPostEffect(updateData);
 </script>
 
 <style lang="less">

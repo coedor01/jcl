@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { defineComponent, onMounted, ref, computed, watch } from "vue";
+import { defineComponent, onMounted, ref, computed, watchPostEffect } from "vue";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
 import { useStore } from "@/store";
@@ -103,19 +103,15 @@ const init = async () => {
         });
 };
 
-watch(
-    ready,
-    () => {
-        if (!ready.value) return;
-        const query = router.currentRoute.value.query;
-        if (store.subject === "pvp") {
-            router.push({ name: "pvp", query });
-        } else {
-            router.push({ name: "pve", query });
-        }
-    },
-    { flush: "post" }
-);
+watchPostEffect(() => {
+    if (!ready.value) return;
+    const query = router.currentRoute.value.query;
+    if (store.subject === "pvp") {
+        router.push({ name: "pvp", query });
+    } else {
+        router.push({ name: "pve", query });
+    }
+});
 onMounted(() => {
     init();
 });

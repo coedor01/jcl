@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { ref, toRefs, watch } from "vue";
+import { ref, toRefs, watchPostEffect } from "vue";
 import { getMountIcon, getEntityName } from "@/utils/common";
 import { displayPercent } from "@/utils/commonNoStore";
 import { usePve } from "@/store/pve";
@@ -54,13 +54,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch(
-    [statType, entityID],
-    () => {
-        updateData();
-    },
-    { immediate: true, flush: "post" }
-);
+watchPostEffect(updateData);
 </script>
 
 <style lang="less" scoped>

@@ -1,0 +1,109 @@
+.m-pve-header {
+    .pr;
+    .size(1400px, 174px);
+    padding: 20px;
+    margin-top: 60px;
+    border-radius: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    .u-title,
+    .u-meta {
+        max-width: 860px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .u-title {
+        .bold;
+        .fz(32px, 42px);
+        color: #ffffff;
+    }
+    .u-overview {
+        .size(400px, 40px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #b3b3b3;
+
+        .u-li {
+            .flex-center;
+            flex-direction: column;
+            gap: 2px;
+            span {
+                display: inline-block;
+                .bold;
+            }
+            .u-li-title {
+                .fz(12px, 16px);
+            }
+
+            .u-li-value {
+                .fz(16px, 21px);
+            }
+        }
+    }
+    .u-meta {
+        .fz(12px, 16px);
+        color: #c4c4c4;
+
+        div {
+            margin-bottom: 4px;
+        }
+
+        span:not(:first-of-type) {
+            margin-left: 12px;
+        }
+    }
+    .u-tabs {
+        .pa;
+        right: 20px;
+        bottom: 20px;
+        height: 80px;
+
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-evenly;
+        padding: 0px 20px;
+        gap: 20px;
+
+        background: #000000;
+        border-radius: 20px;
+
+        .u-tab {
+            .pointer;
+            user-select: none;
+            .flex-center;
+            .size(80px, 80px);
+            flex-direction: column;
+            gap: 4px;
+            .colorful-text(linear-gradient(90deg, #fa5fa6 0%, #1d95f8 100%));
+            transition: all 0.2s ease-in-out;
+
+            &:not(.is-active) {
+                filter: brightness(0.8) grayscale(1);
+            }
+
+            &:not(.is-active):hover {
+                filter: brightness(0.5);
+            }
+
+            .u-tab-icon {
+                .size(45px, 35px);
+                .db;
+            }
+
+            .u-tab-title {
+                .bold;
+                .fz(14px, 18px);
+            }
+        }
+
+        .u-tab.upload .u-tab-icon {
+            .size(52.5px, 35px);
+        }
+    }
+}

@@ -77,7 +77,7 @@ import EditDialog from "./edit_dialog.vue";
 import { getPublicList, deleteBattle, getMyList } from "@/services/team";
 
 import { ElMessage } from "element-plus";
-import { ref, watch, toRefs } from "vue";
+import { ref, watchPostEffect, toRefs } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
@@ -194,13 +194,7 @@ const subjectName = (subject) => {
     );
 };
 // watch
-watch(
-    [page, active],
-    () => {
-        getList();
-    },
-    { immediate: true, flush: "post" }
-);
+watchPostEffect(getList);
 </script>
 
 <style lang="less">

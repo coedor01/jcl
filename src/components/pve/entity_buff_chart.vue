@@ -24,7 +24,7 @@ import { graphic } from "echarts/core";
 import VChart from "vue-echarts";
 import { getEntityName } from "@/utils/common";
 import { displayDuration } from "@/utils/commonNoStore";
-import { toRefs, computed, ref, watch } from "vue";
+import { toRefs, computed, ref, watchPostEffect } from "vue";
 import { usePve } from "@/store/pve";
 import { useStore } from "@/store";
 import getWorkerResponse from "@/utils/worker";
@@ -194,7 +194,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch([entity, selectedBuffs], updateData, { immediate: true, deep: true, flush: "post" });
+watchPostEffect(updateData);
 </script>
 
 <style lang="less" scoped>

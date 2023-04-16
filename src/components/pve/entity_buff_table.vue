@@ -83,7 +83,7 @@
 import { iconLink } from "@jx3box/jx3box-common/js/utils";
 import { getResourceName } from "@/utils/common";
 import { displayPercent, displayDigits } from "@/utils/commonNoStore";
-import { ref, toRefs, watch } from "vue";
+import { ref, toRefs, watchPostEffect } from "vue";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { sortBy } from "lodash-es";
@@ -139,10 +139,7 @@ const updateData = () => {
     });
 };
 
-watch([entity], updateData, {
-    immediate: true,
-    flush: "post",
-});
+watchPostEffect(updateData);
 </script>
 
 <style lang="less">

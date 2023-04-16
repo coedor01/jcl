@@ -6,7 +6,7 @@
 
 <script setup>
 import VChart from "vue-echarts";
-import { computed, ref, toRefs, watch } from "vue";
+import { computed, ref, toRefs, watchPostEffect } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import getWorkerResponse from "@/utils/worker";
@@ -92,7 +92,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch([statType], updateData, { immediate: true, flush: "post" });
+watchPostEffect(updateData);
 </script>
 
 <style lang="less" scoped>

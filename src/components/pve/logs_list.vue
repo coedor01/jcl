@@ -85,7 +85,7 @@ import { InfoFilled } from "@element-plus/icons-vue";
 
 import { displayDigits } from "@/utils/commonNoStore";
 import { usePaginate } from "@/utils/uses/usePaginate";
-import { ref, toRefs, watch, onMounted } from "vue";
+import { ref, toRefs, watchPostEffect, onMounted } from "vue";
 import { usePve } from "@/store/pve";
 import { cloneDeep, throttle } from "lodash";
 import getWorkerResponse from "@/utils/worker";
@@ -97,10 +97,13 @@ const pageSize = ref(30);
 const { currentPage, total, currentData } = usePaginate(logs, pageSize);
 const updateData = () => {
     loading.value = true;
-    getWorkerResponse("get_pve_logs", { logFilter: cloneDeep(logFilter.value) }).then((res) => {
-        logs.value = res;
-        loading.value = false;
-    });
+    getWorkerResponse("get_pve_logs", { logFilter: cloneDeep(logFilter.value) })
+        .then((res) => {
+            logs.value = res;
+        })
+        .finally(() => {
+            loading.value = false;
+        });
 };
 const throttleUpdateData = throttle(updateData, 1000);
 
@@ -115,17 +118,15 @@ const showEventValue = (row) => {
 };
 
 // 监听logFilter变化自动更新
-watch(
-    logFilter,
-    () => {
-        if (logAutoApply.value) {
-            throttleUpdateData();
-        }
-    },
-    { deep: true, immediate: true, flush: "post" }
-);
+watchPostEffect(() => {
+    if (logAutoApply.value) {
+        throttleUpdateData();
+    }
+});
 onMounted(() => {
-    if (logs.value.length === 0) updateData();
+    if (logs.value.length === 0) {
+        updateData();
+    }
 });
 </script>
 

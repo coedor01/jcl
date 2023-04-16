@@ -22,7 +22,7 @@
 import { graphic } from "echarts/core";
 import VChart from "vue-echarts";
 
-import { computed, toRefs, ref, watch } from "vue";
+import { computed, toRefs, ref, watchPostEffect } from "vue";
 import { getEntityColor } from "@/utils/common";
 import { displayDuration, displayDigits, displayPercent } from "@/utils/commonNoStore";
 import { usePve } from "@/store/pve";
@@ -101,7 +101,7 @@ const updateData = () => {
         loading.value = false;
     });
 };
-watch([entity, entityTab], updateData, { immediate: true, flush: "post" });
+watchPostEffect(updateData);
 
 // 表格点击事件
 const handleChartClick = (e) => {

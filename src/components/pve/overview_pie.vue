@@ -14,7 +14,7 @@ import { PieChart } from "echarts/charts";
 import { TooltipComponent } from "echarts/components";
 import VChart from "vue-echarts";
 
-import { ref, watch, toRefs, computed } from "vue";
+import { ref, watchPostEffect, toRefs, computed } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { displayPercent } from "@/utils/commonNoStore";
@@ -104,22 +104,12 @@ const handleSelect = ({ selected }) => {
     focusEntities.value = selected.map((x) => data.value[x].id);
 };
 // 统计类型变化，分析结果变化时更新数据
-watch(
-    [statType],
-    () => {
-        updateData();
-    },
-    { immediate: true, flush: "post" }
-);
+watchPostEffect(updateData);
 // focusEntities变化时同步选中状态
-watch(
-    focusEntities,
-    () => {
-        if (syncing.value) return;
-        syncSelected();
-    },
-    { immediate: true, deep: true, flush: "post" }
-);
+watchPostEffect(() => {
+    if (syncing.value) return;
+    syncSelected();
+});
 </script>
 
 <style lang="less" scoped>

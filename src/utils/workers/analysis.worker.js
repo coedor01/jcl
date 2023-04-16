@@ -2,7 +2,7 @@
  * @Author: X3ZvaWQ x3zvawq@gmail.com
  * @Date: 2023-02-27 20:19:49
  * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
- * @LastEditTime: 2023-04-12 00:04:29
+ * @LastEditTime: 2023-04-16 10:46:31
  * @FilePath: /jcl/src/utils/workers/analysis.worker.js
  * @Description:
  */
@@ -77,6 +77,7 @@ async function getResourceFromApi(resourceList, client = "std") {
 
 let analyzer;
 onmessage = async ({ data: { action, data } }) => {
+    console.log(action, data);
     if (action == "init") {
         const { raw, params } = data;
         analyzer = new Analyzer(raw, params);
@@ -98,14 +99,17 @@ onmessage = async ({ data: { action, data } }) => {
             }
         }
     } else if (action == "export") {
+        const logs = analyzer.getPveLogs(data);
         const window = { $store: analyzer.result };
-        updateStatus("整理原始数据", 1, 5);
+        updateStatus("整理原始数据", 1, 25);
         const headerValues = header.map((item) => item.value);
         // 从window中取出所有的资源
         updateStatus("构建CSV表格", 0);
-        let exporter = writeRowsToSheet(window.$store);
+        let exporter = writeRowsToSheet(logs, window.$store);
         let result;
-        while (!(result = exporter.next()).done) updateStatus("构建CSV表格", 0, 5 + result.value * 0.85);
+        while (!(result = exporter.next()).done) {
+            updateStatus("构建CSV表格", 0, 25 + result.value * 0.65);
+        }
         // 将数据转换为csv格式
         let csv = unparse(result.value, { columns: headerValues });
         updateStatus("构建CSV表格", 1, 90);

@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { toRefs, onMounted, defineComponent, watch } from "vue";
+import { toRefs, onMounted, defineComponent, watchPostEffect } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import { useRouter } from "vue-router";
@@ -49,8 +49,7 @@ onMounted(() => {
             entity.value = Number(query.entity);
         }
         if (query.compareMode) compareMode.value = query.compareMode;
-        if (query.entity1) compareEntity.value[0] = Number(query.entity1);
-        if (query.entity2) compareEntity.value[1] = Number(query.entity2);
+        if (query.entity1 || query.entity2) compareEntity.value = [Number(query.entity1), Number(query.entity2)];
         return;
     }
     // 初始化的时候，没有结果，但是带了ID，带着query跳去view
@@ -62,45 +61,29 @@ onMounted(() => {
     router.push({ name: "home" });
 });
 // 用户切换各种tab、选择玩家的时候修改路由
-watch(
-    [
-        mainTab,
-        // overview
-        statType,
-        focusEntities,
-        // entity
-        entityTab,
-        viewType,
-        entity,
-        // compare
-        compareMode,
-        compareEntity,
-    ],
-    () => {
-        const id = store.info?.id;
-        if (!id) return;
-        const query = {
-            id,
-            tab: mainTab.value,
-        };
-        if (mainTab.value === "overview") {
-            if (statType.value) query.statType = statType.value;
-            if (focusEntities.value.length) query.entity = focusEntities.value.join(",");
-        }
-        if (mainTab.value === "detail") {
-            if (entityTab.value) query.entityTab = entityTab.value;
-            if (viewType.value) query.viewType = viewType.value;
-            if (entity.value) query.entity = entity.value;
-        }
-        if (mainTab.value === "compare") {
-            if (compareMode.value) query.compareMode = compareMode.value;
-            if (compareEntity.value[0]) query.entity1 = compareEntity.value[0];
-            if (compareEntity.value[1]) query.entity2 = compareEntity.value[1];
-        }
-        router.replace({ query });
-    },
-    { deep: true, flush: "post" }
-);
+watchPostEffect(() => {
+    const id = store.info?.id;
+    if (!id) return;
+    const query = {
+        id,
+        tab: mainTab.value,
+    };
+    if (mainTab.value === "overview") {
+        if (statType.value) query.statType = statType.value;
+        if (focusEntities.value.length) query.entity = focusEntities.value.join(",");
+    }
+    if (mainTab.value === "detail") {
+        if (entityTab.value) query.entityTab = entityTab.value;
+        if (viewType.value) query.viewType = viewType.value;
+        if (entity.value) query.entity = entity.value;
+    }
+    if (mainTab.value === "compare") {
+        if (compareMode.value) query.compareMode = compareMode.value;
+        if (compareEntity.value[0]) query.entity1 = compareEntity.value[0];
+        if (compareEntity.value[1]) query.entity2 = compareEntity.value[1];
+    }
+    router.replace({ query });
+});
 
 defineComponent({
     name: "PveIndex",

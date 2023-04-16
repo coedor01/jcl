@@ -61,7 +61,7 @@
 <script setup>
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
-import { toRefs, watch, ref } from "vue";
+import { toRefs, watchPostEffect, ref } from "vue";
 import getWorkerResponse from "@/utils/worker";
 
 const { entity, selectedSkills } = toRefs(usePve());
@@ -110,13 +110,7 @@ const click = (row, column) => {
     }
 };
 
-watch(
-    [entity],
-    () => {
-        updateData();
-    },
-    { immediate: true, flush: "post" }
-);
+watchPostEffect(updateData);
 </script>
 
 <style lang="less">

@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { toRefs, watch } from "vue";
+import { toRefs, watchPostEffect } from "vue";
 import { useRouter } from "vue-router";
 import { usePve } from "@/store/pve";
 import { useStore } from "@/store/index";
@@ -30,22 +30,18 @@ import CompareView from "./compare_view.vue";
 const router = useRouter();
 const store = useStore();
 const { compareMode, compareEntity } = toRefs(usePve());
-watch(
-    [compareMode, compareEntity],
-    () => {
-        const id = store.info?.id;
-        if (!id) return;
-        const query = {
-            id,
-            tab: "compare",
-        };
-        if (compareMode.value) query.compareMode = compareMode.value;
-        if (compareEntity.value[0]) query.entity1 = compareEntity.value[0];
-        if (compareEntity.value[1]) query.entity2 = compareEntity.value[1];
-        router.replace({ query });
-    },
-    { deep: true, flush: "post" }
-);
+watchPostEffect(() => {
+    const id = store.info?.id;
+    if (!id) return;
+    const query = {
+        id,
+        tab: "compare",
+    };
+    if (compareMode.value) query.compareMode = compareMode.value;
+    if (compareEntity.value[0]) query.entity1 = compareEntity.value[0];
+    if (compareEntity.value[1]) query.entity2 = compareEntity.value[1];
+    router.replace({ query });
+});
 </script>
 
 <style lang="less">

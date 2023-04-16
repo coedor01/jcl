@@ -62,7 +62,7 @@ import { getMountIcon, getEntityName } from "@/utils/common";
 import { displayDigits, displayPercent } from "@/utils/commonNoStore";
 import { usePaginate } from "@/utils/uses/usePaginate";
 
-import { ref, watch, toRefs } from "vue";
+import { ref, watchPostEffect, toRefs } from "vue";
 import { sortBy } from "lodash-es";
 import getWorkerResponse from "@/utils/worker";
 
@@ -108,13 +108,7 @@ const updateData = () => {
     });
 };
 // watch
-watch(
-    [statType],
-    () => {
-        updateData();
-    },
-    { immediate: true, flush: "post" }
-);
+watchPostEffect(updateData);
 </script>
 
 <style lang="less">

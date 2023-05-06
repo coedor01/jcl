@@ -4,6 +4,18 @@
         <div class="m-pve-content">
             <component :is="mainComponents[mainTab]"></component>
         </div>
+        <div class="u-comment-area" v-if="!!store.info.id">
+            <Thx
+                class="m-thx"
+                mode="dark"
+                :postId="store.info.id"
+                postType="battle"
+                :postTitle="store.info.title"
+                :adminBoxcoinEnable="true"
+                :userBoxcoinEnable="true"
+            />
+            <Comment class="m-comment" mode="dark" :id="store.info.id" category="battle" />
+        </div>
     </div>
 </template>
 
@@ -21,10 +33,14 @@ import PveLogs from "@/components/pve/pve_logs.vue";
 import UploadCard from "@/components/upload_card.vue";
 import VideoCard from "@/components/video_card.vue";
 
+import Thx from "@jx3box/jx3box-vue3-ui/src/single/Thx.vue";
+import Comment from "@jx3box/jx3box-vue3-ui/src/single/Comment.vue";
+
 const store = useStore();
 const router = useRouter();
 const { mainTab, statType, focusEntities, entityTab, viewType, entityList, entity, compareMode, compareEntity } =
     toRefs(usePve());
+
 // data
 const mainComponents = {
     overview: PveOverview,

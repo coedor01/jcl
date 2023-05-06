@@ -27,7 +27,10 @@
                     </div>
                 </div>
             </template>
-            <el-alert v-else title="数据不存在或没有访问权限" type="error" :closable="false" show-icon center />
+            <div v-if="error" class="m-error-tip">
+                <el-icon><CloseBold /></el-icon>
+                数据不存在或没有访问权限
+            </div>
         </div>
     </div>
 </template>

@@ -24,4 +24,38 @@ body {
     padding: 40px 0;
 }
 
+.el-radio-button.is-active {
+    .el-radio-button__inner {
+        background-color: @light-purple;
+        border-radius: 4px;
+    }
+}
+.el-radio-button .el-radio-button__inner {
+    border: none !important;
+    background-color: transparent;
+}
+.c-jx3box-emotion-item {
+    border: 1px solid transparent !important;
+}
+
+.u-comment-area {
+    width: @main-width;
+
+    .el-textarea__inner {
+        box-shadow: 0 0 0 1px #232527 inset;
+    }
+    .w-thx-copyright,
+    .c-comment-order {
+        background-color: @card-background;
+        border-color: #232527;
+    }
+    .c-comment-box {
+        border-color: #232527;
+    }
+
+    .c-comment {
+        margin: 40px 0;
+    }
+}
+
 @import "./widget.less";

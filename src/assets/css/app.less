@@ -42,20 +42,43 @@ body {
     width: @main-width;
 
     .el-textarea__inner {
-        box-shadow: 0 0 0 1px #232527 inset;
+        box-shadow: 0 0 0 1px @hr-color inset;
     }
     .w-thx-copyright,
     .c-comment-order {
         background-color: @card-background;
-        border-color: #232527;
+        border-color: @hr-color;
     }
     .c-comment-box {
-        border-color: #232527;
+        border-color: @hr-color;
     }
-
+    .c-comment-list {
+        border-color: @hr-color;
+    }
     .c-comment {
         margin: 40px 0;
     }
+    .u-uploader .el-upload--picture-card {
+        background-color: transparent;
+    }
+    .el-input__count {
+        background-color: transparent;
+    }
+}
+.c-jx3box-emotion-pop {
+    border: 1px solid @hr-color!important;
+    background: @card-background!important;
+    .c-jx3box-emotion-list {
+        .scrollbar(@card-background,4px) !important;
+    }
+    .el-tabs__header,
+    .el-tabs__nav-scroll,
+    .el-tabs__item {
+        border: none !important;
+        background-color: var(--el-bg-color-overlay) !important;
+    }
+}
+.c-jx3box-emotion-pop__content {
 }
 
 @import "./widget.less";

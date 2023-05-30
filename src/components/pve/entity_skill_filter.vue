@@ -80,7 +80,6 @@ const updateData = () => {
         data.value = result.data;
         const _selected = result.selectedSkills;
         for (let d of data.value) _selected[d.name].stat = ["cast"];
-        for (let d of data.value.slice(0, 1)) _selected[d.name].stat = ["cast", "hit", "miss"];
         selectedSkills.value = _selected;
         loading.value = false;
     });

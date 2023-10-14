@@ -2,7 +2,7 @@
  * @Author: X3ZvaWQ x3zvawq@gmail.com
  * @Date: 2023-03-22 09:38:41
  * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
- * @LastEditTime: 2023-03-22 16:18:43
+ * @LastEditTime: 2023-10-14 23:55:19
  * @FilePath: /jcl/src/utils/commonNoStore.js
  * @Description:
  */
@@ -113,4 +113,24 @@ export function displayBigNumber(value) {
 export function displayDuration(value) {
     const duration = moment.duration(value, "seconds");
     return duration.isValid() ? `${padStart(duration.minutes(), 2, 0)}:${padStart(duration.seconds(), 2, 0)}` : "--:--";
+}
+
+export function gaussianSmoothing(data, sigma) {
+    const gaussianKernel = (x, sigma) => {
+        return Math.exp(-0.5 * (x / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
+    };
+
+    const kernelRadius = Math.floor(3 * sigma);
+    const kernelSize = 2 * kernelRadius + 1;
+    const kernel = new Array(kernelSize).fill(0).map((_, i) => gaussianKernel(i - kernelRadius, sigma));
+    const kernelSum = kernel.reduce((a, b) => a + b, 0);
+
+    return data.map((_, i, arr) => {
+        let weightedSum = 0;
+        for (let j = -kernelRadius; j <= kernelRadius; j++) {
+            const index = Math.min(Math.max(i + j, 0), arr.length - 1);
+            weightedSum += arr[index] * kernel[j + kernelRadius];
+        }
+        return Math.round(weightedSum / kernelSum);
+    });
 }

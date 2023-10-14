@@ -15,6 +15,7 @@ import {
     displayDuration,
 } from "./commonNoStore";
 import { iconLink } from "@jx3box/jx3box-common/js/utils";
+import { gaussianSmoothing } from "@/utils/commonNoStore";
 
 // 用于解析lua table
 const parseLua = (type, lua) => {
@@ -138,13 +139,14 @@ export class Analyzer {
     }
     getPveOverviewList(params) {
         const { statType, timeRange } = params;
-        const { entities, stats, end } = this.result;
+        const { entities, stats } = this.result;
         if (!stats) return [];
         const source = stats[statType];
         if (!source) return [];
         let result = [];
         let teamTotal = 0;
         let maxValue = 0;
+        const rangeLength = timeRange[1] - timeRange[0];
         for (let entity in source) {
             const logs = source[entity].logs.filter(
                 (log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]
@@ -154,7 +156,7 @@ export class Analyzer {
                 ...statData,
                 ...pick(entities[entity], ["name", "id", "mount", "type"]),
             };
-            entityData.vps = entityData.value / end.sec;
+            entityData.vps = entityData.value / rangeLength;
             if (entityData.type == "player") {
                 teamTotal += entityData.value;
                 maxValue = Math.max(maxValue, entityData.value);
@@ -249,6 +251,10 @@ export class Analyzer {
             }
             yData.unshift(r);
             yData.sort((a, b) => b.total - a.total);
+            yData = yData.map((item) => {
+                item.data = gaussianSmoothing(item.data, 4);
+                return item;
+            });
         }
         return { xData, yData };
     }
@@ -309,12 +315,12 @@ export class Analyzer {
         const max = end.sec + 1;
         // xData: [1,2,3,4,...]
         const xData = Array.from({ length: max }, (v, k) => k + 1);
-        const yData = Array.from({ length: max }, () => 0);
+        const _yData = Array.from({ length: max }, () => 0);
         for (let log of source.logs) {
             const index = Math.floor(log.micro / 1000);
-            yData[index] += log.value;
+            _yData[index] += log.value;
         }
-
+        const yData = gaussianSmoothing(_yData, 4);
         return { overview, xData, yData };
     }
     getPveEntityViewEffect(params) {
@@ -643,6 +649,9 @@ export class Analyzer {
                     ...defaultSeries,
                     itemStyle: { color },
                 });
+                for (let item of yData) {
+                    item.data = gaussianSmoothing(item.data, 4);
+                }
             }
         }
         return { xData, yData };

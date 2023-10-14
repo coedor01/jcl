@@ -6,13 +6,14 @@ export const usePve = defineStore({
         mainTab: "overview", // 当前页面的主tab
         // overview
         statType: "damage", // 当前统计的类型，伤害/承伤/治疗/承疗/buff/喊话等
+        timeRange: [0, 0], // 列表的时间范围
         focusEntities: [], // 全局总览选中的单位们
 
         // entity
         entityTab: "damage", // 单位详情tab
         entity: null, //当前统计的目标
         entityList: [], // 待选单位列表
-        currentWindow: null, // 当前统计窗口
+        entityTimeRange: {}, // 单位详情的时间范围
         viewType: "effect", // 单位数值统计，根据目标/技能
         effect: "", // 选中的技能效果
         effectLogs: [], // 选中的技能效果相关日志

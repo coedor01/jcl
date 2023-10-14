@@ -16,10 +16,6 @@
                 <template v-else>
                     <div class="w-card-title">
                         <span>{{ targetLabel }}列表</span>
-                        <span v-if="currentWindow" class="u-window-tip">
-                            当前查看的是 {{ currentWindow - 5 }} ~ {{ currentWindow }} 之间的记录
-                            <div class="u-clear-window" @click="currentWindow = null">×</div>
-                        </span>
                     </div>
                     <el-table
                         class="u-table"
@@ -87,7 +83,7 @@
 
 <script setup>
 import EmptyGuide from "@/components/common/empty_guide.vue";
-import { ref, watch, computed, toRefs } from "vue";
+import { ref, watch, computed, toRefs, toRaw } from "vue";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { getMountIcon, getEntityName } from "@/utils/common";
@@ -98,7 +94,7 @@ import EntitySkillLog from "./entity_view_log.vue";
 import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
-const { entityTab, entity, currentWindow, target, targetLogs, targetLog } = toRefs(usePve());
+const { entityTab, entity, entityTimeRange, target, targetLogs, targetLog } = toRefs(usePve());
 
 // computed
 const targetLabel = computed(() => {
@@ -127,7 +123,7 @@ const updateData = () => {
     getWorkerResponse("get_pve_entity_view_target", {
         entityTab: entityTab.value,
         entity: entity.value,
-        currentWindow: currentWindow.value,
+        timeRange: toRaw(entityTimeRange.value[entity.value]),
         skipNoNameTarget: skipNoNameTarget.value,
     }).then((result) => {
         data.value = result;
@@ -144,19 +140,21 @@ const sort = ({ prop, order }) => {
         }
     });
 };
-const clearLogs = () => {
-    target.value = "";
-    targetLogs.value = [];
-    targetLog.value = null;
-};
 watch(
-    [entity, currentWindow, entityTab],
+    [entity, () => entityTimeRange.value[entity.value], entityTab],
     ([newEntity], [oldEntity]) => {
         if (oldEntity && newEntity != oldEntity) clearLogs();
         updateData();
     },
     { immediate: true, flush: "post" }
 );
+
+const clearLogs = () => {
+    target.value = "";
+    targetLogs.value = [];
+    targetLog.value = null;
+};
+watch(() => data.value, clearLogs, { flush: "post" });
 </script>
 
 <style lang="less">
@@ -175,13 +173,6 @@ watch(
         .w-card-title {
             display: flex;
             gap: 40px;
-        }
-        .u-window-tip {
-            .flex-center;
-            gap: 8px;
-        }
-        .u-clear-window {
-            .pointer;
         }
 
         & > div:first-of-type {

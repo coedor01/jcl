@@ -50,6 +50,7 @@ import { usePve } from "@/store/pve";
 
 const { focusEntities, statType } = toRefs(usePve());
 
+// tab切换相关逻辑
 const tabs = [
     {
         name: "damage",
@@ -95,6 +96,19 @@ const switchType = (tab) => {
             border-radius: 20px;
             padding: 20px;
             .size(960px, 380px);
+
+            .u-left-options {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .u-time {
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
 
             .m-type-tabs {
                 display: flex;

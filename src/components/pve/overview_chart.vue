@@ -1,6 +1,13 @@
 <template>
     <div class="m-overview-chart" v-loading="loading">
-        <v-chart ref="echart" theme="dark" :option="option" autoresize @legendselectchanged="handleSelect" />
+        <v-chart
+            ref="echart"
+            theme="dark"
+            :option="option"
+            autoresize
+            @legendselectchanged="handleSelect"
+            @datazoom="handleDatazoom"
+        />
     </div>
 </template>
 
@@ -10,11 +17,11 @@ import { computed, ref, toRefs, watchPostEffect } from "vue";
 import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import getWorkerResponse from "@/utils/worker";
-
+import { debounce } from "lodash-es";
 const store = useStore();
 const global = usePve();
 
-const { focusEntities, statType } = toRefs(global);
+const { focusEntities, statType, timeRange } = toRefs(global);
 
 // 被选中的人的名字
 const focusNames = computed(() => {
@@ -68,7 +75,17 @@ const option = computed(() => {
             type: "value",
             boundaryGap: [0, 0.2],
         },
+        dataZoom: [
+            {
+                type: "slider",
+                filterMode: "filter",
+                top: 10,
+            },
+        ],
         series: yData.value,
+        grid: {
+            right: 8,
+        },
     };
 }, [xData, yData, focusNames]);
 
@@ -84,6 +101,17 @@ const handleSelect = ({ name, selected }) => {
     }
 };
 
+// 缩放/时间范围逻辑
+const handleDatazoom = debounce(
+    (e) => {
+        const { start, end } = e;
+        timeRange.value = [start, end];
+    },
+    500,
+    { leading: true }
+);
+
+// 数据更新逻辑
 const updateData = () => {
     loading.value = true;
     getWorkerResponse("get_pve_overview_chart", { statType: statType.value }).then((data) => {

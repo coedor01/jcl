@@ -120,7 +120,7 @@ const displayOverview = computed(() => {
     for (let entity in stats.beDamaged) {
         if (!entities[entity]) continue;
         if (entities[entity].type === "player") continue;
-        const beDamagedValue = stats.beDamaged[entity].all.value;
+        const beDamagedValue = stats.beDamaged[entity].value;
         if (beDamagedValue > maxBeDamaged) {
             maxBeDamaged = beDamagedValue;
             target = entities[entity].name;
@@ -131,7 +131,7 @@ const displayOverview = computed(() => {
     for (let entity in stats.damage) {
         if (!entities[entity]) continue;
         if (entities[entity].type === "player") {
-            totalDamage += stats.damage[entity].all.value;
+            totalDamage += stats.damage[entity].value;
         }
     }
 

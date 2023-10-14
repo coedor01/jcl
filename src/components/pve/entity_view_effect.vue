@@ -13,10 +13,6 @@
             <template v-else>
                 <div class="w-card-title">
                     <span>技能列表</span>
-                    <span v-if="currentWindow" class="u-window-tip">
-                        当前查看的是 {{ currentWindow - 5 }} ~ {{ currentWindow }} 之间的记录
-                        <div class="u-clear-window" @click="currentWindow = null">×</div>
-                    </span>
                 </div>
                 <el-table
                     class="u-table"
@@ -83,7 +79,7 @@
 
 <script setup>
 import EmptyGuide from "@/components/common/empty_guide.vue";
-import { ref, watch, toRefs } from "vue";
+import { ref, watch, toRefs, toRaw } from "vue";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { getResourceIcon, getResourceName } from "@/utils/common";
@@ -94,7 +90,7 @@ import EntitySkillLog from "./entity_view_log.vue";
 import EntitySkillLogDetail from "./entity_view_log_detail.vue";
 
 // 注入的属性
-const { entityTab, entity, currentWindow, effect, effectLogs, effectLog } = toRefs(usePve());
+const { entityTab, entity, entityTimeRange, effect, effectLogs, effectLog } = toRefs(usePve());
 
 // 行点击事件
 const click = (row) => {
@@ -112,12 +108,14 @@ const loading = ref(false);
 const data = ref([]);
 const pageSize = ref(22);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
+
+// 数据更新逻辑
 const updateData = () => {
     loading.value = true;
     getWorkerResponse("get_pve_entity_view_effect", {
         entityTab: entityTab.value,
         entity: entity.value,
-        currentWindow: currentWindow.value,
+        timeRange: toRaw(entityTimeRange.value[entity.value]),
     }).then((result) => {
         data.value = result;
         loading.value = false;
@@ -137,19 +135,21 @@ const sort = ({ prop, order }) => {
         item.index = index++;
     }
 };
-const clearLogs = () => {
-    effect.value = null;
-    effectLogs.value = [];
-    effectLog.value = null;
-};
 watch(
-    [entity, currentWindow, entityTab],
+    [entity, () => entityTimeRange.value[entity.value], entityTab],
     ([newEntity], [oldEntity]) => {
         if (oldEntity && newEntity !== oldEntity) clearLogs();
         updateData();
     },
     { immediate: true, flush: "post" }
 );
+
+const clearLogs = () => {
+    effect.value = null;
+    effectLogs.value = [];
+    effectLog.value = null;
+};
+watch(() => data.value, clearLogs, { flush: "post" });
 </script>
 
 <style lang="less">

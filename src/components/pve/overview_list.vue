@@ -62,7 +62,7 @@ import { getMountIcon, getEntityName } from "@/utils/common";
 import { displayDigits, displayPercent } from "@/utils/commonNoStore";
 import { usePaginate } from "@/utils/uses/usePaginate";
 
-import { ref, watchPostEffect, toRefs } from "vue";
+import { ref, watchPostEffect, toRefs, toRaw } from "vue";
 import { sortBy } from "lodash-es";
 import getWorkerResponse from "@/utils/worker";
 
@@ -71,7 +71,7 @@ const global = usePve();
 // 数据
 const loading = ref(false);
 const data = ref([]);
-const { focusEntities, statType } = toRefs(global);
+const { focusEntities, statType, timeRange } = toRefs(global);
 const { currentPage, currentData, total } = usePaginate(data, ref(25));
 // methods
 const sort = ({ prop, order }) => {
@@ -100,7 +100,10 @@ const rowClass = ({ row }) => {
 };
 const updateData = () => {
     loading.value = true;
-    getWorkerResponse("get_pve_overview_list", { statType: statType.value }).then((result) => {
+    getWorkerResponse("get_pve_overview_list", {
+        statType: statType.value,
+        timeRange: toRaw(timeRange.value),
+    }).then((result) => {
         loading.value = false;
         data.value = result;
         sort({ prop: "value", order: "descending" });

@@ -137,7 +137,7 @@ export class Analyzer {
         })(this);
     }
     getPveOverviewList(params) {
-        const { statType } = params;
+        const { statType, timeRange } = params;
         const { entities, stats, end } = this.result;
         if (!stats) return [];
         const source = stats[statType];
@@ -146,12 +146,16 @@ export class Analyzer {
         let teamTotal = 0;
         let maxValue = 0;
         for (let entity in source) {
+            const logs = source[entity].logs.filter(
+                (log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]
+            );
+            const statData = this.getLogsStat(logs);
             let entityData = {
-                ...pick(source[entity].all, ["count", "value", "max", "min", "criticalCount"]),
-                ...pick(entities[entity], ["name", "id", "mount"]),
+                ...statData,
+                ...pick(entities[entity], ["name", "id", "mount", "type"]),
             };
             entityData.vps = entityData.value / end.sec;
-            if (entityData.mount) {
+            if (entityData.type == "player") {
                 teamTotal += entityData.value;
                 maxValue = Math.max(maxValue, entityData.value);
             }
@@ -175,10 +179,10 @@ export class Analyzer {
         let total = 0;
         const source = stats[statType];
         for (let entity in source) {
-            total += source[entity].all.value;
+            total += source[entity].value;
             let _data = {
                 ...pick(entities[entity], ["id", "name", "color"]),
-                value: source[entity].all.value,
+                value: source[entity].value,
             };
             if (!_data.name) _data.name = "#" + _data.id;
             result.push(_data);
@@ -189,16 +193,10 @@ export class Analyzer {
     getPveOverviewChart(params) {
         const { statType } = params;
         const { entities, stats, end } = this.result;
-        // xData
-        const xData = [];
-        {
-            let max = Math.ceil(end.sec / 5) * 5;
-            let min = 0;
-            while (min <= max) {
-                xData.push(min);
-                min += 5;
-            }
-        }
+
+        const max = end.sec + 1;
+        // xData: [1,2,3,4,...]
+        const xData = Array.from({ length: max }, (v, k) => k + 1);
         // yData
         let yData = {};
         {
@@ -213,22 +211,24 @@ export class Analyzer {
                 if (!entities[id]) continue;
                 const { name, color } = entities[id];
                 if (!name || id == 0) continue;
+                const entityYData = Array.from({ length: max }, () => 0);
+                for (let log of source[id].logs) {
+                    const index = Math.floor(log.micro / 1000);
+                    entityYData[index] += log.value;
+                }
+
                 if (yData[name]) {
                     // 同名单位，合并数据
-                    let newData = [];
-                    for (let x of xData) newData.push(yData[name].data[x] + source[id].windows[x]?.value ?? 0);
-                    yData[name].data = newData;
-                    yData[name].total += source[id].all.value;
+                    for (let index in entityYData) yData[name][index] += entityYData[index];
+                    yData[name].total += source[id].value;
                 } else {
                     // 新单位，纳入统计
-                    let newData = [];
-                    for (let x of xData) newData.push(source[id].windows[x]?.value ?? 0);
                     yData[name] = {
                         ...defaultSeries,
                         itemStyle: { color },
                         name,
-                        data: newData,
-                        total: source[id].all.value,
+                        data: entityYData,
+                        total: source[id].value,
                     };
                 }
             }
@@ -253,12 +253,14 @@ export class Analyzer {
         return { xData, yData };
     }
     getPveOverviewFocus(params) {
-        const { statType, entityID } = params;
-        const source = this.result.stats?.[statType]?.[entityID]?.all?.details;
-        if (!source) return [];
+        const { statType, entityID, timeRange } = params;
+        const logs = this.result.stats?.[statType]?.[entityID]?.logs?.filter(
+            (log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]
+        );
+        if (!logs) return [];
         let result = {};
         let total = 0;
-        for (let log of source) {
+        for (let log of logs) {
             const key = log.effect;
             if (!result[key]) {
                 const resource = getResource(key, this.result);
@@ -288,58 +290,46 @@ export class Analyzer {
 
         const entityObj = entities[entity];
         let overview = { ...pick(entityObj, ["name", "id"]) };
-        {
-            const source = stats[entityTab]?.[entity]?.all;
-            if (!source) return defaultReturn;
-            const duration = end.sec;
-            const vps = source.value / duration;
-            const critRate = source.criticalCount / source.count;
-            const displayValue = source.value ? source.value.toLocaleString() : "-";
-            overview = {
-                ...overview,
-                ...pick(source, ["count"]),
-                value: displayValue,
-                duration,
-                vps,
-                critRate,
-            };
+
+        const source = stats[entityTab]?.[entity];
+        if (!source) return defaultReturn;
+        const duration = end.sec;
+        const vps = source.value / duration;
+        const critRate = source.criticalCount / source.count;
+        const displayValue = source.value ? source.value.toLocaleString() : "-";
+        overview = {
+            ...overview,
+            ...pick(source, ["count"]),
+            value: displayValue,
+            duration,
+            vps,
+            critRate,
+        };
+
+        const max = end.sec + 1;
+        // xData: [1,2,3,4,...]
+        const xData = Array.from({ length: max }, (v, k) => k + 1);
+        const yData = Array.from({ length: max }, () => 0);
+        for (let log of source.logs) {
+            const index = Math.floor(log.micro / 1000);
+            yData[index] += log.value;
         }
 
-        let xData = [];
-        let yData = [];
-        {
-            const source = stats?.[entityTab]?.[entity]?.windows;
-            if (!source) return defaultReturn;
-            // 构造横轴
-            let max = Math.ceil(end.sec / 5) * 5;
-            let min = 0;
-            while (min <= max) {
-                xData.push(min);
-                min += 5;
-            }
-            // 构造纵轴
-            for (let x of xData) {
-                let y = source[x]?.value / 5 || 0;
-                yData.push(y);
-            }
-        }
         return { overview, xData, yData };
     }
     getPveEntityViewEffect(params) {
-        const { entityTab, entity, currentWindow } = params;
+        const { entityTab, entity, timeRange = [0, 1e10] } = params;
         const { stats } = this.result;
-        const source =
-            currentWindow === null
-                ? stats[entityTab]?.[entity]?.all
-                : stats[entityTab]?.[entity]?.windows?.[currentWindow];
+        const source = stats[entityTab]?.[entity];
         if (!source) {
             return [];
         }
         let result = {};
         let total = 0;
-        for (let detail of source.details) {
+        const logs = source.logs.filter((log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]);
+        for (let log of logs) {
             //这个target不一定是目标的ID，在承伤/承疗的时候表现为来源ID
-            const effect = detail.effect;
+            const effect = log.effect;
             if (!result[effect])
                 result[effect] = {
                     count: 0, // 伤害次数
@@ -350,12 +340,12 @@ export class Analyzer {
                     logs: [], // 详细伤害日志
                 };
             result[effect].count++;
-            result[effect].value += detail.value;
-            total += detail.value;
-            result[effect].min = Math.min(result[effect].min, detail.value);
-            result[effect].max = Math.max(result[effect].max, detail.value);
-            if (detail.isCritical) result[effect].criticalCount++;
-            result[effect].logs.push(detail);
+            result[effect].value += log.value;
+            total += log.value;
+            result[effect].min = Math.min(result[effect].min, log.value);
+            result[effect].max = Math.max(result[effect].max, log.value);
+            if (log.isCritical) result[effect].criticalCount++;
+            result[effect].logs.push(log);
         }
         for (let effect in result) {
             let r = result[effect];
@@ -367,21 +357,19 @@ export class Analyzer {
         return Object.values(result).sort((a, b) => b.value - a.value);
     }
     getPveEntityViewTarget(params) {
-        const { entityTab, entity, currentWindow, skipNoNameTarget = true } = params;
+        const { entityTab, entity, timeRange = [0, 1e10], skipNoNameTarget = true } = params;
         const { stats, entities } = this.result;
-        const source =
-            currentWindow === null
-                ? stats[entityTab]?.[entity]?.all
-                : stats[entityTab]?.[entity]?.windows?.[currentWindow];
+        const source = stats[entityTab]?.[entity];
         if (!source) {
             return [];
         }
         let result = {};
 
         let total = 0;
-        for (let detail of source.details) {
+        const logs = source.logs.filter((log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]);
+        for (let log of logs) {
             //这个target不一定是目标的ID，在承伤/承疗的时候表现为来源ID
-            const target = ["damage", "treat"].includes(entityTab) ? detail.target : detail.caster;
+            const target = ["damage", "treat"].includes(entityTab) ? log.target : log.caster;
             const entity = entities[target];
             if (skipNoNameTarget && !entity.name) continue;
             if (!result[target])
@@ -394,12 +382,12 @@ export class Analyzer {
                     logs: [], // 详细伤害日志
                 };
             result[target].count++;
-            result[target].value += detail.value;
-            total += detail.value;
-            result[target].min = Math.min(result[target].min, detail.value);
-            result[target].max = Math.max(result[target].max, detail.value);
-            if (detail.isCritical) result[target].criticalCount++;
-            result[target].logs.push(detail);
+            result[target].value += log.value;
+            total += log.value;
+            result[target].min = Math.min(result[target].min, log.value);
+            result[target].max = Math.max(result[target].max, log.value);
+            if (log.isCritical) result[target].criticalCount++;
+            result[target].logs.push(log);
         }
         for (let k in result) {
             let r = result[k];
@@ -587,10 +575,10 @@ export class Analyzer {
         ];
         const data = [];
         {
-            if (!source || !source.details) return [];
+            if (!source || !source.logs) return [];
             let result = {};
-            for (let detail of source.details) {
-                const effect = detail.effect;
+            for (let log of source.logs) {
+                const effect = log.effect;
                 if (!result[effect]) {
                     result[effect] = {
                         count: 0, // 伤害次数
@@ -603,11 +591,11 @@ export class Analyzer {
                     };
                 }
                 result[effect].count++;
-                result[effect].value += detail.value;
-                result[effect].min = Math.min(result[effect].min, detail.value);
-                result[effect].max = Math.max(result[effect].max, detail.value);
-                result[effect].logs.push(detail);
-                if (detail.isCritical) result[effect].criticalCount++;
+                result[effect].value += log.value;
+                result[effect].min = Math.min(result[effect].min, log.value);
+                result[effect].max = Math.max(result[effect].max, log.value);
+                result[effect].logs.push(log);
+                if (log.isCritical) result[effect].criticalCount++;
             }
             result = Object.values(result).sort((a, b) => b.value - a.value);
             //计算结果->给表格展示的数据
@@ -765,6 +753,7 @@ export class Analyzer {
         // 解析结束
         if (this.index === this.length) {
             this.endBuff();
+            this.endStat();
             return result(null, true);
         }
         this.prev = this.current;
@@ -1141,24 +1130,8 @@ export class Analyzer {
     }
     updateStatItem(type, entity) {
         const stat = this.result.stats[type];
-        if (!stat[entity]) {
-            stat[entity] = {
-                all: {
-                    value: 0,
-                    count: 0,
-                    criticalCount: 0,
-                    time: 0,
-                    max: Number.MIN_SAFE_INTEGER,
-                    min: Number.MAX_SAFE_INTEGER,
-                    details: [],
-                },
-                windows: {},
-            };
-            if (type == "treat") {
-                stat[entity].all.total = 0;
-            }
-        }
-        // ========= 先准备好要用的数据，避免后面重复计算 ==========
+        if (!stat[entity]) stat[entity] = { logs: [] };
+        // 整理出log
         const {
             micro,
             detail: { caster, target, eventType, id, level, values, isCritical },
@@ -1184,38 +1157,119 @@ export class Analyzer {
             effect: effectID,
         };
         if (type == "treat") log.T = total;
+        // 塞进统计里面
+        stat[entity]["logs"].push(log);
+
+        // 废弃代码
+        // if (!stat[entity]) {
+        //     stat[entity] = {
+        //         all: {
+        //             value: 0,
+        //             count: 0,
+        //             criticalCount: 0,
+        //             time: 0,
+        //             max: Number.MIN_SAFE_INTEGER,
+        //             min: Number.MAX_SAFE_INTEGER,
+        //             details: [],
+        //         },
+        //         windows: {},
+        //     };
+        //     if (type == "treat") {
+        //         stat[entity].all.total = 0;
+        //     }
+        // }
+        // ========= 先准备好要用的数据，避免后面重复计算 ==========
+        // const {
+        //     micro,
+        //     detail: { caster, target, eventType, id, level, values, isCritical },
+        // } = this.current;
+        // let value = 0;
+        // let total = 0;
+        // if (["damage", "beDamaged"].includes(type)) {
+        //     value = values[13];
+        // } else if (["treat", "beTreated"].includes(type)) {
+        //     value = values[14];
+        //     total = values[6];
+        // }
+        // 技能效果id
+        // const effectID = `${eventType === 1 ? "skill" : "buff"}:${id}_${level}`;
+        // 统计细节
+        // let log = {
+        //     caster,
+        //     target,
+        //     value: value,
+        //     buffs: this.getBuff(entity),
+        //     micro,
+        //     isCritical: isCritical,
+        //     effect: effectID,
+        // };
+        // if (type == "treat") log.T = total;
         // ========= 更新统计
-        let all = stat[entity].all;
-        all.value += value;
-        all.count += 1;
-        all.time = micro;
-        all.max = Math.max(all.max, value);
-        all.min = Math.min(all.min, value);
-        all.details.push(log);
-        if (isCritical) all.criticalCount += 1;
-        if (type == "treat") all.total += total;
+        // let all = stat[entity].all;
+
+        // all.value += value;
+        // all.count += 1;
+        // all.time = micro;
+        // all.max = Math.max(all.max, value);
+        // all.min = Math.min(all.min, value);
+        // all.details.push(log);
+        // if (isCritical) all.criticalCount += 1;
+        // if (type == "treat") all.total += total;
         // ========= 更新窗口统计
-        let windowId = Math.ceil(micro / 5000) * 5;
-        if (!stat[entity].windows[windowId]) {
-            stat[entity].windows[windowId] = {
-                value: 0,
-                count: 0,
-                criticalCount: 0,
-                max: Number.MIN_SAFE_INTEGER,
-                min: Number.MAX_SAFE_INTEGER,
-                details: [],
-            };
-            if (type == "treat") {
-                stat[entity].windows[windowId].total = 0;
+        // let windowId = Math.ceil(micro / 5000) * 5;
+        // if (!stat[entity].windows[windowId]) {
+        //     stat[entity].windows[windowId] = {
+        //         value: 0,
+        //         count: 0,
+        //         criticalCount: 0,
+        //         max: Number.MIN_SAFE_INTEGER,
+        //         min: Number.MAX_SAFE_INTEGER,
+        //         details: [],
+        //     };
+        //     if (type == "treat") {
+        //         stat[entity].windows[windowId].total = 0;
+        //     }
+        // }
+        // let window = stat[entity].windows[windowId];
+        // window.value += value;
+        // window.count += 1;
+        // window.max = Math.max(window.max, value);
+        // window.min = Math.min(window.min, value);
+        // window.details.push(log);
+        // if (isCritical) window.criticalCount += 1;
+        // if (type == "treat") window.total += total;
+    }
+    // 分析结束的时候，将统计数据整理一下
+    endStat() {
+        for (let type in this.result.stats) {
+            for (let entity in this.result.stats[type]) {
+                const statItem = this.result.stats[type][entity];
+                this.result.stats[type][entity] = {
+                    ...statItem,
+                    ...this.getLogsStat(statItem.logs, type),
+                };
             }
         }
-        let window = stat[entity].windows[windowId];
-        window.value += value;
-        window.count += 1;
-        window.max = Math.max(window.max, value);
-        window.min = Math.min(window.min, value);
-        window.details.push(log);
-        if (isCritical) window.criticalCount += 1;
-        if (type == "treat") window.total += total;
+    }
+
+    // 统计一段时间内的数据详情
+    getLogsStat(logs, type) {
+        const result = {
+            count: 0,
+            criticalCount: 0,
+            value: 0,
+            max: Number.MIN_SAFE_INTEGER,
+            min: Number.MAX_SAFE_INTEGER,
+            total: 0,
+        };
+        for (let log of logs) {
+            result.count += 1;
+            result.value += log.value;
+            result.max = Math.max(result.max, log.value);
+            result.min = Math.min(result.min, log.value);
+            if (log.isCritical) result.criticalCount += 1;
+            if (type === "treat") result.total += log.T;
+        }
+        return result;
     }
 }

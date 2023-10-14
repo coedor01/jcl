@@ -110,11 +110,6 @@ const fileSize = computed(() => {
         ? (store.file.size / 1024 / 1024).toFixed(2) + " M"
         : (store.file.size / 1024).toFixed(2) + " K";
 });
-// const fileType = computed(() => {
-//     if (!store.file.name) return;
-//     // if (store.file.name.endsWith(".jcl")) return "JCL - JX3 Combat Log";
-//     return "不支持的文件类型";
-// });
 
 // event
 const fileChange = (file) => {

@@ -3,7 +3,7 @@
         <div v-if="xData.length === 0" class="u-empty-tip">该单位没有相关数据</div>
         <template v-else>
             <div class="u-chart">
-                <v-chart ref="echart" theme="dark" :option="option" autoresize @click="handleChartClick" />
+                <v-chart ref="echart" theme="dark" :option="option" autoresize @datazoom="handleDatazoom" />
             </div>
             <div class="u-overview">
                 <span v-if="overview.name" class="u-overview-item">{{ overview.name }}</span>
@@ -22,15 +22,26 @@
 import { graphic } from "echarts/core";
 import VChart from "vue-echarts";
 
+import { debounce } from "lodash-es";
 import { computed, toRefs, ref, watchPostEffect } from "vue";
 import { getEntityColor } from "@/utils/common";
 import { displayDuration, displayDigits, displayPercent } from "@/utils/commonNoStore";
 import { usePve } from "@/store/pve";
 import getWorkerResponse from "@/utils/worker";
 
-const { entity, entityTab, currentWindow } = toRefs(usePve());
+const { entity, entityTab, entityTimeRange } = toRefs(usePve());
 
 const entityColor = computed(() => getEntityColor(entity.value));
+
+// 缩放/时间范围逻辑
+const handleDatazoom = debounce(
+    (e) => {
+        const { start, end } = e;
+        entityTimeRange.value[entity.value] = [start, end];
+    },
+    500,
+    { leading: true }
+);
 
 // 图表数据处理、更新
 const loading = ref(false);
@@ -87,6 +98,13 @@ const option = computed(() => {
                 data: yData.value,
             },
         ],
+        dataZoom: [
+            {
+                type: "slider",
+                filterMode: "filter",
+                top: 0,
+            },
+        ],
     };
 });
 const updateData = () => {
@@ -102,15 +120,6 @@ const updateData = () => {
     });
 };
 watchPostEffect(updateData);
-
-// 表格点击事件
-const handleChartClick = (e) => {
-    if (e.targetType == "axisLabel") {
-        currentWindow.value = e.value;
-    } else if (e.componentSubType == "line") {
-        currentWindow.value = xData.value[e.dataIndex];
-    }
-};
 </script>
 
 <style lang="less" scoped>

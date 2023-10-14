@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { ref, toRefs, watchPostEffect } from "vue";
+import { ref, toRefs, watchPostEffect, toRaw } from "vue";
 import { getMountIcon, getEntityName } from "@/utils/common";
 import { displayPercent } from "@/utils/commonNoStore";
 import { usePve } from "@/store/pve";
@@ -34,7 +34,7 @@ const props = defineProps({
     },
 });
 const { entityID } = toRefs(props);
-const { statType, focusEntities } = toRefs(global);
+const { statType, focusEntities, timeRange } = toRefs(global);
 
 const close = () => {
     focusEntities.value = focusEntities.value.filter((x) => {
@@ -49,6 +49,7 @@ const updateData = () => {
     getWorkerResponse("get_pve_overview_focus", {
         statType: statType.value,
         entityID: entityID.value,
+        timeRange: toRaw(timeRange.value),
     }).then((result) => {
         data.value = result;
         loading.value = false;

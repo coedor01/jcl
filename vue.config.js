@@ -114,6 +114,7 @@ module.exports = {
             .loader("worker-loader")
             .options({ inline: "fallback" })
             .end();
+        config.module.rule("js").exclude.add(/\.worker\.js$/);
     },
 };
 

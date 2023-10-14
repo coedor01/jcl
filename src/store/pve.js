@@ -26,6 +26,7 @@ export const usePve = defineStore({
 
         // compare
         compareMode: "damage", // 比较tab
+        compareTimeRange: [0, 0], // 比较的时间范围
         compareEntity: [null, null], // 参与比较的单位
         comparePin: [], // 比较时置顶的技能
 

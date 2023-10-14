@@ -215,7 +215,7 @@ import EmptyGuide from "@/components/common/empty_guide.vue";
 import { usePve } from "@/store/pve";
 import { getResourceIcon, getResourceName, getMountIcon, getEntityName } from "@/utils/common";
 import { displayDigits, displayPercent } from "@/utils/commonNoStore";
-import { toRefs, ref, computed, watchPostEffect } from "vue";
+import { toRefs, ref, computed, watchPostEffect, toRaw } from "vue";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import getWorkerResponse from "@/utils/worker";
 // props
@@ -226,7 +226,7 @@ const props = defineProps({
     },
 });
 const { index } = toRefs(props);
-const { compareEntity, compareMode } = toRefs(usePve());
+const { compareEntity, compareMode, compareTimeRange } = toRefs(usePve());
 const entity = computed(() => {
     return compareEntity.value[index.value - 1];
 });
@@ -264,6 +264,7 @@ const updateData = () => {
     getWorkerResponse("get_pve_compare", {
         compareMode: compareMode.value,
         entity: entity.value,
+        timeRange: toRaw(compareTimeRange.value),
     }).then((res) => {
         data.value = res.data;
         overview.value = res.overview;

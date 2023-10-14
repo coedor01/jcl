@@ -21,6 +21,9 @@ import { debounce } from "lodash-es";
 const store = useStore();
 const global = usePve();
 
+const {
+    result: { end },
+} = store;
 const { focusEntities, statType, timeRange } = toRefs(global);
 
 // 被选中的人的名字
@@ -118,6 +121,7 @@ const updateData = () => {
         xData.value = data.xData;
         yData.value = data.yData;
         loading.value = false;
+        timeRange.value = [0, end.sec + 1];
     });
 };
 watchPostEffect(updateData);

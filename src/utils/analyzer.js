@@ -544,40 +544,43 @@ export class Analyzer {
         return { data, selectedSkills };
     }
     getPveCompare(params) {
-        const { compareMode, entity } = params;
-        const { stats, end } = this.result;
-
-        const source = stats?.[compareMode]?.[entity]?.all;
+        const { compareMode, entity, timeRange } = params;
+        const { stats } = this.result;
+        const source = stats?.[compareMode]?.[entity];
         if (!source) return { overview: [], data: [] };
-        const fightTime = end.sec;
-        const displayTime = displayDuration(fightTime);
+        const logs = source.logs.filter((log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]);
+        const statResult = this.getLogsStat(logs);
+
+        const displayStart = displayDuration(timeRange[0]);
+        const displayEnd = displayDuration(timeRange[1]);
         const overview = [
             {
-                title: "战斗时长",
-                value: displayTime,
+                title: "计算时间",
+                value: `${displayStart} - ${displayEnd}`,
             },
             {
                 title: "总次数",
-                value: source.count,
+                value: statResult.count,
             },
             {
                 title: "总伤害",
-                value: source.value ? source.value.toLocaleString() : 0,
+                value: statResult.value ? statResult.value.toLocaleString() : 0,
             },
             {
                 title: "每秒数值",
-                value: displayDigits(source.value / fightTime),
+                value: displayDigits(statResult.value / (timeRange[1] - timeRange[0])),
             },
             {
                 title: "会心率",
-                value: displayPercent((source.criticalCount / source.count) * 100),
+                value: displayPercent((statResult.criticalCount / statResult.count) * 100),
             },
         ];
         const data = [];
         {
             if (!source || !source.logs) return [];
             let result = {};
-            for (let log of source.logs) {
+
+            for (let log of logs) {
                 const effect = log.effect;
                 if (!result[effect]) {
                     result[effect] = {
@@ -611,15 +614,11 @@ export class Analyzer {
     getPveCompareChart(params) {
         const { compareEntity, compareMode } = params;
         const { stats, end } = this.result;
-        const xData = [];
-        {
-            const max = Math.ceil(end.sec / 5) * 5;
-            let min = 0;
-            while (min <= max) {
-                xData.push(min);
-                min += 5;
-            }
-        }
+
+        const max = end.sec + 1;
+        // xData: [1,2,3,4,...]
+        const xData = Array.from({ length: max }, (v, k) => k + 1);
+        // yData
         const yData = [];
         {
             const defaultSeries = {
@@ -630,13 +629,14 @@ export class Analyzer {
             const source = stats[compareMode];
             for (let id of compareEntity) {
                 if (!id) continue;
+                const data = Array.from({ length: max }, () => 0);
+                for (let log of source[id].logs) {
+                    const index = Math.floor(log.micro / 1000);
+                    data[index] += log.value;
+                }
                 const name = getEntityName(id, this.result);
                 const color = getEntityColor(id, this.result);
-                let data = [];
-                const windows = source?.[id]?.windows;
-                for (let x of xData) {
-                    data.push(windows?.[x]?.value ?? 0);
-                }
+
                 yData.push({
                     name,
                     data,
@@ -1270,6 +1270,9 @@ export class Analyzer {
             if (log.isCritical) result.criticalCount += 1;
             if (type === "treat") result.total += log.T;
         }
+        if (result.max == Number.MIN_SAFE_INTEGER) result.max = 0;
+        if (result.min == Number.MAX_SAFE_INTEGER) result.min = 0;
+
         return result;
     }
 }

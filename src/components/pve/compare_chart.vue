@@ -13,7 +13,7 @@
         <template v-else>
             <div class="w-card-title">伤害曲线</div>
             <div class="u-chart">
-                <v-chart ref="echart" theme="dark" :option="option" autoresize />
+                <v-chart ref="echart" theme="dark" :option="option" autoresize @datazoom="handleDatazoom" />
             </div>
         </template>
     </div>
@@ -26,8 +26,9 @@ import EmptyGuide from "@/components/common/empty_guide.vue";
 
 import { mapState } from "pinia";
 import { usePve } from "@/store/pve";
+import { useStore } from "@/store";
 import getWorkerResponse from "@/utils/worker";
-import { cloneDeep } from "lodash";
+import { cloneDeep, debounce } from "lodash-es";
 
 export default {
     name: "CompareChart",
@@ -41,7 +42,7 @@ export default {
         yData: [],
     }),
     computed: {
-        ...mapState(usePve, ["compareEntity", "compareMode"]),
+        ...mapState(usePve, ["compareEntity", "compareMode", "compareTimeRange"]),
         option() {
             return {
                 backgroundColor: "transparent",
@@ -84,8 +85,20 @@ export default {
                 this.xData = result.xData;
                 this.yData = result.yData;
                 this.loading = false;
+                const {
+                    result: { end },
+                } = useStore();
+                usePve().compareTimeRange = [0, end.sec + 1];
             });
         },
+        handleDatazoom: debounce(
+            (e) => {
+                const { start, end } = e;
+                usePve().compareTimeRange = [start, end];
+            },
+            500,
+            { leading: true }
+        ),
     },
     watch: {
         compareEntity: {

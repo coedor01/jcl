@@ -149,6 +149,9 @@ const getList = () => {
             params.title = search.value;
         }
     }
+    if (mine.value) {
+        delete params.subject;
+    }
     loading.value = true;
     const res = mine.value ? getMyList(params) : getPublicList(params);
     if (res) {

@@ -19,105 +19,79 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import EmptyGuide from "@/components/common/empty_guide.vue";
 import VChart from "vue-echarts";
 
-import EmptyGuide from "@/components/common/empty_guide.vue";
-
-import { mapState } from "pinia";
-import { usePve } from "@/store/pve";
+import { ref, computed, watch, onMounted, toRefs } from "vue";
 import { useStore } from "@/store";
+import { usePve } from "@/store/pve";
 import getWorkerResponse from "@/utils/worker";
 import { cloneDeep, debounce } from "lodash-es";
 
-export default {
-    name: "CompareChart",
-    components: {
-        VChart,
-        EmptyGuide,
+const loading = ref(false);
+const xData = ref([]);
+const yData = ref([]);
+
+const { compareEntity, compareMode, compareTimeRange } = toRefs(usePve());
+const { end: _end } = useStore().result;
+
+const option = computed(() => ({
+    backgroundColor: "transparent",
+    tooltip: {
+        trigger: "axis",
+        order: "valueDesc",
     },
-    data: () => ({
-        loading: false,
-        xData: [],
-        yData: [],
-    }),
-    computed: {
-        ...mapState(usePve, ["compareEntity", "compareMode", "compareTimeRange"]),
-        option() {
-            return {
-                backgroundColor: "transparent",
-                tooltip: {
-                    trigger: "axis",
-                    order: "valueDesc",
-                },
-                xAxis: {
-                    type: "category",
-                    boundaryGap: [0.1, 0.1],
-                    data: this.xData,
-                    triggerEvent: true,
-                },
-                yAxis: {
-                    type: "value",
-                    boundaryGap: [0, 0.2],
-                },
-                dataZoom: [
-                    {
-                        type: "inside",
-                        start: 0,
-                        end: 100,
-                    },
-                    {
-                        start: 0,
-                        end: 100,
-                    },
-                ],
-                series: this.yData,
-            };
-        },
+    xAxis: {
+        type: "category",
+        boundaryGap: [0.1, 0.1],
+        data: xData.value,
+        triggerEvent: true,
     },
-    methods: {
-        updateData() {
-            this.loading = true;
-            getWorkerResponse("get_pve_compare_chart", {
-                compareEntity: cloneDeep(this.compareEntity),
-                compareMode: this.compareMode,
-            }).then((result) => {
-                this.xData = result.xData;
-                this.yData = result.yData;
-                this.loading = false;
-                const {
-                    result: { end },
-                } = useStore();
-                usePve().compareTimeRange = [0, end.sec + 1];
-            });
-        },
-        handleDatazoom: debounce(
-            (e) => {
-                const { start, end } = e;
-                usePve().compareTimeRange = [start, end];
-            },
-            500,
-            { leading: true }
-        ),
+    yAxis: {
+        type: "value",
+        boundaryGap: [0, 0.2],
     },
-    watch: {
-        compareEntity: {
-            handler() {
-                this.updateData();
-            },
-            immediate: true,
-            deep: true,
-            flush: "post",
+    dataZoom: [
+        {
+            type: "inside",
+            start: 0,
+            end: 100,
         },
-        compareMode: {
-            handler() {
-                this.updateData();
-            },
-            immediate: true,
-            flush: "post",
+        {
+            start: 0,
+            end: 100,
         },
-    },
+    ],
+    series: yData.value,
+}));
+
+const updateData = async () => {
+    loading.value = true;
+    const result = await getWorkerResponse("get_pve_compare_chart", {
+        compareEntity: cloneDeep(compareEntity.value),
+        compareMode: compareMode.value,
+    });
+    xData.value = result.xData;
+    yData.value = result.yData;
+    loading.value = false;
+    compareTimeRange.value = [0, endMicro.value];
 };
+
+const endMicro = computed(() => _end?.micro || 0);
+const handleDatazoom = debounce(
+    (e) => {
+        const { start, end } = e;
+        compareTimeRange.value = [(start * endMicro.value) / 100, (end * endMicro.value) / 100];
+    },
+    500,
+    { leading: true }
+);
+
+watch(compareEntity, updateData, { immediate: true, deep: true, flush: "post" });
+watch(compareMode, updateData, { immediate: true, flush: "post" });
+
+onMounted(updateData);
 </script>
 
 <style lang="less">

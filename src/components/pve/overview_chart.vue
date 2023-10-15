@@ -18,17 +18,15 @@ import { useStore } from "@/store";
 import { usePve } from "@/store/pve";
 import getWorkerResponse from "@/utils/worker";
 import { debounce } from "lodash-es";
-const store = useStore();
-const global = usePve();
 
 const {
-    result: { end },
-} = store;
-const { focusEntities, statType, timeRange } = toRefs(global);
+    result: { end: _end },
+} = useStore();
+const { focusEntities, statType, timeRange } = toRefs(usePve());
 
 // 被选中的人的名字
 const focusNames = computed(() => {
-    const { entities } = store.result;
+    const { entities } = useStore().result;
     return focusEntities.value.map((x) => {
         const entity = entities[x];
         if (!entity) return "未知单位";
@@ -42,7 +40,7 @@ const yData = ref([]);
 const legendNames = computed(() => {
     return yData.value.map((x) => x.name);
 }, [yData]);
-// 图标的option
+// 图的option
 const option = computed(() => {
     return {
         tooltip: {
@@ -93,7 +91,7 @@ const option = computed(() => {
 }, [xData, yData, focusNames]);
 
 const handleSelect = ({ name, selected }) => {
-    const { entities } = store.result;
+    const { entities } = useStore().result;
     const ids = Object.values(entities)
         .filter((x) => x.name === name)
         .map((x) => x.id);
@@ -105,10 +103,11 @@ const handleSelect = ({ name, selected }) => {
 };
 
 // 缩放/时间范围逻辑
+const endMicro = computed(() => _end?.micro || 0);
 const handleDatazoom = debounce(
     (e) => {
         const { start, end } = e;
-        timeRange.value = [start, end];
+        timeRange.value = [(start * endMicro.value) / 100, (end * endMicro.value) / 100];
     },
     500,
     { leading: true }
@@ -121,7 +120,7 @@ const updateData = () => {
         xData.value = data.xData;
         yData.value = data.yData;
         loading.value = false;
-        timeRange.value = [0, end.sec + 1];
+        timeRange.value = [0, endMicro.value];
     });
 };
 watchPostEffect(updateData);

@@ -38,7 +38,7 @@ export function useAnalysis() {
                     const global = usePve();
                     global.$reset();
                     // 返回结果
-                    window.$store = data;
+                    // indow.$store = data;
                     store.result = Object.freeze(data);
                     ready.value = true;
                 }

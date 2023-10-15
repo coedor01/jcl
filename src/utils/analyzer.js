@@ -148,15 +148,13 @@ export class Analyzer {
         let maxValue = 0;
         const rangeLength = timeRange[1] - timeRange[0];
         for (let entity in source) {
-            const logs = source[entity].logs.filter(
-                (log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]
-            );
+            const logs = source[entity].logs.filter((log) => log.micro > timeRange[0] && log.micro < timeRange[1]);
             const statData = this.getLogsStat(logs);
             let entityData = {
                 ...statData,
                 ...pick(entities[entity], ["name", "id", "mount", "type"]),
             };
-            entityData.vps = entityData.value / rangeLength;
+            entityData.vps = (entityData.value / rangeLength) * 1000;
             if (entityData.type == "player") {
                 teamTotal += entityData.value;
                 maxValue = Math.max(maxValue, entityData.value);
@@ -261,7 +259,7 @@ export class Analyzer {
     getPveOverviewFocus(params) {
         const { statType, entityID, timeRange } = params;
         const logs = this.result.stats?.[statType]?.[entityID]?.logs?.filter(
-            (log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]
+            (log) => log.micro > timeRange[0] && log.micro < timeRange[1]
         );
         if (!logs) return [];
         let result = {};
@@ -332,7 +330,7 @@ export class Analyzer {
         }
         let result = {};
         let total = 0;
-        const logs = source.logs.filter((log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]);
+        const logs = source.logs.filter((log) => log.micro > timeRange[0] && log.micro < timeRange[1]);
         for (let log of logs) {
             //这个target不一定是目标的ID，在承伤/承疗的时候表现为来源ID
             const effect = log.effect;
@@ -372,7 +370,7 @@ export class Analyzer {
         let result = {};
 
         let total = 0;
-        const logs = source.logs.filter((log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]);
+        const logs = source.logs.filter((log) => log.micro > timeRange[0] && log.micro < timeRange[1]);
         for (let log of logs) {
             //这个target不一定是目标的ID，在承伤/承疗的时候表现为来源ID
             const target = ["damage", "treat"].includes(entityTab) ? log.target : log.caster;
@@ -554,11 +552,11 @@ export class Analyzer {
         const { stats } = this.result;
         const source = stats?.[compareMode]?.[entity];
         if (!source) return { overview: [], data: [] };
-        const logs = source.logs.filter((log) => log.micro / 1000 > timeRange[0] && log.micro / 1000 < timeRange[1]);
+        const logs = source.logs.filter((log) => log.micro > timeRange[0] && log.micro < timeRange[1]);
         const statResult = this.getLogsStat(logs);
 
-        const displayStart = displayDuration(timeRange[0]);
-        const displayEnd = displayDuration(timeRange[1]);
+        const displayStart = displayDuration(timeRange[0] / 1000);
+        const displayEnd = displayDuration(timeRange[1] / 1000);
         const overview = [
             {
                 title: "计算时间",

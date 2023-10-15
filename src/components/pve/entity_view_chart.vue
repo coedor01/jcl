@@ -27,17 +27,20 @@ import { computed, toRefs, ref, watchPostEffect } from "vue";
 import { getEntityColor } from "@/utils/common";
 import { displayDuration, displayDigits, displayPercent } from "@/utils/commonNoStore";
 import { usePve } from "@/store/pve";
+import { useStore } from "@/store";
 import getWorkerResponse from "@/utils/worker";
 
+const { end: _end } = useStore().result;
 const { entity, entityTab, entityTimeRange } = toRefs(usePve());
 
 const entityColor = computed(() => getEntityColor(entity.value));
 
 // 缩放/时间范围逻辑
+const endMicro = computed(() => _end?.micro || 0);
 const handleDatazoom = debounce(
     (e) => {
         const { start, end } = e;
-        entityTimeRange.value[entity.value] = [start, end];
+        entityTimeRange.value[entity.value] = [(start * endMicro.value) / 100, (end * endMicro.value) / 100];
     },
     500,
     { leading: true }

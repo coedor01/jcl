@@ -42,8 +42,13 @@ export default {
         lastItem: null,
         tooltipData: {},
         color: "#a798e6",
+
+        item_cache: null,
+        layout_cache: null,
     }),
     mounted: function () {
+        this.item_cache = {};
+        this.layout_cache = {};
         this.$nextTick(() => {
             this.initCanvas();
             this.render();
@@ -51,6 +56,16 @@ export default {
     },
     methods: {
         renderLines: function () {
+            if (this.layout_cache[this.linetime]) {
+                const group = this.layout_cache[this.linetime];
+                this.canvas.add(group);
+                return;
+            }
+            const group = new fabric.Group([], {
+                selectable: false,
+                objectCaching: false,
+            });
+
             for (let i = 1; i <= this.lines; i++) {
                 const height = 2;
                 const top = (i - 1) * 60 + 29;
@@ -58,6 +73,7 @@ export default {
                     stroke: "#888",
                     strokeWidth: height,
                     selectable: false,
+                    objectCaching: false,
                 });
                 const axisText = new fabric.Text(this.linetime * i + "s", {
                     stroke: "#fff",
@@ -65,14 +81,34 @@ export default {
                     top: top - 6,
                     fontSize: 12,
                     selectable: false,
+                    objectCaching: false,
                 });
-                this.canvas.add(line);
-                this.canvas.add(axisText);
+                group.add(line);
+                group.add(axisText);
             }
+            group.addWithUpdate();
+            this.layout_cache[this.linetime] = group;
+            this.canvas.add(group);
+            return;
         },
         renderItems: function () {
+            if (!this.item_cache[this.linetime]) {
+                this.item_cache[this.linetime] = new WeakMap();
+            }
             this.lastItem = null;
+            const group = new fabric.Group([], {
+                selectable: false,
+                objectCaching: false,
+            });
             for (let item of this.data) {
+                if (this.item_cache[this.linetime].has(item)) {
+                    group.add(this.item_cache[this.linetime].get(item));
+                    continue;
+                }
+                const item_group = new fabric.Group([], {
+                    selectable: false,
+                    objectCaching: false,
+                });
                 const height = 12;
                 const { left, top } = this.itemPosition(item.time);
                 // 渲染小方块
@@ -96,7 +132,7 @@ export default {
                         this.moveTooltip(e.pointer, height);
                     });
                 }
-                this.canvas.add(rect);
+                item_group.add(rect);
                 // 如果上一个渲染的item和当前item的时间间隔太短就不渲染标签
                 if (this.lastItem) {
                     const { left: lastLeft, top: lastTop } = this.itemPosition(this.lastItem.time);
@@ -111,6 +147,7 @@ export default {
                     top: top - 16,
                     fontSize: 12,
                     selectable: false,
+                    objectCaching: false,
                 });
                 let digits = {
                     15: 2,
@@ -125,11 +162,18 @@ export default {
                     top: top + 14,
                     fontSize: 12,
                     selectable: false,
+                    objectCaching: false,
                 });
-                this.canvas.add(nameText);
-                this.canvas.add(timeText);
+                item_group.add(nameText);
+                item_group.add(timeText);
                 this.lastItem = item;
+                item_group.addWithUpdate();
+                this.item_cache[this.linetime].set(item, item_group);
+                group.add(item_group);
             }
+            group.addWithUpdate();
+            this.canvas.add(group);
+            return;
         },
         render: function () {
             if (!this.canvas) return;
@@ -140,12 +184,14 @@ export default {
             this.canvas.clear();
             this.renderLines();
             this.renderItems();
+            this.canvas.renderAll();
         },
         initCanvas: function () {
             this.canvas = new fabric.Canvas("timeline-canvas", {
                 hoverCursor: "pointer",
+                renderOnAddRemove: false,
+                selection: false,
             });
-            this.canvas.selection = false;
         },
         itemPosition: function (time) {
             const line = Math.max(0, Math.floor(time / this.linetime));

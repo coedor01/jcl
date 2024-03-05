@@ -252,16 +252,54 @@ export default {
                 renderOnAddRemove: false,
                 selectable: false,
             });
+
             this.canvas.on("mouse:wheel", ({ e }) => {
-                if (!e.altKey) return;
-                var delta = e.deltaY;
-                var zoom = this.canvas.getZoom();
-                zoom *= 0.999 ** delta;
-                if (zoom > 20) zoom = 20;
-                if (zoom < 0.01) zoom = 0.01;
-                this.canvas.setZoom(zoom);
-                e.preventDefault();
-                e.stopPropagation();
+                if (e.altKey) {
+                    const delta = e.deltaY;
+                    let zoom = this.canvas.getZoom();
+                    zoom *= 0.999 ** delta;
+                    if (zoom > 10) zoom = 10;
+                    if (zoom < 1) zoom = 1;
+                    this.canvas.zoomToPoint({ x: e.offsetX, y: e.offsetY }, zoom);
+                    this.canvas.renderAll();
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+            this.canvas.on("mouse:down", ({ e }) => {
+                if (e.altKey === true) {
+                    this.canvas.isDragging = true;
+                    this.canvas.lastPosX = e.clientX;
+                    this.canvas.lastPosY = e.clientY;
+                }
+            });
+            this.canvas.on("mouse:move", ({ e }) => {
+                if (this.canvas.isDragging) {
+                    var vpt = this.canvas.viewportTransform;
+                    vpt[4] += e.clientX - this.canvas.lastPosX;
+                    const minXOffset = 200 * this.canvas.getZoom();
+                    const maxXOffset = -this.canvas.getWidth() + 100 * this.canvas.getZoom();
+                    if (vpt[4] >= minXOffset) {
+                        vpt[4] = minXOffset;
+                    } else if (vpt[4] < maxXOffset) {
+                        vpt[4] = maxXOffset;
+                    }
+                    vpt[5] += e.clientY - this.canvas.lastPosY;
+                    const minYOffset = 200 * this.canvas.getZoom();
+                    const maxYOffset = -this.canvas.getHeight() + 100 * this.canvas.getZoom();
+                    if (vpt[5] >= minYOffset) {
+                        vpt[5] = minYOffset;
+                    } else if (vpt[5] < maxYOffset) {
+                        vpt[5] = maxYOffset;
+                    }
+                    this.canvas.renderAll();
+                    this.canvas.lastPosX = e.clientX;
+                    this.canvas.lastPosY = e.clientY;
+                }
+            });
+            this.canvas.on("mouse:up", () => {
+                this.canvas.setViewportTransform(this.canvas.viewportTransform);
+                this.canvas.isDragging = false;
             });
         },
         itemPosition: function (time) {

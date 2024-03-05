@@ -12,6 +12,7 @@
 
 <script>
 import { fabric } from "fabric";
+const RECT_HEIGHT = 12;
 
 export default {
     name: "CanvasTimeline",
@@ -43,12 +44,13 @@ export default {
         tooltipData: {},
         color: "#a798e6",
 
-        item_cache: null,
-        layout_cache: null,
+        itemCache: null,
+        layoutCache: null,
+        displayingItemGroup: [],
     }),
     mounted: function () {
-        this.item_cache = {};
-        this.layout_cache = {};
+        this.itemCache = {};
+        this.layoutCache = {};
         this.$nextTick(() => {
             this.initCanvas();
             this.render();
@@ -56,8 +58,8 @@ export default {
     },
     methods: {
         renderLines: function () {
-            if (this.layout_cache[this.linetime]) {
-                const group = this.layout_cache[this.linetime];
+            if (this.layoutCache[this.linetime]) {
+                const group = this.layoutCache[this.linetime];
                 this.canvas.add(group);
                 return;
             }
@@ -87,29 +89,18 @@ export default {
                 group.add(axisText);
             }
             group.addWithUpdate();
-            this.layout_cache[this.linetime] = group;
+            this.layoutCache[this.linetime] = group;
             this.canvas.add(group);
             return;
         },
         renderItems: function () {
-            if (!this.item_cache[this.linetime]) {
-                this.item_cache[this.linetime] = new WeakMap();
-            }
             this.lastItem = null;
-            const group = new fabric.Group([], {
-                selectable: false,
-                objectCaching: false,
-            });
             for (let item of this.data) {
-                if (this.item_cache[this.linetime].has(item)) {
-                    group.add(this.item_cache[this.linetime].get(item));
-                    continue;
-                }
                 const item_group = new fabric.Group([], {
                     selectable: false,
                     objectCaching: false,
                 });
-                const height = 12;
+                const height = RECT_HEIGHT;
                 const { left, top } = this.itemPosition(item.time);
                 // 渲染小方块
                 const rect = new fabric.Rect({
@@ -118,20 +109,7 @@ export default {
                     width: 6,
                     height: height,
                     fill: item.extra?.color ?? this.color,
-                    selectable: false,
                 });
-                if (this.tooltip) {
-                    rect.on("mouseover", () => {
-                        this.showTooltip(item);
-                    });
-                    rect.on("mouseout", () => {
-                        this.closeTooltip();
-                    });
-                    rect.on("mousemove", (e) => {
-                        let height = Object.keys(item.extra?.tooltip ?? {}).length * 12;
-                        this.moveTooltip(e.pointer, height);
-                    });
-                }
                 item_group.add(rect);
                 // 如果上一个渲染的item和当前item的时间间隔太短就不渲染标签
                 if (this.lastItem) {
@@ -140,14 +118,14 @@ export default {
                         continue;
                     }
                 }
+                this.lastItem = item;
+
                 const nameText = new fabric.Text(item.content, {
                     fontWeight: "100",
                     stroke: "#aaa",
                     left: left,
                     top: top - 16,
                     fontSize: 12,
-                    selectable: false,
-                    objectCaching: false,
                 });
                 let digits = {
                     15: 2,
@@ -166,14 +144,95 @@ export default {
                 });
                 item_group.add(nameText);
                 item_group.add(timeText);
-                this.lastItem = item;
                 item_group.addWithUpdate();
-                this.item_cache[this.linetime].set(item, item_group);
-                group.add(item_group);
+                if (this.tooltip) {
+                    item_group.on("mouseover", () => {
+                        this.showTooltip(item);
+                    });
+                    item_group.on("mouseout", () => {
+                        this.closeTooltip();
+                    });
+                    item_group.on("mousemove", (e) => {
+                        let height = Object.keys(item.extra?.tooltip ?? {}).length * 12;
+                        this.moveTooltip(e.pointer, height);
+                    });
+                }
+                item_group[Symbol("item")] = item;
+                this.canvas.add(item_group);
             }
-            group.addWithUpdate();
-            this.canvas.add(group);
             return;
+        },
+        patch: function () {
+            // TODO: 有bug！先不用
+            const objects = this.canvas.getObjects();
+            for (let obj of objects) {
+                if (!obj[Symbol("item")]) continue;
+                if (!this.data.includes(obj[Symbol("item")])) {
+                    this.canvas.remove(obj);
+                }
+            }
+            for (const item of this.data) {
+                if (this.itemCache[item.time]) {
+                    this.itemCache[item.time].push(item);
+                } else {
+                    const item_group = new fabric.Group([], {
+                        selectable: false,
+                        objectCaching: false,
+                    });
+                    const { left, top } = this.itemPosition(item.time);
+                    // 渲染小方块
+                    const rect = new fabric.Rect({
+                        left: left,
+                        top: top,
+                        width: 6,
+                        height: RECT_HEIGHT,
+                        fill: item.extra?.color ?? this.color,
+                    });
+                    item_group.add(rect);
+                    const nameText = new fabric.Text(item.content, {
+                        fontWeight: "100",
+                        stroke: "#aaa",
+                        left: left,
+                        top: top - 16,
+                        fontSize: 12,
+                    });
+                    let digits = {
+                        15: 2,
+                        30: 1,
+                        45: 1,
+                        60: 0,
+                    };
+                    let time = item.time.toFixed(digits[this.linetime]) + "s";
+                    const timeText = new fabric.Text(time, {
+                        stroke: this.color,
+                        left: left,
+                        top: top + 14,
+                        fontSize: 12,
+                        selectable: false,
+                        objectCaching: false,
+                    });
+                    item_group.add(nameText);
+                    item_group.add(timeText);
+                    item_group.addWithUpdate();
+                    if (
+                        this.canvas.getObjects().some((obj) => {
+                            return (
+                                obj.top == item_group.top &&
+                                obj.left < item_group.left + 32 &&
+                                obj.left > item_group.left - 32
+                            );
+                        })
+                    ) {
+                        item_group.remove(nameText);
+                        item_group.remove(timeText);
+                    }
+                    item_group.addWithUpdate();
+                    item_group[Symbol("item")] = item;
+                    this.canvas.add(item_group);
+                }
+            }
+
+            this.canvas.renderAll();
         },
         render: function () {
             if (!this.canvas) return;
@@ -185,12 +244,24 @@ export default {
             this.renderLines();
             this.renderItems();
             this.canvas.renderAll();
+            window.canvas = this.canvas;
         },
         initCanvas: function () {
             this.canvas = new fabric.Canvas("timeline-canvas", {
                 hoverCursor: "pointer",
                 renderOnAddRemove: false,
-                selection: false,
+                selectable: false,
+            });
+            this.canvas.on("mouse:wheel", ({ e }) => {
+                if (!e.altKey) return;
+                var delta = e.deltaY;
+                var zoom = this.canvas.getZoom();
+                zoom *= 0.999 ** delta;
+                if (zoom > 20) zoom = 20;
+                if (zoom < 0.01) zoom = 0.01;
+                this.canvas.setZoom(zoom);
+                e.preventDefault();
+                e.stopPropagation();
             });
         },
         itemPosition: function (time) {
@@ -211,8 +282,8 @@ export default {
         },
         moveTooltip: function (pointer, height) {
             const tooltip = this.$refs.tooltip;
-            let x = Math.max(0, Math.min(pointer.x - 80, 960));
-            let y = Math.max(60, pointer.y - height - 48);
+            let x = Math.max(0, Math.min(pointer.x - 80, 1100));
+            let y = Math.max(40, pointer.y - height - 48);
             tooltip.style.left = x + "px";
             tooltip.style.top = y + "px";
         },

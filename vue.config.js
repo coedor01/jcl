@@ -1,6 +1,8 @@
 const path = require("path");
 const setting = require("./setting.json");
 const pkg = require("./package.json");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+
 module.exports = {
     //❤️ Multiple pages ~
     // pages: {
@@ -115,6 +117,8 @@ module.exports = {
             .options({ inline: "fallback" })
             .end();
         config.module.rule("js").exclude.add(/\.worker\.js$/);
+
+        config.plugin("polyfills").use(NodePolyfillPlugin);
     },
 };
 

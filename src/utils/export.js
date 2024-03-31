@@ -1,7 +1,7 @@
 /*
     这个文件用于导出，输入应该是format生成的row
  */
-import moment from "moment";
+import { moment } from "@jx3box/jx3box-common/js/moment";
 import xfid from "@jx3box/jx3box-data/data/xf/xfid.json";
 /**
  * 定义导出的excel文件的列名，数据源，以及是否隐藏等

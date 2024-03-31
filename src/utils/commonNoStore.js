@@ -11,6 +11,8 @@ import xfId from "@jx3box/jx3box-data/data/xf/xfid.json";
 import { iconLink } from "@jx3box/jx3box-common/js/utils";
 import { padStart, cloneDeep } from "lodash-es";
 import { moment } from "@jx3box/jx3box-common/js/moment";
+import duration from "dayjs/plugin/duration";
+moment.extend(duration);
 
 const resourceSearchCache = {};
 export function getResource(_key, store) {
@@ -111,8 +113,8 @@ export function displayBigNumber(value) {
 }
 
 export function displayDuration(value) {
-    const duration = moment.duration(value, "seconds");
-    return duration.isValid() ? `${padStart(duration.minutes(), 2, 0)}:${padStart(duration.seconds(), 2, 0)}` : "--:--";
+    if (isNaN(value)) return "--:--";
+    return moment.duration(value, "seconds").format("mm:ss", { trim: false });
 }
 
 export function gaussianSmoothing(data, sigma) {

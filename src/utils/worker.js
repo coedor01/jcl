@@ -1,12 +1,3 @@
-/*
- * @Author: X3ZvaWQ x3zvawq@gmail.com
- * @Date: 2023-03-22 10:19:53
- * @LastEditors: X3ZvaWQ x3zvawq@gmail.com
- * @LastEditTime: 2023-10-14 19:29:29
- * @FilePath: /jcl/src/utils/worker.js
- * @Description: 与analysisWorker交互的工具方法，实现了一个队列
- */
-
 import { useStore } from "@/store";
 const store = useStore();
 

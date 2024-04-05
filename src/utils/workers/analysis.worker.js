@@ -7,6 +7,7 @@
  * @Description:
  */
 import { Analyzer } from "@/utils/analyzer";
+import { Adapter } from "@/utils/adapter";
 import { getResource as _getResourceFromApi } from "@/services/resource.js";
 import { isArray, uniq, omit } from "lodash-es";
 // export 要用的
@@ -75,11 +76,21 @@ async function getResourceFromApi(resourceList, client = "std") {
     return result;
 }
 
+/**
+ * @type {Analyzer}
+ */
 let analyzer;
+/**
+ * @type {Adapter}
+ */
+let adapter;
 onmessage = async ({ data: { action, data } }) => {
     if (action == "init") {
         const { raw, params } = data;
+        adapter = new Adapter({});
         analyzer = new Analyzer(raw, params);
+        analyzer.bindAdapter(adapter);
+
         updateResult("init", true);
     } else if (action == "get_all") {
         const counter = analyzer.getAll();
@@ -120,6 +131,6 @@ onmessage = async ({ data: { action, data } }) => {
     } else {
         // get_aa_bb -> getAaBb
         const methodName = action.replace(/_([a-z])/g, (_, p1) => p1.toUpperCase());
-        postMessage(analyzer[methodName](data));
+        postMessage(analyzer.adapter[methodName](data));
     }
 };

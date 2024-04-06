@@ -215,6 +215,10 @@ onMounted(() => {
         align-items: center;
         width: 100%;
 
+        span {
+            flex-shrink: 0;
+        }
+
         .el-select {
             flex-grow: 1;
         }

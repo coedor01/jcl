@@ -97,11 +97,11 @@ const init = async () => {
 
     getBattleInfo()
         .then((next) => {
-            if (!next) return new Promise();
+            if (!next) return new Promise((r) => r());
             return startDownload();
         })
         .then(() => {
-            if (!store.raw) return new Promise();
+            if (!store.raw) return new Promise((r) => r());
             startAnalysis();
         });
 };

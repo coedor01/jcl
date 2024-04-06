@@ -103,7 +103,7 @@ export class Analyzer {
      */
     bindAdapter(adapter) {
         this.adapter = adapter;
-        this.adapter.updateResult(this.result);
+        this.adapter.bindAnalyzer(this);
     }
 
     // 重置分析器
@@ -181,6 +181,8 @@ export class Analyzer {
     }
     // 更新JCL文件元信息
     updateMeta() {
+        // 如果没有开始时间，先暂时使用这一行作为开始时间
+        if (!this.result.start.frame) this.result.start = getRowTime(this.current);
         // frame=0，一般是JJC过完图了，直接截断，处理完毕
         if (this.current.frame === 0) {
             this.index = this.length - 1;

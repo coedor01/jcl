@@ -18,6 +18,14 @@ export class Adapter {
         this.result = result;
     }
 
+    bindAnalyzer(analyzer) {
+        /**
+         * @type {import('./analyzer').Analyzer}
+         */
+        this.analyzer = analyzer;
+        this.result = analyzer.result;
+    }
+
     updateResult(result) {
         this.result = result;
     }
@@ -34,7 +42,7 @@ export class Adapter {
         const rangeLength = timeRange[1] - timeRange[0];
         for (let entity in source) {
             const logs = source[entity].logs.filter((log) => log.micro > timeRange[0] && log.micro < timeRange[1]);
-            const statData = this.getLogsStat(logs);
+            const statData = this.analyzer.getLogsStat(logs);
             let entityData = {
                 ...statData,
                 ...pick(entities[entity], ["name", "id", "mount", "type"]),
@@ -78,10 +86,10 @@ export class Adapter {
     getPveOverviewChart(params) {
         const { statType } = params;
         const { entities, stats, end } = this.result;
-
         const max = end.sec + 1;
         // xData: [1,2,3,4,...]
         const xData = Array.from({ length: max }, (v, k) => k + 1);
+
         // yData
         let yData = {};
         {
@@ -91,7 +99,7 @@ export class Adapter {
                 showSymbol: false,
             };
             const source = stats?.[statType];
-            // ÒÑÓĞÊı¾İµÄÍ³¼Æ
+            // å·²æœ‰æ•°æ®çš„ç»Ÿè®¡
             for (let id in source) {
                 if (!entities[id]) continue;
                 const { name, color } = entities[id];
@@ -103,11 +111,11 @@ export class Adapter {
                 }
 
                 if (yData[name]) {
-                    // Í¬Ãûµ¥Î»£¬ºÏ²¢Êı¾İ
+                    // åŒåå•ä½ï¼Œåˆå¹¶æ•°æ®
                     for (let index in entityYData) yData[name][index] += entityYData[index];
                     yData[name].total += source[id].value;
                 } else {
-                    // ĞÂµ¥Î»£¬ÄÉÈëÍ³¼Æ
+                    // æ–°å•ä½ï¼Œçº³å…¥ç»Ÿè®¡
                     yData[name] = {
                         ...defaultSeries,
                         itemStyle: { color },
@@ -118,10 +126,10 @@ export class Adapter {
                 }
             }
             yData = Object.values(yData).filter((item) => item.data.some((v) => v > 0));
-            // È«¾ÖÍ³¼Æ
+            // å…¨å±€ç»Ÿè®¡
             let r = {
                 ...defaultSeries,
-                name: "¡¾È«¾Ö¡¿",
+                name: "ã€å…¨å±€ã€‘",
                 data: [],
             };
             let datas = yData.map((item) => item.data);
@@ -217,16 +225,16 @@ export class Adapter {
         let total = 0;
         const logs = source.logs.filter((log) => log.micro > timeRange[0] && log.micro < timeRange[1]);
         for (let log of logs) {
-            //Õâ¸ötarget²»Ò»¶¨ÊÇÄ¿±êµÄID£¬ÔÚ³ĞÉË/³ĞÁÆµÄÊ±ºò±íÏÖÎªÀ´Ô´ID
+            //è¿™ä¸ªtargetä¸ä¸€å®šæ˜¯ç›®æ ‡çš„IDï¼Œåœ¨æ‰¿ä¼¤/æ‰¿ç–—çš„æ—¶å€™è¡¨ç°ä¸ºæ¥æºID
             const effect = log.effect;
             if (!result[effect])
                 result[effect] = {
-                    count: 0, // ÉËº¦´ÎÊı
-                    criticalCount: 0, //»áĞÄ´ÎÊı
-                    value: 0, //×ÜÉËº¦Á¿
-                    min: 1e10, //×îĞ¡ÉËº¦Öµ
-                    max: -1e10, //×î´óÉËº¦Öµ
-                    logs: [], // ÏêÏ¸ÉËº¦ÈÕÖ¾
+                    count: 0, // ä¼¤å®³æ¬¡æ•°
+                    criticalCount: 0, //ä¼šå¿ƒæ¬¡æ•°
+                    value: 0, //æ€»ä¼¤å®³é‡
+                    min: 1e10, //æœ€å°ä¼¤å®³å€¼
+                    max: -1e10, //æœ€å¤§ä¼¤å®³å€¼
+                    logs: [], // è¯¦ç»†ä¼¤å®³æ—¥å¿—
                 };
             result[effect].count++;
             result[effect].value += log.value;
@@ -257,18 +265,18 @@ export class Adapter {
         let total = 0;
         const logs = source.logs.filter((log) => log.micro > timeRange[0] && log.micro < timeRange[1]);
         for (let log of logs) {
-            //Õâ¸ötarget²»Ò»¶¨ÊÇÄ¿±êµÄID£¬ÔÚ³ĞÉË/³ĞÁÆµÄÊ±ºò±íÏÖÎªÀ´Ô´ID
+            //è¿™ä¸ªtargetä¸ä¸€å®šæ˜¯ç›®æ ‡çš„IDï¼Œåœ¨æ‰¿ä¼¤/æ‰¿ç–—çš„æ—¶å€™è¡¨ç°ä¸ºæ¥æºID
             const target = ["damage", "treat"].includes(entityTab) ? log.target : log.caster;
             const entity = entities[target];
             if (skipNoNameTarget && !entity.name) continue;
             if (!result[target])
                 result[target] = {
-                    count: 0, // ÉËº¦´ÎÊı
-                    criticalCount: 0, //»áĞÄ´ÎÊı
-                    value: 0, //×ÜÉËº¦Á¿
-                    min: 1e10, //×îĞ¡ÉËº¦Öµ
-                    max: -1e10, //×î´óÉËº¦Öµ
-                    logs: [], // ÏêÏ¸ÉËº¦ÈÕÖ¾
+                    count: 0, // ä¼¤å®³æ¬¡æ•°
+                    criticalCount: 0, //ä¼šå¿ƒæ¬¡æ•°
+                    value: 0, //æ€»ä¼¤å®³é‡
+                    min: 1e10, //æœ€å°ä¼¤å®³å€¼
+                    max: -1e10, //æœ€å¤§ä¼¤å®³å€¼
+                    logs: [], // è¯¦ç»†ä¼¤å®³æ—¥å¿—
                 };
             result[target].count++;
             result[target].value += log.value;
@@ -438,29 +446,29 @@ export class Adapter {
         const source = stats?.[compareMode]?.[entity];
         if (!source) return { overview: [], data: [] };
         const logs = source.logs.filter((log) => log.micro > timeRange[0] && log.micro < timeRange[1]);
-        const statResult = this.getLogsStat(logs);
+        const statResult = this.analyzer.getLogsStat(logs);
 
         const displayStart = displayDuration(timeRange[0] / 1000);
         const displayEnd = displayDuration(timeRange[1] / 1000);
         const overview = [
             {
-                title: "¼ÆËãÊ±¼ä",
+                title: "è®¡ç®—æ—¶é—´",
                 value: `${displayStart} - ${displayEnd}`,
             },
             {
-                title: "×Ü´ÎÊı",
+                title: "æ€»æ¬¡æ•°",
                 value: statResult.count,
             },
             {
-                title: "×ÜÉËº¦",
+                title: "æ€»ä¼¤å®³",
                 value: statResult.value ? statResult.value.toLocaleString() : 0,
             },
             {
-                title: "Ã¿ÃëÊıÖµ",
+                title: "æ¯ç§’æ•°å€¼",
                 value: displayDigits(statResult.value / (timeRange[1] - timeRange[0])),
             },
             {
-                title: "»áĞÄÂÊ",
+                title: "ä¼šå¿ƒç‡",
                 value: displayPercent((statResult.criticalCount / statResult.count) * 100),
             },
         ];
@@ -473,12 +481,12 @@ export class Adapter {
                 const effect = log.effect;
                 if (!result[effect]) {
                     result[effect] = {
-                        count: 0, // ÉËº¦´ÎÊı
-                        criticalCount: 0, //»áĞÄ´ÎÊı
-                        value: 0, //×ÜÉËº¦Á¿
-                        min: 1e10, //×îĞ¡ÉËº¦Öµ
-                        max: 1e-10, //×î´óÉËº¦Öµ
-                        logs: [], // ÏêÏ¸ÉËº¦ÈÕÖ¾
+                        count: 0, // ä¼¤å®³æ¬¡æ•°
+                        criticalCount: 0, //ä¼šå¿ƒæ¬¡æ•°
+                        value: 0, //æ€»ä¼¤å®³é‡
+                        min: 1e10, //æœ€å°ä¼¤å®³å€¼
+                        max: 1e-10, //æœ€å¤§ä¼¤å®³å€¼
+                        logs: [], // è¯¦ç»†ä¼¤å®³æ—¥å¿—
                         effect,
                     };
                 }
@@ -490,7 +498,7 @@ export class Adapter {
                 if (log.isCritical) result[effect].criticalCount++;
             }
             result = Object.values(result).sort((a, b) => b.value - a.value);
-            //¼ÆËã½á¹û->¸ø±í¸ñÕ¹Ê¾µÄÊı¾İ
+            //è®¡ç®—ç»“æœ->ç»™è¡¨æ ¼å±•ç¤ºçš„æ•°æ®
             for (let res of result) {
                 res.criticalRate = (res.criticalCount / res.count) * 100;
                 res.valueRate = (res.value / source.value.value) * 100;
@@ -564,32 +572,32 @@ export class Adapter {
 
         let index = 0;
         const result = rows.filter((row) => {
-            // ÃÃÊ²Ã´ÓÃµÄ¶«Î÷Ö±½Ó¹ıÂË
+            // å¦¹ä»€ä¹ˆç”¨çš„ä¸œè¥¿ç›´æ¥è¿‡æ»¤
             if ([4, 8, 10, 11, 12].includes(row.type)) return false;
-            // ÊÂ¼şÀàĞÍ¹ıÂË
+            // äº‹ä»¶ç±»å‹è¿‡æ»¤
             for (let type in typeMap) {
-                // Èç¹ûÏÔÊ¾ÀàĞÍÀï²»°üº¬Õâ¸öÀàĞÍ,²¢ÇÒµ±Ç°ÊÂ¼ş´¦ÓÚÕâ¸öÀàĞÍ£¬Ôò²»ÏÔÊ¾
+                // å¦‚æœæ˜¾ç¤ºç±»å‹é‡Œä¸åŒ…å«è¿™ä¸ªç±»å‹,å¹¶ä¸”å½“å‰äº‹ä»¶å¤„äºè¿™ä¸ªç±»å‹ï¼Œåˆ™ä¸æ˜¾ç¤º
                 if (!showTypes.includes(type) && typeMap[type].includes(row.type)) {
                     return false;
                 }
             }
-            // Ïà¹Øµ¥Î»¹ıÂË
+            // ç›¸å…³å•ä½è¿‡æ»¤
             if (entities.length) {
                 if (row.source.t == "entity" || row.target.t == "entity") {
-                    // ¹ıÂËÓêÎÒÎŞ¹ÏµÄµ¥Î»
+                    // è¿‡æ»¤é›¨æˆ‘æ— ç“œçš„å•ä½
                     if (!entities.includes(row.source.v) && !entities.includes(row.target.v)) {
                         return false;
                     }
-                    // ¿ªÆôÁËÖ»ÏÔÊ¾Ñ¡Ôñµ¥Î»ÎªÀ´Ô´µ¥Î»ºó
+                    // å¼€å¯äº†åªæ˜¾ç¤ºé€‰æ‹©å•ä½ä¸ºæ¥æºå•ä½å
                     if (logFilter.onlySource && row.source && row.source.t == "entity") {
                         if (!entities.includes(row.source.v)) return false;
                     }
                 }
             }
-            // Ê±¼ä·¶Î§¹ıÂË
+            // æ—¶é—´èŒƒå›´è¿‡æ»¤
             if (row.micro < timeRange[0] || row.micro > timeRange[1]) return false;
 
-            // ¹Ø¼ü´Ê¹ıÂË
+            // å…³é”®è¯è¿‡æ»¤
             if (hideKeywords && row.content) {
                 for (let keyword of hideKeywords) {
                     if (keyword.type == "str" && row.content.t === "str" && row.content.v.includes(keyword.text))
@@ -600,7 +608,7 @@ export class Adapter {
                         return false;
                 }
             }
-            // ÊÂ¼şÄÚÈİËÑË÷,Âß¼­ÓĞĞ©¸´ÔÓOrz
+            // äº‹ä»¶å†…å®¹æœç´¢,é€»è¾‘æœ‰äº›å¤æ‚Orz
             if (keywords && row.content) {
                 let conform = false;
                 for (let keyword of keywords) {
@@ -618,11 +626,11 @@ export class Adapter {
                 }
                 if (!conform) return false;
             }
-            // Òş²Ø·´»÷
+            // éšè—åå‡»
             if (logFilter.hideReact && row.type == 21) {
                 if (row.detail.isReact) return false;
             }
-            // Òş²ØÎŞÊıÖµÊÂ¼ş
+            // éšè—æ— æ•°å€¼äº‹ä»¶
             if (logFilter.hideNoValue && row.type == 21 && !showEventValue(row)) return false;
 
             row.index = ++index;

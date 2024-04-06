@@ -131,6 +131,7 @@ onmessage = async ({ data: { action, data } }) => {
     } else {
         // get_aa_bb -> getAaBb
         const methodName = action.replace(/_([a-z])/g, (_, p1) => p1.toUpperCase());
-        postMessage(analyzer.adapter[methodName](data));
+        const result = analyzer.adapter[methodName](data);
+        postMessage(result);
     }
 };

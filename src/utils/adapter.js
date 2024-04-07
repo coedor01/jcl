@@ -527,7 +527,9 @@ export class Adapter {
             for (let id of compareEntity) {
                 if (!id) continue;
                 const data = Array.from({ length: max }, () => 0);
-                for (let log of source[id].logs) {
+                const logs = source[id]?.logs;
+                if (!logs) continue;
+                for (let log of logs) {
                     const index = Math.floor(log.micro / 1000);
                     data[index] += log.value;
                 }

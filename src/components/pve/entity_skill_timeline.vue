@@ -3,15 +3,15 @@
         <div class="w-card-title">
             <span class="u-title">技能释放时间轴</span>
             <el-radio-group v-model.number="linetime" size="small">
-                <el-radio-button :label="15">每行15s</el-radio-button>
-                <el-radio-button :label="30">每行30s</el-radio-button>
-                <el-radio-button :label="45">每行45s</el-radio-button>
-                <el-radio-button :label="60">每行60s</el-radio-button>
+                <el-radio-button :value="15">每行15s</el-radio-button>
+                <el-radio-button :value="30">每行30s</el-radio-button>
+                <el-radio-button :value="45">每行45s</el-radio-button>
+                <el-radio-button :value="60">每行60s</el-radio-button>
             </el-radio-group>
             <div class="u-setting-trigger">
                 <el-icon><Setting /></el-icon>
                 选择技能
-                <entity-skill-filter class="u-setting-poper"></entity-skill-filter>
+                <entity-skill-filter class="u-setting-popper"></entity-skill-filter>
             </div>
         </div>
         <div class="u-canvas-wrapper">
@@ -129,13 +129,13 @@ const data = computed(() => {
     }
 
     .u-setting-trigger:hover {
-        .u-setting-poper {
+        .u-setting-popper {
             visibility: visible;
             opacity: 1;
         }
     }
 
-    .u-setting-poper {
+    .u-setting-popper {
         // 悬浮效果
         visibility: hidden;
         opacity: 0;

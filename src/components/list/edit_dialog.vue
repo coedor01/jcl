@@ -19,9 +19,9 @@
             </el-form-item>
             <el-form-item label="阅读权限">
                 <el-radio-group v-model="item.visible">
-                    <el-radio :label="0">公开</el-radio>
-                    <el-radio :label="1">私有</el-radio>
-                    <el-radio :label="2">仅亲友可见</el-radio>
+                    <el-radio :value="0">公开</el-radio>
+                    <el-radio :value="1">私有</el-radio>
+                    <el-radio :value="2">仅亲友可见</el-radio>
                 </el-radio-group>
             </el-form-item>
         </el-form>

@@ -38,7 +38,7 @@ const xData = ref([]);
 const yData = ref([]);
 // legend的名字
 const legendNames = computed(() => {
-    return yData.value.map((x) => x.name);
+    return yData.value?.map((x) => x.name) || [];
 }, [yData]);
 // 图的option
 const option = computed(() => {

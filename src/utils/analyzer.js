@@ -302,7 +302,7 @@ export class Analyzer {
                 }
             }
             if (!this.result.buff[target][key]) this.result.buff[target][key] = { cur: null, logs: [] };
-            let eb = this.result.buff[target][key];
+            const eb = this.result.buff[target][key];
             if (!isDelete) {
                 // 添加BUFF
                 let battleStartFrame = this.result.start.frame;
@@ -331,8 +331,23 @@ export class Analyzer {
                     }
                 }
             } else {
+                // 适配可能存在的第一个buff是删除的情况
+                if (!eb.cur) {
+                    eb.logs.push({
+                        source,
+                        deleteBy: source,
+                        start: 0,
+                        end: micro,
+                        id: key,
+                        stack,
+                        stackLogs: {
+                            0: stack,
+                            [micro]: stack,
+                        },
+                    });
+                    return;
+                }
                 // 删除BUFF
-                if (!eb.cur) return;
                 let buff = eb.cur;
                 buff.end = micro;
                 buff.deleteBy = source;

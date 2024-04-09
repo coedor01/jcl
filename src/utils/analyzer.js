@@ -90,6 +90,22 @@ const defaultResult = {
     },
 };
 // 分析器
+/**
+ *
+ * 分析器
+ * @class Analyzer
+ * @param {string} raw JCL文件内容
+ * @param {object} options 选项
+ * @property {string[]} raw JCL文件内容
+ * @property {object} options 选项
+ * @property {object} result 分析结果
+ * @property {object} tmp 临时数据
+ * @property {number} index 当前解析到的行数
+ * @property {number} length JCL文件总行数
+ * @property {object} prev 上一行解析结果
+ * @property {object} current 当前行解析结果
+ * @property {import('./adapter').Adapter} adapter 适配器
+ */
 export class Analyzer {
     constructor(raw, options) {
         this.raw = raw.split("\n").filter((x) => x);
@@ -106,9 +122,46 @@ export class Analyzer {
         this.adapter.bindAnalyzer(this);
     }
 
-    // 重置分析器
+    /**
+     * 将游标指向某一条记录
+     * @param {number|"start"|"end"|"next"} index
+     * @returns {number} 更换指向之后的游标位置
+     */
+    cursorTo(index) {
+        if (index === "start") return (this.index = 0);
+        if (index === "end") return (this.index = this.length - 1);
+        if (index === "next") return (this.index += 1);
+        return (this.index = index);
+    }
+
+    /**
+     * 短遍历，找到开始时间
+     * @returns
+     */
+    findStartTime() {
+        let _index = 0;
+        const line = parseLine(this.raw[_index]);
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            _index++;
+            const _line = parseLine(this.raw[_index]);
+            // 如果是战斗全局信息并且是开始标记，就是战斗开始时间
+            if (_line.type === 1 && _line.detail.start) {
+                return getRowTime(_line);
+            }
+            // 如果遍历超过15秒钟没找到就认为是错误的jcl,为了兼容取第一条
+            if (_line.micro - line.micro > 1000 * 15 || _index >= this.length) {
+                return getRowTime(line);
+            }
+            continue;
+        }
+    }
+
+    /**
+     * 重置分析器
+     */
     reset() {
-        this.index = 0;
+        this.cursorTo("start");
         this.length = this.raw.length;
         this.prev = undefined;
         this.current = undefined;
@@ -121,25 +174,28 @@ export class Analyzer {
             globalSays: [],
         };
     }
+
     // 到下一个时间节点
     nextStep() {}
+
     // 直接解析到头，获取整个JCL文件的结果，返回一个生成器
     getAll() {
-        let that = this;
-        return (function* (analyzer) {
+        const analyzer = this;
+        return (function* () {
             analyzer.reset();
+            analyzer.result.start = analyzer.findStartTime();
             while (true) {
                 let result = analyzer.nextLine();
-                if (result.done) return that.result;
+                if (result.done) return analyzer.result;
                 yield result;
             }
-        })(this);
+        })();
     }
 
     // 解析JCL的下一行
     nextLine() {
         const result = (row, done = false, valid = true) => {
-            this.index++;
+            this.cursorTo("next");
             return {
                 row,
                 done,
@@ -168,7 +224,10 @@ export class Analyzer {
     }
     // 更新分析结果，执行下述的updateXX方法
     updateResult() {
-        if (!this.updateMeta()) return;
+        if (this.updateMeta() === false) {
+            this.cursorTo("end");
+            return;
+        }
         this.updateResources();
         this.updateEntities();
         this.updateScene();
@@ -181,11 +240,9 @@ export class Analyzer {
     }
     // 更新JCL文件元信息
     updateMeta() {
-        // 如果没有开始时间，先暂时使用这一行作为开始时间
-        if (!this.result.start.frame) this.result.start = getRowTime(this.current);
         // frame=0，一般是JJC过完图了，直接截断，处理完毕
         if (this.current.frame === 0) {
-            this.index = this.length - 1;
+            this.cursorTo("end");
             this.result.end = getRowTime(this.prev);
             return false;
         }
@@ -206,21 +263,8 @@ export class Analyzer {
             // 战斗结束时间
             if (!start) {
                 this.result.end = getRowTime(this.current);
-            } else {
-                this.result.start = getRowTime(this.current);
-                let cur = this.result.rows.pop();
-                this.result.rows = this.result.rows.map((row) => {
-                    this.current = row;
-                    this.updateResult();
-                    return row;
-                });
-                cur.micro = 0;
-                cur.sec = 0;
-                cur.frame = 0;
-                this.current = cur;
             }
         }
-        if (!this.result.start.micro) return false;
         return true;
     }
     // 更新JCL文件涉及到的资源列表

@@ -11,6 +11,7 @@
                     popper-class="m-select-popper"
                     effect="dark"
                     clearable
+                    filterable
                 >
                     <template v-if="mountIcon[0]" #prefix>
                         <img class="u-mount-icon" :src="mountIcon[0]" alt="" />
@@ -36,6 +37,7 @@
                     popper-class="m-select-popper"
                     effect="dark"
                     clearable
+                    filterable
                 >
                     <template v-if="mountIcon[1]" #prefix>
                         <img class="u-mount-icon" :src="mountIcon[1]" alt="" />

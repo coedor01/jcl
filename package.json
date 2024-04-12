@@ -21,6 +21,7 @@
         "buffer": "^6.0.3",
         "core-js": "^3.28.0",
         "dayjs": "^1.11.10",
+        "dayjs-plugin-utc": "^0.1.2",
         "echarts": "^5.4.1",
         "element-plus": "^2.2.32",
         "fabric": "^5.3.0",

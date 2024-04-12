@@ -3,6 +3,8 @@
  */
 import { moment } from "@jx3box/jx3box-common/js/moment";
 import xfid from "@jx3box/jx3box-data/data/xf/xfid.json";
+import utc from "dayjs-plugin-utc";
+moment.extend(utc);
 /**
  * 定义导出的excel文件的列名，数据源，以及是否隐藏等
  */
@@ -102,8 +104,8 @@ const getEntityName = (id, { showID = false, showOrder = false } = {}) => {
  * 传入一个JCL日志列表的row对象，返回一个包含额外信息的row用于导出
  */
 const rowAddExtra = (row) => {
-    if (row.micro < 0) row.displayTime = "-" + moment(-row.micro).utcOffset(0).format("HH:mm:ss.SSS");
-    else row.displayTime = moment(row.micro).utcOffset(0).format("HH:mm:ss.SSS");
+    if (row.micro < 0) row.displayTime = "-" + moment.utc(-row.micro).format("HH:mm:ss.SSS");
+    else row.displayTime = moment.utc(row.micro).format("HH:mm:ss.SSS");
     // 事件来源和事件目标的详细信息
     for (let key of ["source", "target"]) {
         const entityID = row[key].v;

@@ -109,7 +109,7 @@ onmessage = async ({ data: { action, data } }) => {
             }
         }
     } else if (action == "export") {
-        const logs = analyzer.getPveLogs(data);
+        const logs = analyzer.adapter.getPveLogs(data);
         const window = { $store: analyzer.result };
         updateStatus("整理原始数据", 1, 25);
         const headerValues = header.map((item) => item.value);

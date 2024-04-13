@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "mikestead.dotenv",
+        "vue.volar",
+        "esbenp.prettier-vscode",
+        "steoates.autoimport",
+        "usernamehw.errorlens",
+        "gruntfuggly.todo-tree",
+        "pflannery.vscode-versionlens",
+        "wix.vscode-import-cost",
+        "eamodio.gitlens"
+    ]
+}

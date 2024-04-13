@@ -26,7 +26,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component);
 }
 
-// echarts
+// echarts相关
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { LineChart, BarChart, CustomChart } from "echarts/charts";

@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, markRaw } from "vue";
 import { useStore } from "@/store/index.js";
 import { usePve } from "@/store/pve.js";
 import { getRandomColor } from "@/utils/commonNoStore";
@@ -39,7 +39,7 @@ export function useAnalysis() {
                     global.$reset();
                     // 返回结果
                     // window.$store = data;
-                    store.result = Object.freeze(data);
+                    store.result = markRaw(data);
                     ready.value = true;
                 }
             };

@@ -230,5 +230,9 @@ watchPostEffect(updateData);
         .fz(14px, 18px);
         .bold;
     }
+
+    :deep(.vue-echarts-inner) {
+        .w(100%);
+    }
 }
 </style>

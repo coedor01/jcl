@@ -377,18 +377,25 @@ export class Analyzer {
             } else {
                 // 适配可能存在的第一个buff是删除的情况
                 if (!eb.cur) {
-                    eb.logs.push({
-                        source,
-                        deleteBy: source,
-                        start: 0,
-                        end: micro,
-                        id: key,
-                        stack,
-                        stackLogs: {
-                            0: stack,
-                            [micro]: stack,
-                        },
-                    });
+                    const last_logs = eb.logs[eb.logs.length - 1];
+                    if (last_logs) {
+                        last_logs.end = micro;
+                        last_logs.deleteBy = source;
+                    } else {
+                        eb.logs.push({
+                            source,
+                            deleteBy: source,
+                            start: 0,
+                            end: micro,
+                            id: key,
+                            stack,
+                            stackLogs: {
+                                0: stack,
+                                [micro]: stack,
+                            },
+                        });
+                    }
+
                     return;
                 }
                 // 删除BUFF

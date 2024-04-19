@@ -38,7 +38,9 @@ export function useAnalysis() {
                     const global = usePve();
                     global.$reset();
                     // 返回结果
-                    window.$store = data;
+                    if (process?.env?.NODE_ENV === "development") {
+                        window.$store = data;
+                    }
                     store.result = markRaw(data);
                     ready.value = true;
                 }

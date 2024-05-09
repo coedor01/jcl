@@ -32,6 +32,7 @@ import PveCompare from "@/components/pve/pve_compare.vue";
 import PveLogs from "@/components/pve/pve_logs.vue";
 import UploadCard from "@/components/upload_card.vue";
 import VideoCard from "@/components/video_card.vue";
+import BossTimeLine from "@/components/pve/boss_timeline.vue";
 
 import Thx from "@jx3box/jx3box-vue3-ui/src/single/Thx.vue";
 import Comment from "@jx3box/jx3box-vue3-ui/src/single/Comment.vue";
@@ -45,6 +46,8 @@ const { mainTab, statType, focusEntities, entityTab, viewType, entityList, entit
 const mainComponents = {
     overview: PveOverview,
     detail: PveEntity,
+    blame: PveEntity, // TODO:这部分还没写，随便找个界面先跑
+    time_line: BossTimeLine,
     compare: PveCompare,
     logs: PveLogs,
     upload: UploadCard,

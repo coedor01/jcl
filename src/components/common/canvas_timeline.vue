@@ -12,6 +12,7 @@
 
 <script>
 import { fabric } from "fabric";
+import { cloneDeep } from "lodash";
 const RECT_HEIGHT = 12;
 
 export default {
@@ -94,8 +95,9 @@ export default {
             return;
         },
         renderItems: function () {
+            const data = cloneDeep(this.data).sort((a, b) => a.time - b.time);
             this.lastItem = null;
-            for (let item of this.data) {
+            for (let item of data) {
                 const item_group = new fabric.Group([], {
                     selectable: false,
                     objectCaching: false,

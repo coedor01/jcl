@@ -8,13 +8,20 @@
                 <el-radio-button :value="45">每行45s</el-radio-button>
                 <el-radio-button :value="60">每行60s</el-radio-button>
             </el-radio-group>
+            <div class="u-setting-trigger">
+                <el-icon><Setting /></el-icon>
+                选择技能
+                <timeline-selector class="u-setting-popper"></timeline-selector>
+            </div>
         </div>
         <div class="u-canvas-wrapper">
             <canvas-timeline :data="data" :time="time" :linetime="linetime"></canvas-timeline>
         </div>
     </div>
 </template>
+
 <script setup>
+import TimelineSelector from "../pve/timeline_selector";
 import CanvasTimeline from "../common/canvas_timeline.vue";
 
 import { computed, ref } from "vue";

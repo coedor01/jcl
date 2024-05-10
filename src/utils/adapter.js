@@ -438,7 +438,6 @@ export class Adapter {
             }
             data.push(...Object.values(result));
         }
-        console.log(data, selectedSkills);
         return { data, selectedSkills };
     }
 
@@ -530,7 +529,6 @@ export class Adapter {
             }
             data.push(...Object.values(result));
         }
-        console.log(data, selectedTimeline);
         return { data, selectedTimeline };
     }
 

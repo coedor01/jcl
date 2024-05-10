@@ -24,14 +24,14 @@
 import TimelineSelector from "../pve/timeline_selector";
 import CanvasTimeline from "../common/canvas_timeline.vue";
 
-import { computed, ref } from "vue";
+import { computed, toRefs, ref } from "vue";
 import { useStore } from "@/store";
-
+import { usePve } from "@/store/pve";
 import { getResource } from "@/utils/common";
 
 const store = useStore();
 const { end } = store.result;
-
+const { selectedTimeline } = toRefs(usePve());
 const time = computed(() => end.sec + 10);
 const linetime = ref(15);
 const data = computed(() => {
@@ -49,8 +49,10 @@ const data = computed(() => {
         }
         let name = idNameMap[key];
         let short_name = name;
-        // const selectedSkill = selectedSkills.value[name];
-        // if (!selectedSkill || !selectedSkill.stat.includes(log.skillType)) continue;
+        // 是否显示
+        const skill_key = "skill:" + name;
+        const current_timeline = selectedTimeline.value[skill_key];
+        if (!current_timeline || !current_timeline.stat.includes("select")) continue;
         if (name.length > 5) short_name = name.charAt(0) + ".." + name.charAt(name.length - 1);
         result.push({
             content: short_name,
@@ -64,7 +66,7 @@ const data = computed(() => {
                     等级: log.skill_level,
                     施放时间: log.time.toFixed(2) + "s",
                 },
-                color: "#ffffff",
+                color: current_timeline.color,
             },
         });
     }
@@ -75,6 +77,9 @@ const data = computed(() => {
             const name = store.result.entities[k].name;
             const templateID = store.result.entities[k].templateID;
             for (let value of v) {
+                const say_key = "say:" + value.content;
+                const current_timeline = selectedTimeline.value[say_key];
+                if (!current_timeline || !current_timeline.stat.includes("select")) continue;
                 result.push({
                     content: name + "喊话",
                     time: value.time,
@@ -85,7 +90,7 @@ const data = computed(() => {
                             释放者名称: name,
                             施放时间: value.time.toFixed(2) + "s",
                         },
-                        color: "#ffffff",
+                        color: current_timeline.color,
                     },
                 });
             }
@@ -95,6 +100,9 @@ const data = computed(() => {
     // 模板类部分
     for (let [k, v] of Object.entries(source.templates)) {
         for (let value of v) {
+            const template_key = "template:" + value.name;
+            const current_timeline = selectedTimeline.value[template_key];
+            if (!current_timeline || !current_timeline.stat.includes("select")) continue;
             result.push({
                 content: value.name,
                 time: value.time,
@@ -105,7 +113,7 @@ const data = computed(() => {
                         数量: value.count,
                         出现时间: value.time.toFixed(2) + "s",
                     },
-                    color: "#ffffff",
+                    color: current_timeline.color,
                 },
             });
         }

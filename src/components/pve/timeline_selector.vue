@@ -7,11 +7,11 @@
                     <span :title="`${row.name}`">{{ row.name.split(":")[1] }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="选择" :width="40" align="center">
+            <el-table-column label="是否绘制" :width="40" align="center">
                 <template #default="{ row }">
                     <div class="u-check-icon">
                         <img
-                            v-if="selectedTimeline[row.name].stat.includes('cast')"
+                            v-if="selectedTimeline[row.name].stat.includes('select')"
                             src="@/assets/img/common/checked.svg"
                             draggable="false"
                         />
@@ -53,7 +53,7 @@ const updateData = () => {
     getWorkerResponse("timeline_selector", {}).then((result) => {
         data.value = result.data;
         const _selected = result.selectedTimeline;
-        for (let d of data.value) _selected[d.name].stat = ["cast"];
+        for (let d of data.value) _selected[d.name].stat = ["select"];
         selectedTimeline.value = _selected;
         loading.value = false;
     });
@@ -67,11 +67,11 @@ const click = (row, column) => {
         if (skill.stat.length) {
             skill.stat = [];
         } else {
-            skill.stat = ["cast"];
+            skill.stat = ["select"];
         }
     } else {
         const type = {
-            1: "cast",
+            1: "select",
         }[columnIndex];
         if (skill.stat.includes(type)) {
             skill.stat = skill.stat.filter((item) => item !== type);

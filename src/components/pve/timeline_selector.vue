@@ -7,7 +7,7 @@
                     <span :title="`${row.name}`">{{ row.name.split(":")[1] }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="是否绘制" :width="40" align="center">
+            <el-table-column label="选择" :width="40" align="center">
                 <template #default="{ row }">
                     <div class="u-check-icon">
                         <img

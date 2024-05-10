@@ -10,7 +10,7 @@
             </el-radio-group>
             <div class="u-setting-trigger">
                 <el-icon><Setting /></el-icon>
-                选择技能
+                选择绘制的内容
                 <timeline-selector class="u-setting-popper"></timeline-selector>
             </div>
         </div>

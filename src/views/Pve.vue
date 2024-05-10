@@ -46,7 +46,7 @@ const { mainTab, statType, focusEntities, entityTab, viewType, entityList, entit
 const mainComponents = {
     overview: PveOverview,
     detail: PveEntity,
-    blame: PveEntity, // TODO:这部分还没写，随便找个界面先跑
+    // blame: PveEntity, // TODO:这部分还没写，随便找个界面先跑
     time_line: BossTimeLine,
     compare: PveCompare,
     logs: PveLogs,

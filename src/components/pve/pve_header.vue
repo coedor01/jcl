@@ -94,7 +94,7 @@ const showTab = computed(() => {
     return tabList.filter((tab) => {
         if (tab.name === "upload" && store.info.title) return false;
         if (tab.name === "video" && !store.info.video_identifier) return false;
-        if (tab.name == "blame" && ![669, 670].includes(store.result.map)) return false;
+        if (tab.name == "blame") return false; // PR，暂时屏蔽掉，实现后再说
         if (tab.name == "time_line" && ![669, 670].includes(store.result.map)) return false;
         return true;
     });

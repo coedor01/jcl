@@ -83,7 +83,6 @@ const defaultResult = {
     skill: {},
     say: {},
     scene: {},
-    death: {},
     player_death: {},
     buff_blame: {},
     time_line_result: {

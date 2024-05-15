@@ -10,7 +10,6 @@ import {
     displayDuration,
 } from "./commonNoStore";
 import { iconLink } from "@jx3box/jx3box-common/js/utils";
-import { gaussianSmoothing } from "@/utils/commonNoStore";
 import { pick } from "lodash-es";
 
 export class Adapter {
@@ -95,7 +94,7 @@ export class Adapter {
         {
             const defaultSeries = {
                 type: "line",
-                smooth: true,
+                smooth: false,
                 showSymbol: false,
             };
             const source = stats?.[statType];
@@ -142,9 +141,6 @@ export class Adapter {
             }
             yData.unshift(r);
             yData.sort((a, b) => b.total - a.total);
-            yData = yData.map((item) => {
-                return item;
-            });
         }
         return { xData, yData };
     }
@@ -210,8 +206,8 @@ export class Adapter {
             const index = Math.floor(log.micro / 1000);
             _yData[index] += log.value;
         }
-        const yData = gaussianSmoothing(_yData, 4);
-        return { overview, xData, yData };
+        // const yData = gaussianSmoothing(_yData, 4);
+        return { overview, xData, _yData };
     }
     getPveEntityViewEffect(params) {
         const { entityTab, entity, timeRange = [0, 1e10] } = params;
@@ -611,7 +607,7 @@ export class Adapter {
         {
             const defaultSeries = {
                 type: "line",
-                smooth: true,
+                smooth: false,
                 showSymbol: false,
             };
             const source = stats[compareMode];
@@ -633,9 +629,6 @@ export class Adapter {
                     ...defaultSeries,
                     itemStyle: { color },
                 });
-                for (let item of yData) {
-                    item.data = gaussianSmoothing(item.data, 4);
-                }
             }
         }
         return { xData, yData };

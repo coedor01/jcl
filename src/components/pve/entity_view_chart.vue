@@ -80,7 +80,7 @@ const option = computed(() => {
         series: [
             {
                 type: "line",
-                smooth: true,
+                smooth: false,
                 sampling: "lttb",
                 showSymbol: false,
                 itemStyle: {

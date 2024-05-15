@@ -143,7 +143,6 @@ export class Adapter {
             yData.unshift(r);
             yData.sort((a, b) => b.total - a.total);
             yData = yData.map((item) => {
-                item.data = gaussianSmoothing(item.data, 4);
                 return item;
             });
         }

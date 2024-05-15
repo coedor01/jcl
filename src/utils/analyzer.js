@@ -1,5 +1,5 @@
 import { parseJx3dat } from "luat2json";
-
+import { raid_analysis_constant } from "@/assets/data/raid_constant";
 import { JCL_TYPE } from "./jclType";
 import { formatLine } from "./format";
 import { cloneDeep, pick } from "lodash-es";
@@ -397,35 +397,9 @@ export class Analyzer {
                  * 维护一个哈希表，key是buffid，value是层数，满足该层数的buff将会被记录
                  * 记录玩家不应该获得的buff，获得代表玩家出现失误。
                  */
-                const buffTable = {
-                    // 25人普通冷龙峰
-                    669: {
-                        17200: 8, // 精神匮乏，记录减疗超过40%的玩家
-                        17201: 8, // 耐力损耗，记录易伤超过40%的玩家
-                        27878: 3, // 风起潮涌
-                        28295: 3, // 狂躁的诺布心诀内力
-                        27922: 3, // 烈毒
-                        27940: 1, // 死寂
-                        27938: 4, // 悚然
-                        27939: 1, // 光耀炫目
-                        28267: 1, // 影秽
-                    },
-                    // 25人英雄冷龙峰
-                    670: {
-                        17200: 8, // 精神匮乏，记录减疗超过40%的玩家
-                        17201: 8, // 耐力损耗，记录易伤超过40%的玩家
-                        27878: 3, // 风起潮涌
-                        28295: 1, // 狂躁的诺布心诀内力
-                        27922: 3, // 烈毒
-                        27940: 1, // 死寂
-                        27937: 1, // 阴火弹
-                        27938: 4, // 悚然
-                        27939: 1, // 光耀炫目
-                        28267: 1, // 影秽
-                    },
-                };
+                const buffTable = raid_analysis_constant.buffTable;
                 // 非查找地图，不做判断。
-                if (!(this.result.map in buffTable)) {
+                if (!(this.result.map in raid_analysis_constant.enable_mapId)) {
                     return;
                 }
                 let mapId = this.result.map;
@@ -586,39 +560,6 @@ export class Analyzer {
         const { id, killer } = detail;
         let entities = this.result.entities;
         let entity = entities[id];
-        let killerEntity = entities[killer];
-
-        if (!this.result.death[id] && entity) {
-            this.result.death[id] = {
-                kill: 0,
-                death: 0,
-                logs: [],
-            };
-        }
-        if (!this.result.death[killer] && killerEntity) {
-            this.result.death[killer] = {
-                kill: 0,
-                death: 0,
-                logs: [],
-            };
-        }
-        // =====
-        if (entity) {
-            this.result.death[id].death += 1;
-            this.result.death[id].logs.push({
-                time: micro / 1000,
-                type: "death",
-                id: killer,
-            });
-        }
-        if (killerEntity) {
-            this.result.death[killer].kill += 1;
-            this.result.death[killer].logs.push({
-                time: micro / 1000,
-                type: "kill",
-                id,
-            });
-        }
 
         // 如果被击杀类型是玩家则代表玩家重伤，将内容更新至player_death
         if (entity && entity.type == "player") {
@@ -766,9 +707,8 @@ export class Analyzer {
 
     // 更新副本技能轴（副本专用）
     updateTimeLine() {
-        const mapList = [669, 670];
         // 非特定副本地图，不做判断
-        if (!mapList.includes(this.result.map)) {
+        if (!raid_analysis_constant.enable_mapId.includes(this.result.map)) {
             return;
         }
         // 喊话类全部需要记录，在updateSay()中已经全部记录，不需要额外处理
@@ -780,19 +720,8 @@ export class Analyzer {
             if (id == 6746) {
                 return;
             }
-            // 冷龙峰目标
-            const bossName = [
-                "葛木寒",
-                "戮夜游·刀盾兵",
-                "戮夜游·锁链手",
-                "戮夜游·弓箭手",
-                "雨轻红",
-                "喜雅",
-                "鹰眼客",
-                "赤幽明",
-                "赤厄明",
-                "游荡黑影",
-            ];
+            // 获取处理的目标列表
+            const bossName = raid_analysis_constant.bossName[this.result.map];
             if (this.result.entities[caster] && bossName.includes(this.result.entities[caster].name)) {
                 // 处理有读条的技能
                 if (type == 19) {
@@ -810,8 +739,8 @@ export class Analyzer {
                 // 处理没有读条的技能
                 else {
                     // 无读条类直接作用技能
-                    // 冷龙峰技能
-                    const skillTable = [37498, 37075, 37002];
+                    // 获取处理的无读条技能
+                    const skillTable = raid_analysis_constant.noChannel_skillId[this.result.map];
                     // 非记录技能，直接返回
                     if (!skillTable.includes(id)) {
                         return;
@@ -862,34 +791,16 @@ export class Analyzer {
         // 该部分的逻辑在整个文档读取完毕后需要将结果写入到result中，并且必须在读取完毕后写入
         if ([6].includes(type)) {
             const { detail } = this.current;
-            const templatesTable = {
-                669: {
-                    127357: "戮夜游·锁链手",
-                    127369: "戮夜游·刀盾兵",
-                    127348: "落冰",
-                    126934: "黑镜",
-                    127310: "漆黑泥沼",
-                    123781: "游荡黑影",
-                },
-                670: {
-                    127460: "戮夜游·锁链手",
-                    127464: "戮夜游·刀盾兵",
-                    127442: "落冰",
-                    126934: "黑镜",
-                    127434: "漆黑泥沼",
-                    127476: "游荡黑影",
-                },
-            };
+            const templatesTable = raid_analysis_constant.templateTable[this.result.map];
             // 判断npc是否在检测的id中
-            const mapId = this.result.map;
             const id = this.result.entities[detail.id].templateID;
-            if (id in templatesTable[mapId]) {
+            if (id in templatesTable) {
                 // 判断该实体是否为首次出现
                 if (!(id in this.tmp.templateId)) {
                     // 首次出现，初始化一个新的实体
                     const log = {
                         id: id,
-                        name: templatesTable[mapId][id],
+                        name: templatesTable[id],
                         time: micro / 1000,
                         count: 1,
                     };
@@ -907,7 +818,7 @@ export class Analyzer {
                     // 写入新一次出现的实体
                     const log = {
                         id: id,
-                        name: templatesTable[mapId][id],
+                        name: templatesTable[id],
                         time: micro / 1000,
                         count: 1,
                     };

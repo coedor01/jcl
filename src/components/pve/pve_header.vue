@@ -43,6 +43,7 @@ import jx3box_url from "@jx3box/jx3box-common/data/jx3box.json";
 import { useRouter } from "vue-router";
 import { workerBusy } from "@/utils/worker";
 import { ElMessage } from "element-plus";
+import { raid_analysis_constant } from "@/assets/data/raid_constant";
 const { __imgPath } = jx3box_url;
 
 const store = useStore();
@@ -95,7 +96,7 @@ const showTab = computed(() => {
         if (tab.name === "upload" && store.info.title) return false;
         if (tab.name === "video" && !store.info.video_identifier) return false;
         if (tab.name == "blame") return false; // PR，暂时屏蔽掉，实现后再说
-        if (tab.name == "time_line" && ![669, 670].includes(store.result.map)) return false;
+        if (tab.name == "time_line" && !raid_analysis_constant.enable_mapId.includes(store.result.map)) return false;
         return true;
     });
 });

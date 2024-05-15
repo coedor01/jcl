@@ -37,7 +37,6 @@ const linetime = ref(15);
 const data = computed(() => {
     const source = store.result.time_line_result;
     if (!source) return [];
-    if (!source) return [];
     const result = [];
     const idNameMap = {};
     for (let log of source.skills) {

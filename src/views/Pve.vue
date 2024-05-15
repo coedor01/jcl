@@ -32,7 +32,7 @@ import PveCompare from "@/components/pve/pve_compare.vue";
 import PveLogs from "@/components/pve/pve_logs.vue";
 import UploadCard from "@/components/upload_card.vue";
 import VideoCard from "@/components/video_card.vue";
-import BossTimeLine from "@/components/pve/boss_timeline.vue";
+import BossTimeLine from "@/components/pve/boss_timeline_selector.vue";
 
 import Thx from "@jx3box/jx3box-vue3-ui/src/single/Thx.vue";
 import Comment from "@jx3box/jx3box-vue3-ui/src/single/Comment.vue";

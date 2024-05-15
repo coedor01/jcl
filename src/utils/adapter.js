@@ -440,6 +440,98 @@ export class Adapter {
         }
         return { data, selectedSkills };
     }
+
+    timelineSelector() {
+        const data = [];
+        const selectedTimeline = {};
+        const source = this.result.time_line_result;
+        {
+            if (!source) {
+                return { data, selectedTimeline };
+            }
+            const colorGenerator = getRandomColor();
+
+            // skills part
+            let result = {};
+            for (let log of source.skills) {
+                // 构造skill查询
+                const key = `${log.skill_id}_${log.skill_level}`;
+                const resource = getResource("skill:" + key, this.result);
+                // 查询不到就跳过
+                if (!resource || !resource.name) continue;
+
+                const name = "skill:" + resource.name;
+                if (result[name] === undefined) {
+                    result[name] = {
+                        name,
+                        ids: [key],
+                        color: colorGenerator.next().value,
+                    };
+                    selectedTimeline[name] = {
+                        name,
+                        ...result[name],
+                        stat: [],
+                    };
+                } else {
+                    result[name].ids.push(key);
+                    selectedTimeline[name].ids.push(key);
+                }
+            }
+            data.push(...Object.values(result));
+
+            // template part
+            result = {};
+            for (let [k, v] of Object.entries(source.templates)) {
+                for (let value of v) {
+                    const name = "template:" + value.name;
+                    if (result[name] === undefined) {
+                        result[name] = {
+                            name,
+                            ids: [k],
+                            color: colorGenerator.next().value,
+                        };
+                        selectedTimeline[name] = {
+                            name,
+                            ...result[name],
+                            stat: [],
+                        };
+                    } else {
+                        result[name].ids.push(k);
+                        selectedTimeline[name].ids.push(k);
+                    }
+                }
+            }
+            data.push(...Object.values(result));
+
+            // say part
+            result = {};
+            for (let [k, v] of Object.entries(this.result.say)) {
+                if (k != "_system") {
+                    for (let value of v) {
+                        const name = "say:" + value.content;
+                        if (result[name] === undefined) {
+                            result[name] = {
+                                name,
+                                ids: [value.content],
+                                color: colorGenerator.next().value,
+                            };
+                            selectedTimeline[name] = {
+                                name,
+                                ...result[name],
+                                stat: [],
+                            };
+                        } else {
+                            result[name].ids.push(value.content);
+                            selectedTimeline[name].ids.push(value.content);
+                        }
+                    }
+                }
+            }
+            data.push(...Object.values(result));
+        }
+        return { data, selectedTimeline };
+    }
+
     getPveCompare(params) {
         const { compareMode, entity, timeRange } = params;
         const { stats } = this.result;

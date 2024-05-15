@@ -65,6 +65,16 @@ const tabList = [
         title: "单位对比",
     },
     {
+        name: "blame",
+        icon: require("@/assets/img/pve/header_compare.svg"),
+        title: "查锅",
+    },
+    {
+        name: "time_line",
+        icon: require("@/assets/img/pve/header_compare.svg"),
+        title: "首领技能轴",
+    },
+    {
         name: "video",
         icon: require("@/assets/img/common/video.svg"),
         title: "视频回放",
@@ -84,6 +94,8 @@ const showTab = computed(() => {
     return tabList.filter((tab) => {
         if (tab.name === "upload" && store.info.title) return false;
         if (tab.name === "video" && !store.info.video_identifier) return false;
+        if (tab.name == "blame") return false; // PR，暂时屏蔽掉，实现后再说
+        if (tab.name == "time_line" && ![669, 670].includes(store.result.map)) return false;
         return true;
     });
 });

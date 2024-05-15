@@ -84,6 +84,12 @@ const defaultResult = {
     say: {},
     scene: {},
     death: {},
+    player_death: {},
+    buff_blame: {},
+    time_line_result: {
+        skills: [],
+        templates: [],
+    },
     resources: {
         skill: [],
         buff: [],
@@ -107,6 +113,11 @@ const defaultResult = {
  * @property {import('./adapter').Adapter} adapter 适配器
  */
 export class Analyzer {
+    /**
+     *
+     * @param {string} raw
+     * @param {Record<string, any>} options
+     */
     constructor(raw, options) {
         this.raw = raw.split("\n").filter((x) => x);
         this.options = options || {};
@@ -162,16 +173,20 @@ export class Analyzer {
      */
     reset() {
         this.cursorTo("start");
+        /**
+         * @type {AnalyzeResult}
+         */
+        this.result = cloneDeep(defaultResult);
         this.length = this.raw.length;
         this.prev = undefined;
         this.current = undefined;
-
-        this.result = cloneDeep(defaultResult);
         this.adapter?.updateResult(this.result);
         this.tmp = {
             enterSceneCount: {},
             firstAppearTimeUpdated: {},
             globalSays: [],
+            channelSkill: {},
+            templateId: {},
         };
     }
 
@@ -208,6 +223,7 @@ export class Analyzer {
         if (this.index === this.length) {
             this.endBuff();
             this.endStat();
+            this.endTemplate();
             return result(null, true);
         }
         this.prev = this.current;
@@ -216,7 +232,7 @@ export class Analyzer {
         let valid = logFilter(line);
         if (!valid) return result(null, false, valid);
         // 格式化日志
-        let row = formatLine(line, this.result, this.tmp);
+        let row = formatLine(line);
         this.result.rows.push(row);
         this.current = row;
         this.updateResult();
@@ -237,6 +253,7 @@ export class Analyzer {
         this.updateSay();
         this.updateTeam();
         this.updateStat();
+        this.updateTimeLine();
     }
     // 更新JCL文件元信息
     updateMeta() {
@@ -374,28 +391,103 @@ export class Analyzer {
                         eb.cur.stackLogs[micro] = stack;
                     }
                 }
+
+                /**
+                 * 赛季更新BUFF处理段：
+                 * 维护一个哈希表，key是buffid，value是层数，满足该层数的buff将会被记录
+                 * 记录玩家不应该获得的buff，获得代表玩家出现失误。
+                 */
+                const buffTable = {
+                    // 25人普通冷龙峰
+                    669: {
+                        17200: 8, // 精神匮乏，记录减疗超过40%的玩家
+                        17201: 8, // 耐力损耗，记录易伤超过40%的玩家
+                        27878: 3, // 风起潮涌
+                        28295: 3, // 狂躁的诺布心诀内力
+                        27922: 3, // 烈毒
+                        27940: 1, // 死寂
+                        27938: 4, // 悚然
+                        27939: 1, // 光耀炫目
+                        28267: 1, // 影秽
+                    },
+                    // 25人英雄冷龙峰
+                    670: {
+                        17200: 8, // 精神匮乏，记录减疗超过40%的玩家
+                        17201: 8, // 耐力损耗，记录易伤超过40%的玩家
+                        27878: 3, // 风起潮涌
+                        28295: 1, // 狂躁的诺布心诀内力
+                        27922: 3, // 烈毒
+                        27940: 1, // 死寂
+                        27937: 1, // 阴火弹
+                        27938: 4, // 悚然
+                        27939: 1, // 光耀炫目
+                        28267: 1, // 影秽
+                    },
+                };
+                // 非查找地图，不做判断。
+                if (!(this.result.map in buffTable)) {
+                    return;
+                }
+                let mapId = this.result.map;
+                // 判断玩家获得的buff是否是否在需要监控的哈希表内，且层数是否达到要求
+                if (
+                    id in buffTable[mapId] &&
+                    stack >= buffTable[mapId][id] &&
+                    this.result.entities[target] &&
+                    this.result.entities[target].type == "player"
+                ) {
+                    // 该玩家是否已经被记录过
+                    if (target in this.result.buff_blame) {
+                        // 该效果是否已经被记过
+                        if (id in this.result.buff_blame[target]) {
+                            this.result.buff_blame[target][id].push({
+                                playerId: target,
+                                source: source,
+                                buff_id: id,
+                                stack: stack,
+                                time: micro / 1000,
+                            });
+                        } else {
+                            // 新建一个该效果
+                            this.result.buff_blame[target][id] = [
+                                {
+                                    playerId: target,
+                                    source: source,
+                                    buff_id: id,
+                                    stack: stack,
+                                    time: micro / 1000,
+                                },
+                            ];
+                        }
+                    } else {
+                        // 新建一个该玩家
+                        this.result.buff_blame[target] = {};
+                        this.result.buff_blame[target][id] = [
+                            {
+                                playerId: target,
+                                source: source,
+                                buff_id: id,
+                                stack: stack,
+                                time: micro / 1000,
+                            },
+                        ];
+                    }
+                }
             } else {
                 // 适配可能存在的第一个buff是删除的情况
                 if (!eb.cur) {
-                    const last_logs = eb.logs[eb.logs.length - 1];
-                    if (last_logs) {
-                        last_logs.end = micro;
-                        last_logs.deleteBy = source;
-                    } else {
-                        eb.logs.push({
-                            source,
-                            deleteBy: source,
-                            start: 0,
-                            end: micro,
-                            id: key,
-                            stack,
-                            stackLogs: {
-                                0: stack,
-                                [micro]: stack,
-                            },
-                        });
-                    }
-
+                    eb.logs.push({
+                        source,
+                        deleteBy: source,
+                        start: 0,
+                        end: micro,
+                        id: key,
+                        stack,
+                        stackLogs: {
+                            0: stack,
+                            [micro]: stack,
+                        },
+                    });
                     return;
                 }
                 // 删除BUFF
@@ -527,7 +619,52 @@ export class Analyzer {
                 id,
             });
         }
+
+        // 如果被击杀类型是玩家则代表玩家重伤，将内容更新至player_death
+        if (entity && entity.type == "player") {
+            // 该玩家不是第一次死亡
+            if (id in this.result.player_death) {
+                this.result.player_death[id].push({
+                    playerId: id,
+                    killerName: killer,
+                    time: micro / 1000,
+                    detail: this.updateDeathDetail(id, micro, 5000),
+                    buff: this.getBuff(id),
+                });
+            }
+
+            // 该玩家是第一次死亡
+            else {
+                this.result.player_death[id] = [
+                    {
+                        playerName: id,
+                        killerName: killer,
+                        time: micro / 1000,
+                        detail: this.updateDeathDetail(id, micro, 5000),
+                        buff: this.getBuff(id),
+                    },
+                ];
+            }
+        }
     }
+    /**
+     * 找到重伤玩家在前window毫秒内受到的伤害记录
+     * @param {int} entityId 重伤玩家ID
+     * @param {int} deathTime 重伤玩家死亡时间（战斗开始后的毫秒数）
+     * @param {int} window 查找窗口（单位毫秒），默认为死亡前5000毫秒，即5秒
+     * @returns {dictType} 玩家在死亡前window毫秒内受到的伤害的logs
+     */
+    updateDeathDetail(entityId, deathTime, window = 5000) {
+        let detail = [];
+        let start_time = deathTime - window >= 0 ? deathTime - window : 0; // 防止向前追溯的时间越界
+        let start_row_id = this.result.stats.beDamaged[entityId]["logs"].length - 1;
+        while (start_row_id >= 0 && this.result.stats.beDamaged[entityId]["logs"][start_row_id].micro >= start_time) {
+            detail.push(this.result.stats.beDamaged[entityId]["logs"][start_row_id]);
+            start_row_id -= 1;
+        }
+        return detail;
+    }
+
     // 喊话统计
     updateSay() {
         const { micro, type, detail } = this.current;
@@ -626,6 +763,173 @@ export class Analyzer {
         // 塞进统计里面
         stat[entity]["logs"].push(log);
     }
+
+    // 更新副本技能轴（副本专用）
+    updateTimeLine() {
+        const mapList = [669, 670];
+        // 非特定副本地图，不做判断
+        if (!mapList.includes(this.result.map)) {
+            return;
+        }
+        // 喊话类全部需要记录，在updateSay()中已经全部记录，不需要额外处理
+        const { micro, type, detail } = this.current;
+        // 技能类，仅记录副本内与首领战斗中首领/小怪释放的技能
+        if ([19, 21, 22, 23, 24, 25, 26].includes(type)) {
+            const { caster, id, level } = detail;
+            // 寂灭不做判断(明教bug技能)
+            if (id == 6746) {
+                return;
+            }
+            // 冷龙峰目标
+            const bossName = [
+                "葛木寒",
+                "戮夜游·刀盾兵",
+                "戮夜游·锁链手",
+                "戮夜游·弓箭手",
+                "雨轻红",
+                "喜雅",
+                "鹰眼客",
+                "赤幽明",
+                "赤厄明",
+                "游荡黑影",
+            ];
+            if (this.result.entities[caster] && bossName.includes(this.result.entities[caster].name)) {
+                // 处理有读条的技能
+                if (type == 19) {
+                    const name = this.result.entities[caster].name;
+                    const templateID = this.result.entities[caster].templateID;
+                    const log = {
+                        name: name,
+                        templateID: templateID,
+                        skill_id: id,
+                        skill_level: level,
+                        time: micro / 1000,
+                    };
+                    this.result.time_line_result["skills"].push(log);
+                }
+                // 处理没有读条的技能
+                else {
+                    // 无读条类直接作用技能
+                    // 冷龙峰技能
+                    const skillTable = [37498, 37075, 37002];
+                    // 非记录技能，直接返回
+                    if (!skillTable.includes(id)) {
+                        return;
+                    }
+                    let data = this.result.skill[caster];
+                    const key = `${id}_${level}`;
+                    // 未初始化过，先写入一次记录
+                    if (!(key in this.tmp.channelSkill)) {
+                        this.tmp.channelSkill[key] = micro / 1000;
+                        const name = data.name == undefined ? "天外来客" : data.name;
+                        const templateID = data.templateID == undefined ? 0 : data.templateID;
+                        const log = {
+                            name: name,
+                            templateID: templateID,
+                            skill_id: id,
+                            skill_level: level,
+                            time: micro / 1000,
+                        };
+                        this.result.time_line_result["skills"].push(log);
+                        return;
+                    } else {
+                        // 初始化过，进行一次判断是否写入
+                        // 如果上一次该技能的事件发生在0.5s以内，说明是技能命中了多个目标，所以不写入时间轴
+                        if (Math.abs(this.tmp.channelSkill[key] - micro / 1000) < 0.5) {
+                            // 更新最近一次时间
+                            this.tmp.channelSkill[key] = micro / 1000;
+                            return;
+                        }
+                        const name = data.name == undefined ? "天外来客" : data.name;
+                        const templateID = data.templateID == undefined ? 0 : data.templateID;
+                        const log = {
+                            name: name,
+                            templateID: templateID,
+                            skill_id: id,
+                            skill_level: level,
+                            time: micro / 1000,
+                        };
+                        this.result.time_line_result["skills"].push(log);
+                    }
+                }
+            }
+            // 下面的代码在技能类里永远无法执行，直接结束
+            return;
+        }
+
+        // 模板ID匹配部分
+        // 该部分主要找出一些衍生物体加入场景的时间，以及部分由模板ID构成的技能
+        // 该部分的逻辑在整个文档读取完毕后需要将结果写入到result中，并且必须在读取完毕后写入
+        if ([6].includes(type)) {
+            const { detail } = this.current;
+            const templatesTable = {
+                669: {
+                    127357: "戮夜游·锁链手",
+                    127369: "戮夜游·刀盾兵",
+                    127348: "落冰",
+                    126934: "黑镜",
+                    127310: "漆黑泥沼",
+                    123781: "游荡黑影",
+                },
+                670: {
+                    127460: "戮夜游·锁链手",
+                    127464: "戮夜游·刀盾兵",
+                    127442: "落冰",
+                    126934: "黑镜",
+                    127434: "漆黑泥沼",
+                    127476: "游荡黑影",
+                },
+            };
+            // 判断npc是否在检测的id中
+            const mapId = this.result.map;
+            const id = this.result.entities[detail.id].templateID;
+            if (id in templatesTable[mapId]) {
+                // 判断该实体是否为首次出现
+                if (!(id in this.tmp.templateId)) {
+                    // 首次出现，初始化一个新的实体
+                    const log = {
+                        id: id,
+                        name: templatesTable[mapId][id],
+                        time: micro / 1000,
+                        count: 1,
+                    };
+                    this.tmp.templateId[id] = [log];
+                } else {
+                    // 已经出现过了
+                    // 首先计算本次内出现的个数，规定1秒内连续出现的均为同一次出现
+                    const lastId = this.tmp.templateId[id].length - 1;
+                    if (Math.abs(this.tmp.templateId[id][lastId].time - micro / 1000) < 1.0) {
+                        // 更新数量时间后直接返回
+                        this.tmp.templateId[id][lastId].count += 1;
+                        this.tmp.templateId[id][lastId].time = micro / 1000;
+                        return;
+                    }
+                    // 写入新一次出现的实体
+                    const log = {
+                        id: id,
+                        name: templatesTable[mapId][id],
+                        time: micro / 1000,
+                        count: 1,
+                    };
+                    this.tmp.templateId[id].push(log);
+                }
+            }
+            return;
+        }
+    }
+
+    // 副本时间轴衍生方法
+    // 实体分析将在文件分析结束后调用该函数，将tmp.templateId中的结果保存
+    endTemplate() {
+        // 若为非使用地图，该变量值为空，直接返回不需要写入
+        if (this.tmp.templateId == {}) {
+            return;
+        }
+        // 写入结果后返回
+        this.result.time_line_result.templates = this.tmp.templateId;
+        return;
+    }
+
     // 分析结束的时候，将统计数据整理一下
     endStat() {
         for (let type in this.result.stats) {

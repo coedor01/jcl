@@ -1,5 +1,5 @@
 <template>
-    <div class="m-entity-view-target">
+    <div class="m-blame-view-death">
         <div class="u-left">
             <div class="w-card" v-loading="loading">
                 <!-- 为空指引 -->
@@ -30,7 +30,7 @@
                                 <span>{{ getEntityName(row.killerId) }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="critRate" label="时间" width="104" sortable="custom">
+                        <el-table-column prop="critRate" label="重伤时间" width="104" sortable="custom">
                             <template #default="{ row }">
                                 <span>{{ row.time }}</span>
                             </template>
@@ -130,7 +130,7 @@ watch(() => data.value, clearLogs, { flush: "post" });
 </script>
 
 <style lang="less">
-.m-entity-view-target {
+.m-blame-view-death {
     display: flex;
     gap: 20px;
     .size(1440px, 800px);

@@ -5,7 +5,7 @@
                 to="row-reverse"
                 :rotate="90"
                 text-align="right"
-                :tips="['在右侧选择一个目标后', '此处会展示该次技能释放的所有详细数据']"
+                :tips="['在右侧选择一个玩家后', '显示该玩家死亡前所携带的效果']"
             ></empty-guide>
         </template>
         <template v-else>

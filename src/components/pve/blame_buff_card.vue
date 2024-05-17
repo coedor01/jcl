@@ -1,5 +1,5 @@
 <template>
-    <div class="m-entity-view-target">
+    <div class="m-blame-view-buff">
         <div class="u-left">
             <div class="w-card" v-loading="loading">
                 <!-- 为空指引 -->
@@ -129,7 +129,7 @@ watch(() => data.value, clearLogs, { flush: "post" });
 </script>
 
 <style lang="less">
-.m-entity-view-target {
+.m-blame-view-buff {
     display: flex;
     gap: 20px;
     .size(1440px, 800px);

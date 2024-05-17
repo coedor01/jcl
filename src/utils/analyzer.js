@@ -398,7 +398,7 @@ export class Analyzer {
                  */
                 const buffTable = raid_analysis_constant.buffTable;
                 // 非查找地图，不做判断。
-                if (!(this.result.map in raid_analysis_constant.enable_mapId)) {
+                if (!raid_analysis_constant.enable_mapId.includes(this.result.map)) {
                     return;
                 }
                 let mapId = this.result.map;
@@ -577,7 +577,7 @@ export class Analyzer {
             else {
                 this.result.player_death[id] = [
                     {
-                        playerName: id,
+                        playerId: id,
                         killerName: killer,
                         time: micro / 1000,
                         detail: this.updateDeathDetail(id, micro, 5000),

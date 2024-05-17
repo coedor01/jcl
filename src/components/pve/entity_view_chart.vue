@@ -80,8 +80,6 @@ const option = computed(() => {
         series: [
             {
                 type: "line",
-                smooth: false,
-                sampling: "lttb",
                 showSymbol: false,
                 itemStyle: {
                     color: entityColor.value,

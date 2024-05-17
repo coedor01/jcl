@@ -11,6 +11,7 @@ import {
 } from "./commonNoStore";
 import { iconLink } from "@jx3box/jx3box-common/js/utils";
 import { pick } from "lodash-es";
+import { raid_analysis_constant } from "@/assets/data/raid_constant";
 
 export class Adapter {
     constructor(result) {
@@ -206,8 +207,8 @@ export class Adapter {
             const index = Math.floor(log.micro / 1000);
             _yData[index] += log.value;
         }
-        // const yData = gaussianSmoothing(_yData, 4);
-        return { overview, xData, _yData };
+        const yData = _yData;
+        return { overview, xData, yData };
     }
     getPveEntityViewEffect(params) {
         const { entityTab, entity, timeRange = [0, 1e10] } = params;
@@ -290,6 +291,38 @@ export class Adapter {
         }
         return Object.values(result).sort((a, b) => b.value - a.value);
     }
+    getBlameEntity(params) {
+        let result = [];
+        const { entityId } = params;
+        const { buff_blame } = this.result;
+        console.log(entityId);
+        console.log(buff_blame);
+        if (!entityId) {
+            return result;
+        }
+        let this_entity_logs = buff_blame[entityId];
+        if (!this_entity_logs) {
+            return result;
+        }
+        for (let [key, values] of Object.entries(this_entity_logs)) {
+            for (let value of values) {
+                let name = getResource("buff:" + key, this.result).name;
+                if (!name) {
+                    name = raid_analysis_constant.buff2name[key];
+                }
+                let log = {
+                    buffId: key,
+                    buffName: name,
+                    source: value.source,
+                    stack: value.stack,
+                    time: value.time,
+                };
+                result.push(log);
+            }
+        }
+        return result;
+    }
+
     getPveEntityBuff(params) {
         const { entity } = params;
         const { buff, end } = this.result;

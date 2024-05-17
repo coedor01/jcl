@@ -22,12 +22,26 @@
                         :data="currentData"
                         :border="false"
                         @sort-change="sort"
-                        @row-click="click"
                         :row-class-name="rowClass"
                     >
                         <el-table-column :label="targetLabel" width="112">
                             <template #default="{ row }">
-                                <span>{{ getEntityName(row.killerId) }}</span>
+                                <span>{{ getEntityName(row.source) }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="name" label="名字" width="148" sortable="custom">
+                            <template #default="{ row }">
+                                <span>{{ row.buffName }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="id" label="Buff ID" width="148" sortable="custom">
+                            <template #default="{ row }">
+                                <span>{{ row.buffId }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="stack" label="层数" width="148" sortable="custom">
+                            <template #default="{ row }">
+                                <span>{{ row.stack }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="critRate" label="时间" width="104" sortable="custom">
@@ -49,19 +63,12 @@
                     ></el-pagination>
                 </template>
             </div>
-            <blame-skill-log></blame-skill-log>
-        </div>
-        <div class="u-bottom">
-            <!-- 技能日志 -->
-            <blame-death-buff-detail></blame-death-buff-detail>
         </div>
     </div>
 </template>
 
 <script setup>
 import EmptyGuide from "@/components/common/empty_guide.vue";
-import BlameDeathBuffDetail from "@/components/pve/blame_death_buff_detail.vue";
-import BlameSkillLog from "./blame_skill_log.vue";
 import { ref, watch, computed, toRefs } from "vue";
 import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
@@ -69,24 +76,16 @@ import { getEntityName } from "@/utils/common";
 import getWorkerResponse from "@/utils/worker";
 
 // 注入的属性
-const { entityTab, entity, entityTimeRange, target, blame_death_buff, blame_death_detail } = toRefs(usePve());
+const { entityTab, entity, entityTimeRange, target, targetLogs, targetLog } = toRefs(usePve());
 
 // computed
 const targetLabel = computed(() => {
-    return "击杀者";
+    return "来源";
 });
-// 行点击事件
-const click = (row) => {
-    if (target.value === row.playerId) return;
-    target.value = row.playerId;
-    blame_death_buff.value = row.buff;
-    blame_death_detail.value = row.detail;
-    // console.log(blame_death_buff);
-};
 
 // 行样式
 const rowClass = ({ row }) => {
-    return target.value === row.playerId ? "is-focus" : "";
+    return target.value === row.target ? "is-focus" : "";
 };
 // 数据相关
 const loading = ref(false);
@@ -95,7 +94,7 @@ const pageSize = ref(9);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
 const updateData = () => {
     loading.value = true;
-    getWorkerResponse("get_blame_death_entity", {
+    getWorkerResponse("get_blame_entity", {
         entityId: entity.value,
     }).then((result) => {
         data.value = result;
@@ -123,8 +122,8 @@ watch(
 
 const clearLogs = () => {
     target.value = "";
-    blame_death_buff.value = [];
-    blame_death_detail.value = [];
+    targetLogs.value = [];
+    targetLog.value = null;
 };
 watch(() => data.value, clearLogs, { flush: "post" });
 </script>

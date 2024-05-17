@@ -566,7 +566,7 @@ export class Analyzer {
             if (id in this.result.player_death) {
                 this.result.player_death[id].push({
                     playerId: id,
-                    killerName: killer,
+                    killerId: killer,
                     time: micro / 1000,
                     detail: this.updateDeathDetail(id, micro, 5000),
                     buff: this.getBuff(id),
@@ -578,7 +578,7 @@ export class Analyzer {
                 this.result.player_death[id] = [
                     {
                         playerId: id,
-                        killerName: killer,
+                        killerId: killer,
                         time: micro / 1000,
                         detail: this.updateDeathDetail(id, micro, 5000),
                         buff: this.getBuff(id),

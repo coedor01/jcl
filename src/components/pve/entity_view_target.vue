@@ -106,7 +106,9 @@ const click = (row) => {
     if (target.value === row.target) return;
     target.value = row.target;
     targetLogs.value = row.logs;
+
     targetLog.value = row.logs[0];
+    // .log(targetLog.value);
 };
 // 行样式
 const rowClass = ({ row }) => {

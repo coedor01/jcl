@@ -12,14 +12,21 @@
                         <div class="w-tabs">
                             <div
                                 class="u-tab"
-                                :class="{ 'is-active': viewType == 'target' }"
-                                @click="viewType = 'target'"
+                                :class="{ 'is-active': blameType == 'buff_blame' }"
+                                @click="blameType = 'buff_blame'"
                             >
-                                按目标显示
+                                可能犯错的记录
+                            </div>
+                            <div
+                                class="u-tab"
+                                :class="{ 'is-active': blameType == 'death_blame' }"
+                                @click="blameType = 'death_blame'"
+                            >
+                                死亡记录
                             </div>
                         </div>
                         <keep-alive>
-                            <component :is="typeComponent[viewType]"></component>
+                            <component :is="typeComponent[blameType]"></component>
                         </keep-alive>
                     </template>
                 </div>
@@ -35,13 +42,14 @@ import { usePve } from "@/store/pve";
 import EntityTabs from "./entity_tabs.vue";
 import BlameEntitySelector from "./blame_entity_selector.vue";
 
+import BlameBuffCard from "./blame_buff_card.vue";
 import BlameDeathCard from "./blame_death_card.vue";
 
 const typeComponent = {
-    target: BlameDeathCard,
+    buff_blame: BlameBuffCard,
+    death_blame: BlameDeathCard,
 };
-const { viewType, entityTab } = toRefs(usePve());
-viewType.value = "target";
+const { blameType, entityTab } = toRefs(usePve());
 </script>
 
 <style lang="less">

@@ -15,6 +15,7 @@ export const usePve = defineStore({
         entityList: [], // 待选单位列表
         entityTimeRange: {}, // 单位详情的时间范围
         viewType: "effect", // 单位数值统计，根据目标/技能
+        blameType: "buff_blame",
         effect: "", // 选中的技能效果
         effectLogs: [], // 选中的技能效果相关日志
         effectLog: null, // 选中的技能效果某个日志详情
@@ -24,6 +25,8 @@ export const usePve = defineStore({
         selectedBuffs: [], // 选中的buff
         selectedSkills: {}, // 参与统计的技能
         selectedTimeline: {}, // 参与时间轴选项卡计算
+        blame_death_detail: [],
+        blame_death_buff: [],
 
         // compare
         compareMode: "damage", // 比较tab

@@ -321,6 +321,23 @@ export class Adapter {
         return result;
     }
 
+    getBlameDeathEntity(params) {
+        let result = [];
+        const { entityId } = params;
+        const { player_death } = this.result;
+        if (!entityId) {
+            return result;
+        }
+        let this_entity_logs = player_death[entityId];
+        if (!this_entity_logs) {
+            return result;
+        }
+        for (let this_death of this_entity_logs) {
+            result.push(this_death);
+        }
+        return result;
+    }
+
     getPveEntityBuff(params) {
         const { entity } = params;
         const { buff, end } = this.result;

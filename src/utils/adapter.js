@@ -295,8 +295,6 @@ export class Adapter {
         let result = [];
         const { entityId } = params;
         const { buff_blame } = this.result;
-        console.log(entityId);
-        console.log(buff_blame);
         if (!entityId) {
             return result;
         }

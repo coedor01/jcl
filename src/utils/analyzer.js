@@ -596,6 +596,7 @@ export class Analyzer {
      */
     updateDeathDetail(entityId, deathTime, window = 5000) {
         let detail = [];
+        if (!this.result?.stats?.beDamaged?.[entityId]) return detail;
         let start_time = deathTime - window >= 0 ? deathTime - window : 0; // 防止向前追溯的时间越界
         let start_row_id = this.result.stats.beDamaged[entityId]["logs"].length - 1;
         while (start_row_id >= 0 && this.result.stats.beDamaged[entityId]["logs"][start_row_id].micro >= start_time) {

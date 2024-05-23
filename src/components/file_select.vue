@@ -50,10 +50,13 @@
                 <el-button
                     class="u-start"
                     :disabled="[statusCode.upload, statusCode.ready].includes(status)"
-                    :loading="status == statusCode.loading"
+                    :loading="status == statusCode.loading || fileProcessing"
                     @click="start"
-                    >开始分析</el-button
                 >
+                    <span v-if="status === statusCode.loading">分析中</span>
+                    <span v-else-if="fileProcessing">文件处理中</span>
+                    <span v-else>开始分析</span>
+                </el-button>
                 <el-button
                     class="u-view"
                     :class="{ ready: status == statusCode.ready }"
@@ -70,11 +73,10 @@
 <script setup>
 import { ref, toRefs, computed } from "vue";
 import { useRouter } from "vue-router";
-import { decode } from "iconv-lite";
 import { useAnalysis } from "@/utils/uses/useAnalysis";
 import { useStore } from "@/store";
-import { Buffer } from "buffer";
 import { ElMessage } from "element-plus";
+import FileWorker from "@/utils/workers/file.worker.js";
 
 const store = useStore();
 const router = useRouter();
@@ -101,7 +103,7 @@ const status = computed(() => {
     // 选了文件，还没开始分析
     if (progress.value === 0) return statusCode.default;
     // 正在分析
-    if (!ready.value) return statusCode.loading;
+    if (!ready.value || fileProcessing.value) return statusCode.loading;
     // 分析完毕
     return statusCode.ready;
 });
@@ -117,6 +119,7 @@ const fileChange = (file) => {
     progress.value = 0;
     ready.value = false;
 };
+const fileProcessing = ref(false);
 const start = () => {
     if (!store.file.name.endsWith(".jcl")) {
         ElMessage.error("仅支持JCL文件");
@@ -124,6 +127,7 @@ const start = () => {
     }
     store.result = {};
     store.info = {};
+    fileProcessing.value = true;
     new Promise((resolve) => {
         let reader = new FileReader();
         reader.onload = (e) => {
@@ -132,12 +136,18 @@ const start = () => {
         reader.readAsArrayBuffer(store.file);
     })
         .then((buffer) => {
-            const raw = decode(Buffer.from(buffer), "gbk");
-            store.raw = raw;
-            return new Promise((resolve) => resolve(true));
+            const fileWorker = new FileWorker();
+            return new Promise((resolve) => {
+                fileWorker.onmessage = (e) => {
+                    resolve(e.data.raw);
+                };
+                fileWorker.postMessage({ buffer });
+            });
         })
-        .then(() => {
+        .then((raw) => {
+            store.raw = raw;
             startAnalysis();
+            fileProcessing.value = false;
         });
 };
 const view = () => {

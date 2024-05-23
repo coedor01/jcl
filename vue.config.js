@@ -22,6 +22,7 @@ module.exports = {
 
     //⚛️ Proxy ~
     devServer: {
+        host: "localhost",
         proxy: {
             "/api/vip": {
                 target: "https://pay.jx3box.com",

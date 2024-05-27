@@ -91,6 +91,9 @@ const data = computed(() => {
         if (player_death != []) {
             for (let deaths of Object.values(player_death)) {
                 for (let value of deaths) {
+                    if (value.playerId in cache) {
+                        continue;
+                    }
                     cache[value.playerId] = true;
                     entitiesArr.push(value);
                 }
@@ -106,6 +109,7 @@ const data = computed(() => {
                         if (value.playerId in cache) {
                             continue;
                         }
+                        cache[value.playerId] = true;
                         entitiesArr.push(value);
                     }
                 }

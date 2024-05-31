@@ -118,6 +118,7 @@ const option = computed(() => ({
             const start = (detail.start / 1000).toFixed(1);
             const end = (detail.end / 1000).toFixed(1);
             return `${params.marker} ${params.name} <br />
+                            BUFF ID: ${detail.id} <br />
                             BUFF来源: ${getEntityName(detail.source)} <br />
                             ${detail.deleteBy ? `BUFF卸除者: ${getEntityName(detail.deleteBy)} <br />` : ""}
                             开始时间: ${start} 秒 <br />

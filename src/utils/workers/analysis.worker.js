@@ -9,7 +9,7 @@
 import { Analyzer } from "@/utils/analyzer";
 import { Adapter } from "@/utils/adapter";
 import { getResource as _getResourceFromApi } from "@/services/resource.js";
-import { isArray, uniq, omit } from "lodash-es";
+import { isArray, omit } from "lodash-es";
 // export 要用的
 import { unparse } from "papaparse";
 import iconv from "iconv-lite";
@@ -32,13 +32,13 @@ async function getResourceFromApi(resourceList, client = "std") {
     let buff_res = await _getResourceFromApi({
         client,
         type: "buff",
-        ids: uniq(resourceList.buff),
+        ids: [...resourceList.buff],
         fields: ["BuffID", "Level", "IconID", "Name", "BuffName", "Desc"],
     });
     let skill_res = await _getResourceFromApi({
         client,
         type: "skill",
-        ids: uniq(resourceList.skill),
+        ids: [...resourceList.skill],
         fields: ["SkillID", "Level", "MaxLevel", "IconID", "Name", "SkillName", "Desc"],
     });
     if (buff_res.data) {

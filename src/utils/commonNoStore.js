@@ -22,7 +22,7 @@ export function getResource(_key, store) {
     if (resourceSearchCache[cacheKey]) return resources[resourceSearchCache[cacheKey]];
     let resourceKey = `${type}:${key}`;
     let r = resources[resourceKey];
-    // 直接找到了id和level都符合的记录就直接返回图标
+    // 直接找到了id和level都符合的记录就直接返回
     if (r) {
         resourceSearchCache[cacheKey] = resourceKey;
         return r;

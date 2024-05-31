@@ -1,107 +1,74 @@
 <template>
-    <div class="m-pve-entity">
-        <div class="u-first-section">
-            <!-- 左上角筛选单位/将单位加入候选列表的部分 -->
-            <BlameEntitySelector></BlameEntitySelector>
-            <div class="u-right">
-                <!-- 候选列表，切换当前选择单位的组件 -->
-                <entity-tabs></entity-tabs>
-                <div class="u-second-section">
-                    <template v-if="entityTab">
-                        <!-- 技能详情统计方式切换 -->
-                        <div class="w-tabs">
-                            <div
-                                class="u-tab"
-                                :class="{ 'is-active': blameType == 'buff_blame' }"
-                                @click="blameType = 'buff_blame'"
-                            >
-                                可能犯错的记录
-                            </div>
-                            <div
-                                class="u-tab"
-                                :class="{ 'is-active': blameType == 'death_blame' }"
-                                @click="blameType = 'death_blame'"
-                            >
-                                死亡记录
-                            </div>
-                        </div>
-                        <keep-alive>
-                            <component :is="typeComponent[blameType]"></component>
-                        </keep-alive>
-                    </template>
-                </div>
-            </div>
+    <div class="m-pve-blame">
+        <!-- 左上角筛选单位/将单位加入候选列表的部分 -->
+        <div class="u-left">
+            <BlameFilters :data="data"></BlameFilters>
+        </div>
+        <div class="u-right">
+            <BlameList :data="data"></BlameList>
         </div>
     </div>
 </template>
 
 <script setup>
-import { toRefs } from "vue";
+import { toRefs, computed } from "vue";
 import { usePve } from "@/store/pve";
+import { useStore } from "@/store";
 
-import EntityTabs from "./entity_tabs.vue";
-import BlameEntitySelector from "./blame_entity_selector.vue";
+import BlameFilters from "./blame_filters.vue";
+import BlameList from "./blame_list.vue";
 
-import BlameBuffCard from "./blame_buff_card.vue";
-import BlameDeathCard from "./blame_death_card.vue";
+const store = useStore();
+const { blame_filters } = toRefs(usePve());
 
-const typeComponent = {
-    buff_blame: BlameBuffCard,
-    death_blame: BlameDeathCard,
-};
-const { blameType, entityTab } = toRefs(usePve());
+// 相关的数据（因为这个功能数据量不会很大
+// 所以不需要太复杂
+const data = computed(() => {
+    const { buff_blame, player_death } = store.result;
+    const result = [];
+    if (blame_filters.value.death) {
+        for (const player_id in player_death) {
+            for (const death of player_death[player_id]) {
+                result.push({
+                    playerId: player_id,
+                    time: death.time,
+                    event: "重伤",
+                    detail: death,
+                });
+            }
+        }
+    }
+    if (blame_filters.value.buff) {
+        for (const player_id in buff_blame) {
+            for (const buff_id in buff_blame[player_id]) {
+                for (const buff of buff_blame[player_id][buff_id]) {
+                    result.push({
+                        playerId: player_id,
+                        time: buff.time,
+                        event: "BUFF",
+                        detail: buff,
+                    });
+                }
+            }
+        }
+    }
+
+    return result.sort((a, b) => a.time - b.time);
+}, [store.result]);
 </script>
 
-<style lang="less">
-.m-pve-entity {
+<style lang="less" scoped>
+.m-pve-blame {
     .mt(20px);
     width: 1440px;
+    display: flex;
+    gap: 20px;
 
-    .u-first-section {
-        height: 480px;
+    .u-right {
+        height: 760px;
+        flex-grow: 1;
         display: flex;
         gap: 20px;
-    }
-    .u-second-section {
-        .mt(20px);
-
-        .w-tabs {
-            .mb(20px);
-        }
-    }
-
-    .u-first-section > .u-right {
-        display: flex;
-        flex-direction: column;
-        width: 1060px;
-        height: 480px;
-
-        & > .w-card {
-            flex-grow: 1;
-            display: flex;
-            gap: 20px;
-        }
-    }
-
-    .m-type-tabs {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        .u-tab {
-            .x;
-            .fz(14px, 40px);
-            .size(110px, 40px);
-            cursor: pointer;
-            border-radius: 20px;
-            color: #fff;
-            background-color: #252525;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .u-tab.is-active {
-            color: #fff;
-            background-color: #0c759e;
-        }
     }
 }
 </style>

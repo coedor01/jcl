@@ -24,7 +24,12 @@ export const usePve = defineStore({
         targetLog: null, // 选中的目标某个日志详情
         selectedBuffs: [], // 选中的buff
         selectedSkills: {}, // 参与统计的技能
+
+        // timeline
         selectedTimeline: {}, // 参与时间轴选项卡计算
+
+        // blame
+        blame_filters: {},
         blame_death_detail: [],
         blame_death_buff: [],
 

@@ -90,8 +90,8 @@ const defaultResult = {
         templates: [],
     },
     resources: {
-        skill: [],
-        buff: [],
+        skill: null,
+        buff: null,
     },
 };
 // 分析器
@@ -287,8 +287,10 @@ export class Analyzer {
     updateResources() {
         let row = this.current;
         let resources = this.result.resources;
-        if (row.content.t == "skill") resources.skill.push(row.content.v);
-        if (row.content.t == "buff") resources.buff.push(row.content.v);
+        if (!resources.skill) resources.skill = new Set();
+        if (!resources.buff) resources.buff = new Set();
+        if (row.content.t == "skill") resources.skill.add(row.content.v);
+        if (row.content.t == "buff") resources.buff.add(row.content.v);
     }
     // 更新单位信息
     updateEntities() {

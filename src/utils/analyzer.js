@@ -400,7 +400,7 @@ export class Analyzer {
                  */
                 const buffTable = raid_analysis_constant.buffTable;
                 // 非查找地图，不做判断。
-                if (!raid_analysis_constant.enable_mapId.includes(this.result.map)) {
+                if (!raid_analysis_constant.blame_enable_mapId.includes(this.result.map)) {
                     return;
                 }
                 let mapId = this.result.map;
@@ -717,7 +717,7 @@ export class Analyzer {
     // 更新副本技能轴（副本专用）
     updateTimeLine() {
         // 非特定副本地图，不做判断
-        if (!raid_analysis_constant.enable_mapId.includes(this.result.map)) {
+        if (!raid_analysis_constant.timeline_enable_mapId.includes(this.result.map)) {
             return;
         }
         // 喊话类全部需要记录，在updateSay()中已经全部记录，不需要额外处理
@@ -750,6 +750,9 @@ export class Analyzer {
                     // 无读条类直接作用技能
                     // 获取处理的无读条技能
                     const skillTable = raid_analysis_constant.noChannel_skillId[this.result.map];
+                    if (skillTable == undefined) {
+                        return;
+                    }
                     // 非记录技能，直接返回
                     if (!skillTable.includes(id)) {
                         return;
@@ -801,6 +804,9 @@ export class Analyzer {
         if ([6].includes(type)) {
             const { detail } = this.current;
             const templatesTable = raid_analysis_constant.templateTable[this.result.map];
+            if (templatesTable == undefined) {
+                return;
+            }
             // 判断npc是否在检测的id中
             const id = this.result.entities[detail.id].templateID;
             if (id in templatesTable) {

@@ -73,8 +73,9 @@ const data = computed(() => {
     for (let [k, v] of Object.entries(store.result.say)) {
         // 仅处理非系统喊话
         if (k != "_system") {
-            const name = store.result.entities[k].name;
-            const templateID = store.result.entities[k].templateID;
+            // 需要建议：是否保留来自不明实体的喊话
+            const name = store.result.entities[k] == undefined ? "天外来客" : store.result.entities[k].name;
+            const templateID = store.result.entities[k] == undefined ? 0 : store.result.entities[k].templateID;
             for (let value of v) {
                 const say_key = "say:" + value.content;
                 const current_timeline = selectedTimeline.value[say_key];

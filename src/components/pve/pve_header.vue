@@ -95,8 +95,9 @@ const showTab = computed(() => {
     return tabList.filter((tab) => {
         if (tab.name === "upload" && store.info.title) return false;
         if (tab.name === "video" && !store.info.video_identifier) return false;
-        if (tab.name == "blame" && !raid_analysis_constant.enable_mapId.includes(store.result.map)) return false;
-        if (tab.name == "time_line" && !raid_analysis_constant.enable_mapId.includes(store.result.map)) return false;
+        if (tab.name == "blame" && !raid_analysis_constant.blame_enable_mapId.includes(store.result.map)) return false;
+        if (tab.name == "time_line" && !raid_analysis_constant.timeline_enable_mapId.includes(store.result.map))
+            return false;
         return true;
     });
 });

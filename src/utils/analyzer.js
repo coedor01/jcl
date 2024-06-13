@@ -399,8 +399,11 @@ export class Analyzer {
                  * 记录玩家不应该获得的buff，获得代表玩家出现失误。
                  */
                 const buffTable = raid_analysis_constant.buffTable;
-                // 非查找地图，不做判断。
-                if (!raid_analysis_constant.blame_enable_mapId.includes(this.result.map)) {
+                // 非查找地图或者为缘起，不做判断
+                if (
+                    this.result.client == "origin" ||
+                    !raid_analysis_constant.blame_enable_mapId.includes(this.result.map)
+                ) {
                     return;
                 }
                 let mapId = this.result.map;
@@ -716,8 +719,8 @@ export class Analyzer {
 
     // 更新副本技能轴（副本专用）
     updateTimeLine() {
-        // 非特定副本地图，不做判断
-        if (!raid_analysis_constant.timeline_enable_mapId.includes(this.result.map)) {
+        // 非特定副本地图或者缘起客户端，不做判断
+        if (this.result.client == "origin" || !raid_analysis_constant.timeline_enable_mapId.includes(this.result.map)) {
             return;
         }
         // 喊话类全部需要记录，在updateSay()中已经全部记录，不需要额外处理

@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="u-canvas-wrapper">
-            <canvas-timeline :data="data" :time="time" :linetime="linetime"></canvas-timeline>
+            <canvas-timeline :data="data" :time="time" :linetime="linetime" :max_width="1400"></canvas-timeline>
         </div>
     </div>
 </template>

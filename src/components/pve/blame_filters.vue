@@ -17,10 +17,15 @@
         <div class="w-card u-menu">
             <div class="w-card-title">事件列表</div>
             <div class="u-event-list">
-                <el-table class="u-table" :data="data" :border="false" @row-click="clickBlameEvent">
-                    <el-table-column label="时间" width="80">
+                <el-table class="u-table" :data="data" :border="false">
+                    <el-table-column label="时间" width="100">
                         <template #default="{ row }">
-                            <span>{{ row.time }}</span>
+                            <div v-if="row.time < 60">
+                                <span>{{ ~~row.time }}秒</span>
+                            </div>
+                            <div v-else>
+                                <span>{{ ~~(row.time / 60) }}分{{ ~~(row.time % 60) }}秒</span>
+                            </div>
                         </template>
                     </el-table-column>
                     <el-table-column label="玩家">
@@ -63,9 +68,7 @@ const filterList = [
 ];
 
 // 点击触发右侧跳转
-const clickBlameEvent = (row) => {
-    console.log(row);
-};
+
 onMounted(() => {
     filterList.forEach((filter) => {
         filters[filter.name] = true;

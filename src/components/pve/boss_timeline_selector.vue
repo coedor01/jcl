@@ -1,21 +1,21 @@
 <template>
-    <div class="m-entity-skill-timeline w-card">
-        <div class="w-card-title">
-            <span class="u-title">技能释放时间轴</span>
-            <el-radio-group v-model.number="linetime" size="small">
-                <el-radio-button :value="15">每行15s</el-radio-button>
-                <el-radio-button :value="30">每行30s</el-radio-button>
-                <el-radio-button :value="45">每行45s</el-radio-button>
-                <el-radio-button :value="60">每行60s</el-radio-button>
-            </el-radio-group>
-            <div class="u-setting-trigger">
-                <el-icon><Setting /></el-icon>
-                选择绘制的内容
-                <timeline-selector class="u-setting-popper"></timeline-selector>
-            </div>
+    <div class="timeline-container">
+        <div class="timeline-selector">
+            <timeline-selector class="u-setting-popper"></timeline-selector>
         </div>
-        <div class="u-canvas-wrapper">
-            <canvas-timeline :data="data" :time="time" :linetime="linetime"></canvas-timeline>
+        <div class="m-timeline w-card">
+            <div class="w-card-title">
+                <span class="u-title">技能释放时间轴</span>
+                <el-radio-group v-model.number="linetime" size="small">
+                    <el-radio-button :value="15">每行15s</el-radio-button>
+                    <el-radio-button :value="30">每行30s</el-radio-button>
+                    <el-radio-button :value="45">每行45s</el-radio-button>
+                    <el-radio-button :value="60">每行60s</el-radio-button>
+                </el-radio-group>
+            </div>
+            <div class="u-canvas-wrapper">
+                <canvas-timeline :data="data" :time="time" :linetime="linetime" :max_width="1000"></canvas-timeline>
+            </div>
         </div>
     </div>
 </template>
@@ -145,55 +145,79 @@ const data = computed(() => {
 </script>
 
 <style lang="less">
-.m-pve-entity {
+.timeline-container {
+    display: flex;
     .mt(20px);
     width: 1440px;
+}
+.timeline-selector {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 20px;
+    width: 360px; /* 确保左侧的宽度固定 */
+}
 
-    .u-first-section {
-        height: 480px;
-        display: flex;
-        gap: 20px;
-    }
-    .u-second-section {
-        .mt(20px);
-
-        .w-tabs {
-            .mb(20px);
-        }
-    }
-
-    .u-first-section > .u-right {
-        display: flex;
-        flex-direction: column;
-        width: 1060px;
-        height: 480px;
-
-        & > .w-card {
-            flex-grow: 1;
-            display: flex;
-            gap: 20px;
-        }
-    }
-
-    .m-type-tabs {
+.m-timeline {
+    .w-card-title {
         display: flex;
         align-items: center;
-        gap: 20px;
-        .u-tab {
-            .x;
-            .fz(14px, 40px);
-            .size(110px, 40px);
-            cursor: pointer;
-            border-radius: 20px;
-            color: #fff;
-            background-color: #252525;
-            transition: all 0.3s ease-in-out;
-        }
+        justify-content: space-between;
 
-        .u-tab.is-active {
-            color: #fff;
-            background-color: #0c759e;
+        .u-title {
+            .mr(20px);
         }
+    }
+
+    .el-radio-button.is-active {
+        .el-radio-button__inner {
+            background-color: @light-purple;
+            border-radius: 4px;
+        }
+    }
+    .el-radio-button .el-radio-button__inner {
+        border: none;
+        background-color: transparent;
+    }
+
+    .u-setting-trigger {
+        .pr;
+        .flex-center;
+        .pointer;
+        gap: 4px;
+        color: #fff;
+        background-color: @dark-purple;
+        padding: 3px 8px;
+        .r(3px);
+    }
+
+    .u-setting-trigger:hover {
+        .u-setting-popper {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+
+    .u-setting-popper {
+        // 悬浮效果
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0.15s, opacity 0.15s linear;
+
+        // 定位
+        .pa;
+        top: calc(100%);
+        right: -20px;
+
+        z-index: 20;
+    }
+
+    .u-canvas-wrapper {
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-height: 800px;
+        height: auto;
+        .scrollbar(#131517, 10px);
     }
 }
 </style>

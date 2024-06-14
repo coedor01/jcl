@@ -4,7 +4,8 @@
             <div class="u-event" @click="selectedEvent = event">
                 <template v-if="event.event === 'BUFF'">
                     <div class="u-event__buff">
-                        <div class="u-time">{{ event.time }} 秒</div>
+                        <div v-if="event.time < 60" class="u-time">{{ ~~event.time }}秒</div>
+                        <div v-else class="u-time">{{ ~~(event.time / 60) }}分{{ ~~(event.time % 60) }}秒</div>
                         <div class="u-meta">
                             <div class="u-type is-buff">吃 Buff 吃饱了！</div>
                         </div>
@@ -18,7 +19,8 @@
                 </template>
                 <template v-else-if="event.event === '重伤'">
                     <div class="u-event__death">
-                        <div class="u-time">{{ event.time }} 秒</div>
+                        <div v-if="event.time < 60" class="u-time">{{ ~~event.time }}秒</div>
+                        <div v-else class="u-time">{{ ~~(event.time / 60) }}分{{ ~~(event.time % 60) }}秒</div>
                         <div class="u-meta">
                             <div class="u-type is-death">被嘎啦！</div>
                         </div>

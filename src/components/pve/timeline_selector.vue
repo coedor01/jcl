@@ -2,7 +2,7 @@
     <div class="m-timeline-selectors w-card" v-loading="loading">
         <div class="w-card-title">时间轴绘制设置</div>
         <el-table class="u-table" :data="currentData" :border="false" @cell-click="click">
-            <el-table-column label="内容" :width="100">
+            <el-table-column label="内容" :width="200">
                 <template #default="{ row }">
                     <span :title="`${row.name}`">{{ row.name.split(":")[1] }}</span>
                 </template>
@@ -44,7 +44,7 @@ const { selectedTimeline } = toRefs(usePve());
 
 const loading = ref(false);
 const data = ref([]);
-const pageSize = ref(8);
+const pageSize = ref(12);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
 
 // 获取可供选择的数据
@@ -86,7 +86,7 @@ watchPostEffect(updateData);
 
 <style lang="less">
 .m-timeline-selectors {
-    .size(230px, 370px);
+    .size(280px, 500px);
     border: 1px solid #2d3236;
     flex-shrink: 0;
 

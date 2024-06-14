@@ -1,5 +1,5 @@
 <template>
-    <div class="m-timeline-wrapper" :style="{ height: `${height}px` }" ref="wrapper">
+    <div class="m-timeline-wrapper" :style="dynamicStyles" ref="wrapper">
         <canvas id="timeline-canvas"></canvas>
         <div ref="tooltip" class="u-tooltip">
             <div class="u-tooltip-item" v-for="(v, k) in tooltipData" :key="k">
@@ -35,20 +35,28 @@ export default {
             type: Boolean,
             default: true,
         },
+        max_width: {
+            type: Number,
+            default: 1400,
+        },
     },
-    data: () => ({
-        padding: 40,
-        width: 1400,
-        canvas: null,
+    data() {
+        return {
+            padding: 40,
+            width: null, // 初始化为 null 或默认值
+            canvas: null,
+            lastItem: null,
+            tooltipData: {},
+            color: "#a798e6",
+            itemCache: null,
+            layoutCache: null,
+            displayingItemGroup: [],
+        };
+    },
+    created() {
+        this.width = this.max_width; // 在 created 钩子中初始化 width
+    },
 
-        lastItem: null,
-        tooltipData: {},
-        color: "#a798e6",
-
-        itemCache: null,
-        layoutCache: null,
-        displayingItemGroup: [],
-    }),
     mounted: function () {
         this.itemCache = {};
         this.layoutCache = {};
@@ -335,6 +343,15 @@ export default {
         height: function () {
             return this.lines * 60;
         },
+        maxWidth() {
+            return this.width + 40;
+        },
+        dynamicStyles() {
+            return {
+                maxWidth: this.maxWidth,
+                height: this.height,
+            };
+        },
     },
     watch: {
         data: {
@@ -352,7 +369,6 @@ export default {
 
 <style lang="less">
 .m-timeline-wrapper {
-    max-width: 1440px;
     overflow: hidden;
     position: relative;
     .u-tooltip {

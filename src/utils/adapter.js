@@ -484,7 +484,9 @@ export class Adapter {
         return { data, selectedSkills };
     }
 
-    timelineSelector() {
+    timelineSelector(params) {
+        const { filter } = params;
+        console.log(filter.value);
         const data = [];
         const selectedTimeline = {};
         const source = this.result.time_line_result;
@@ -496,41 +498,19 @@ export class Adapter {
 
             // skills part
             let result = {};
-            for (let log of source.skills) {
-                // 构造skill查询
-                const key = `${log.skill_id}_${log.skill_level}`;
-                const resource = getResource("skill:" + key, this.result);
-                // 查询不到就跳过
-                if (!resource || !resource.name) continue;
+            if (filter.skill == true) {
+                for (let log of source.skills) {
+                    // 构造skill查询
+                    const key = `${log.skill_id}_${log.skill_level}`;
+                    const resource = getResource("skill:" + key, this.result);
+                    // 查询不到就跳过
+                    if (!resource || !resource.name) continue;
 
-                const name = "skill:" + resource.name;
-                if (result[name] === undefined) {
-                    result[name] = {
-                        name,
-                        ids: [key],
-                        color: colorGenerator.next().value,
-                    };
-                    selectedTimeline[name] = {
-                        name,
-                        ...result[name],
-                        stat: [],
-                    };
-                } else {
-                    result[name].ids.push(key);
-                    selectedTimeline[name].ids.push(key);
-                }
-            }
-            data.push(...Object.values(result));
-
-            // template part
-            result = {};
-            for (let [k, v] of Object.entries(source.templates)) {
-                for (let value of v) {
-                    const name = "template:" + value.name;
+                    const name = "skill:" + resource.name;
                     if (result[name] === undefined) {
                         result[name] = {
                             name,
-                            ids: [k],
+                            ids: [key],
                             color: colorGenerator.next().value,
                         };
                         selectedTimeline[name] = {
@@ -539,23 +519,23 @@ export class Adapter {
                             stat: [],
                         };
                     } else {
-                        result[name].ids.push(k);
-                        selectedTimeline[name].ids.push(k);
+                        result[name].ids.push(key);
+                        selectedTimeline[name].ids.push(key);
                     }
                 }
+                data.push(...Object.values(result));
             }
-            data.push(...Object.values(result));
 
-            // say part
-            result = {};
-            for (let [k, v] of Object.entries(this.result.say)) {
-                if (k != "_system") {
+            // template part
+            if (filter.templates == true) {
+                result = {};
+                for (let [k, v] of Object.entries(source.templates)) {
                     for (let value of v) {
-                        const name = "say:" + value.content;
+                        const name = "template:" + value.name;
                         if (result[name] === undefined) {
                             result[name] = {
                                 name,
-                                ids: [value.content],
+                                ids: [k],
                                 color: colorGenerator.next().value,
                             };
                             selectedTimeline[name] = {
@@ -564,13 +544,41 @@ export class Adapter {
                                 stat: [],
                             };
                         } else {
-                            result[name].ids.push(value.content);
-                            selectedTimeline[name].ids.push(value.content);
+                            result[name].ids.push(k);
+                            selectedTimeline[name].ids.push(k);
                         }
                     }
                 }
+                data.push(...Object.values(result));
             }
-            data.push(...Object.values(result));
+
+            // say part
+            if (filter.say) {
+                result = {};
+                for (let [k, v] of Object.entries(this.result.say)) {
+                    if (k != "_system") {
+                        for (let value of v) {
+                            const name = "say:" + value.content;
+                            if (result[name] === undefined) {
+                                result[name] = {
+                                    name,
+                                    ids: [value.content],
+                                    color: colorGenerator.next().value,
+                                };
+                                selectedTimeline[name] = {
+                                    name,
+                                    ...result[name],
+                                    stat: [],
+                                };
+                            } else {
+                                result[name].ids.push(value.content);
+                                selectedTimeline[name].ids.push(value.content);
+                            }
+                        }
+                    }
+                }
+                data.push(...Object.values(result));
+            }
         }
         return { data, selectedTimeline };
     }

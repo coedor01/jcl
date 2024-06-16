@@ -106,14 +106,5 @@ onMounted(() => {
         flex-grow: 1;
         flex-shrink: 0;
     }
-
-    :deep(.el-table__row) {
-        .pointer;
-    }
-    :deep(.el-table__row):not(.is-focus):hover {
-        .el-table__cell {
-            background: #7650f8;
-        }
-    }
 }
 </style>

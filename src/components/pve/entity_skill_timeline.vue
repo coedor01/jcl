@@ -154,7 +154,7 @@ const data = computed(() => {
         overflow-x: hidden;
         max-height: 800px;
         height: auto;
-        .scrollbar(#131517, 10px);
+        .scrollbar(#718282, 10px);
     }
 }
 </style>

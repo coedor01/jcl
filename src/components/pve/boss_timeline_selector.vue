@@ -14,7 +14,7 @@
                 </el-radio-group>
             </div>
             <div class="u-canvas-wrapper">
-                <canvas-timeline :data="data" :time="time" :linetime="linetime" :max_width="1000"></canvas-timeline>
+                <canvas-timeline :data="data" :time="time" :linetime="linetime" :max_width="1045"></canvas-timeline>
             </div>
         </div>
     </div>
@@ -217,7 +217,7 @@ const data = computed(() => {
         overflow-x: hidden;
         max-height: 800px;
         height: auto;
-        .scrollbar(#131517, 10px);
+        .scrollbar(#718282, 10px);
     }
 }
 </style>

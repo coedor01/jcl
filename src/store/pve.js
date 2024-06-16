@@ -27,6 +27,11 @@ export const usePve = defineStore({
 
         // timeline
         selectedTimeline: {}, // 参与时间轴选项卡计算
+        timeline_filters: {
+            skill: true,
+            template: true,
+            say: true,
+        },
 
         // blame
         blame_filters: {},

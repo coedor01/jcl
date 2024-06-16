@@ -131,11 +131,10 @@ export default {
                 this.lastItem = item;
 
                 const nameText = new fabric.Text(item.content, {
-                    fontWeight: "100",
-                    stroke: "#aaa",
                     left: left,
                     top: top - 16,
                     fontSize: 12,
+                    fill: "#aaa",
                 });
                 let digits = {
                     15: 2,
@@ -348,8 +347,8 @@ export default {
         },
         dynamicStyles() {
             return {
-                maxWidth: this.maxWidth,
-                height: this.height,
+                maxWidth: this.maxWidth + "px",
+                height: this.height + "px",
             };
         },
     },

@@ -76,6 +76,11 @@ const tabList = [
         title: "首领技能轴",
     },
     {
+        name: "buff_coverage",
+        icon: require("@/assets/img/pve/header_compare.svg"),
+        title: "团队增益总览",
+    },
+    {
         name: "video",
         icon: require("@/assets/img/common/video.svg"),
         title: "视频回放",

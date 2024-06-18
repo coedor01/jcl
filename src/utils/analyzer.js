@@ -93,6 +93,7 @@ const defaultResult = {
         skill: null,
         buff: null,
     },
+    player_list: [],
 };
 // 分析器
 /**
@@ -313,6 +314,7 @@ export class Analyzer {
             // 记录玩家信息
             let entity = Object.assign({}, { type: "player", firstAppear }, detail);
             entities[id] = entity;
+            this.result.player_list.push(id);
         }
         // NPC信息
         if (type === 8) {

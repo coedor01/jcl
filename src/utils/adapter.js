@@ -12,7 +12,6 @@ import {
 import { iconLink } from "@jx3box/jx3box-common/js/utils";
 import { pick } from "lodash-es";
 import { raid_analysis_constant } from "@/assets/data/raid_constant";
-import { buffs_coverage_constants } from "@/assets/data/buff_coverage_constant";
 
 export class Adapter {
     constructor(result) {
@@ -37,10 +36,74 @@ export class Adapter {
         }
         return total;
     }
-    getTeamBuffCoverage() {
+    getIndividualBuffCoverage(params) {
+        const { query_buff_list } = params;
         const { player_list, buff, end } = this.result;
         let result = [];
-        for (let [buffid, level] of Object.entries(buffs_coverage_constants.team_buffs)) {
+        for (let [buffid, level] of Object.entries(query_buff_list)) {
+            let query_key = buffid + "_" + level;
+            let name = getResource("buff:" + query_key, this.result).name;
+            let this_buff_result = {
+                name: name,
+                id: buffid,
+                level: level,
+                average_stack_per_player: [],
+                average_stack: 0,
+                average_coverage_per_player: [],
+                average_coverage: 0,
+                times_per_player: [],
+                buffed_player: [],
+                average_times_per_player: 0,
+                min_stack: 0,
+                max_stack: 0,
+                query_key: "buff:" + query_key,
+            };
+            let tot_stack = 0;
+            let min_stack = Number.MAX_SAFE_INTEGER;
+            let max_stack = 0;
+            let tot_duration = 0;
+            for (let player of player_list) {
+                tot_stack = 0;
+                tot_duration = 0;
+                if (query_key in buff[player]) {
+                    for (let res of buff[player][query_key]["logs"]) {
+                        tot_stack += res.stack;
+                        min_stack = Math.min(res.stack, min_stack);
+                        max_stack = Math.max(res.stack, max_stack);
+                        tot_duration = tot_duration + Math.abs(res.end - res.start);
+                    }
+                    this_buff_result.average_stack_per_player.push(tot_stack / buff[player][query_key]["logs"].length);
+                    this_buff_result.average_coverage_per_player.push(tot_duration / 1000 / end.sec);
+                    this_buff_result.times_per_player.push(buff[player][query_key]["logs"].length);
+                    this_buff_result.buffed_player.push(player);
+                }
+            }
+            if (max_stack != 0) {
+                this_buff_result.average_stack = Math.floor(
+                    this.sum(this_buff_result.average_stack_per_player) /
+                        this_buff_result.average_stack_per_player.length
+                );
+                this_buff_result.average_coverage = (
+                    this.sum(this_buff_result.average_coverage_per_player) /
+                    this_buff_result.average_coverage_per_player.length
+                ).toFixed(4);
+                this_buff_result.average_times_per_player = (
+                    this.sum(this_buff_result.times_per_player) / this_buff_result.times_per_player.length
+                ).toFixed(1);
+                this_buff_result.min_stack = min_stack;
+                this_buff_result.max_stack = max_stack;
+                result.push(this_buff_result);
+            }
+        }
+
+        return result;
+    }
+
+    getTeamBuffCoverage(params) {
+        const { query_buff_list } = params;
+        const { player_list, buff, end } = this.result;
+        let result = [];
+        for (let [buffid, level] of Object.entries(query_buff_list)) {
             let query_key = buffid + "_" + level;
             let name = getResource("buff:" + query_key, this.result).name;
             let this_buff_result = {

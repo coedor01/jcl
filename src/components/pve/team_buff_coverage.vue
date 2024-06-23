@@ -1,6 +1,16 @@
 <template>
-    <div class="m-buff-coverage-list">
+    <div class="m-team-buff-coverage">
         <p class="u-title">团队增益详情</p>
+        <div>
+            <el-input
+                v-model="message"
+                placeholder="输入你想添加的增益ID(例：查看飘黄应该输入 20855:1)"
+                style="width: 400px"
+            >
+            </el-input
+            ><el-button @click="submitMessage" style="margin-left: 10px; height: 28px">提交</el-button>
+        </div>
+
         <el-table
             v-loading="loading"
             class="u-table"
@@ -42,7 +52,7 @@
             small
             background
             layout="pager"
-            :page-size="25"
+            :page-size="10"
             :total="total"
             :hide-on-single-page="true"
             :current-page="currentPage"
@@ -56,17 +66,20 @@ import { displayPercent } from "@/utils/commonNoStore";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { getResourceIcon } from "@/utils/common";
 import { ref, watchPostEffect } from "vue";
+import { buffs_coverage_constants } from "@/assets/data/buff_coverage_constant";
 
 import getWorkerResponse from "@/utils/worker";
 
 // 数据
 const loading = ref(false);
-const data = ref([]);
+const final_data = ref([]);
+const message = ref(""); // 定义 message
+const query_buff_list = buffs_coverage_constants.team_buffs;
 
-const { currentPage, currentData, total } = usePaginate(data, ref(25));
+const { currentPage, currentData, total } = usePaginate(final_data, ref(10));
 // methods
 const sort = ({ prop, order }) => {
-    data.value = data.value.sort((a, b) => {
+    final_data.value = final_data.value.sort((a, b) => {
         if (order === "ascending") {
             return a[prop] - b[prop];
         } else {
@@ -77,25 +90,30 @@ const sort = ({ prop, order }) => {
 
 const updateData = () => {
     loading.value = true;
-    getWorkerResponse("get_team_buff_coverage", {}).then((result) => {
+    getWorkerResponse("get_team_buff_coverage", { query_buff_list }).then((result) => {
         loading.value = false;
-        data.value = result;
+        final_data.value = result;
         sort({ prop: "average_coverage", order: "descending" });
         currentPage.value = 1;
     });
 };
 // watch
 watchPostEffect(updateData);
+// 监控 message 的变化
+const submitMessage = () => {
+    query_buff_list[parseInt(message.value.split(":")[0])] = parseInt(message.value.split(":")[1]);
+    updateData();
+};
 </script>
 
 <style lang="less">
-.m-buff-coverage-list {
+.m-team-buff-coverage {
     display: flex;
     flex-direction: column;
     background: #131517;
     border-radius: 20px;
     padding: 20px;
-    .size(1280px, 960px);
+    .size(1280px, 520px);
 
     .u-title {
         margin: 0;

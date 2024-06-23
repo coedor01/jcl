@@ -44,6 +44,10 @@ export const usePve = defineStore({
         compareEntity: [null, null], // 参与比较的单位
         comparePin: [], // 比较时置顶的技能
 
+        // BUFF_COVERAGE
+        individual_selected_buff: "",
+        individual_selected_buff_log: [],
+
         // logs
         logs: [], // 日志列表
         logFilter: {

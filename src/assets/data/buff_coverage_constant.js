@@ -8,4 +8,10 @@ export const buffs_coverage_constants = {
         23107: 1,
         24742: 1,
     },
+    individual_buffs: {
+        10208: 1,
+        23573: 1,
+        16259: 0,
+        16328: 1,
+    },
 };

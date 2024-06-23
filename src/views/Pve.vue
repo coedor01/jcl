@@ -37,7 +37,7 @@ import BossTimeLine from "@/components/pve/boss_timeline_selector.vue";
 import Thx from "@jx3box/jx3box-vue3-ui/src/single/Thx.vue";
 import Comment from "@jx3box/jx3box-vue3-ui/src/single/Comment.vue";
 import BlameIndex from "@/components/pve/blame_index.vue";
-import BuffCoverage from "@/components/pve/buff_coverage.vue";
+import BuffCoverageMain from "@/components/pve/buff_coverage_main.vue";
 
 const store = useStore();
 const router = useRouter();
@@ -50,7 +50,7 @@ const mainComponents = {
     detail: PveEntity,
     blame: BlameIndex,
     time_line: BossTimeLine,
-    buff_coverage: BuffCoverage,
+    buff_coverage_main: BuffCoverageMain,
     compare: PveCompare,
     logs: PveLogs,
     upload: UploadCard,

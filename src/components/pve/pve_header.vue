@@ -76,7 +76,7 @@ const tabList = [
         title: "首领技能轴",
     },
     {
-        name: "buff_coverage",
+        name: "buff_coverage_main",
         icon: require("@/assets/img/pve/header_compare.svg"),
         title: "团队增益总览",
     },

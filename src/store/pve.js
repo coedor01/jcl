@@ -34,7 +34,10 @@ export const usePve = defineStore({
         },
 
         // blame
-        blame_filters: {},
+        blame_filters: {
+            death: true,
+            buff: true,
+        },
         blame_death_detail: [],
         blame_death_buff: [],
 

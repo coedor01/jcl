@@ -23,7 +23,7 @@
         >
             <el-table-column label="图标" width="48" :align="'right'">
                 <template #default="{ row }">
-                    <img class="u-mount-icon" :src="getResourceIcon(row.query_key)" alt="" />
+                    <img class="u-buff-icon" :src="getResourceIcon(row.query_key)" alt="" />
                 </template>
             </el-table-column>
             <el-table-column label="增益名称" width="120">
@@ -41,7 +41,7 @@
             <el-table-column prop="min_stack" label="单次最小层数" width="130" sortable="true"></el-table-column>
             <el-table-column prop="max_stack" label="单次最大层数" width="130" sortable="custom"></el-table-column>
             <el-table-column prop="average_coverage" label="覆盖率" width="130" sortable="custom"></el-table-column>
-            <el-table-column label="覆盖率(百分比)" width="130">
+            <el-table-column label="覆盖率(百分比)" width="10">
                 <template #default="{ row }">
                     <div class="u-rate-wrapper">
                         <div class="u-rate-value">{{ displayPercent(row.average_coverage * 100) }}</div>
@@ -148,6 +148,11 @@ const submitMessage = () => {
 
     .u-table {
         flex-grow: 1;
+        .u-buff-icon {
+            .size(24px);
+            .mr(4px);
+            display: block;
+        }
 
         .u-effect-icon {
             .flex-center;

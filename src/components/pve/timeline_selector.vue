@@ -51,12 +51,13 @@ import { usePve } from "@/store/pve";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { toRefs, ref, toRaw, watch } from "vue";
 import getWorkerResponse from "@/utils/worker";
+import { useRoute } from "vue-router";
 
 const { selectedTimeline, timeline_filters } = toRefs(usePve());
 const filters = ref(["say", "template", "skill"]);
 const loading = ref(false);
 const data = ref([]);
-const pageSize = ref(12);
+const pageSize = ref(22);
 const { currentPage, currentData, total } = usePaginate(data, pageSize);
 
 // 单位过滤器相关
@@ -120,24 +121,34 @@ const click = (row, column) => {
         }
     }
 };
+const route = useRoute();
+watch(
+    () => route.fullPath,
+    () => {
+        timeline_filters.value = { skill: true, template: true, say: true };
+        updateData();
+    }
+);
+
 watch(
     timeline_filters,
     () => {
         updateData();
     },
-    { deep: true, immediate: true }
+    { immediate: true, deep: true }
 );
 </script>
 
 <style lang="less">
 .m-timeline-selectors {
-    .size(280px, 500px);
+    .size(280px, 882px);
     border: 1px solid #2d3236;
     flex-shrink: 0;
 
     .u-tab {
+        display: flex-grow;
+        width: 50px;
         cursor: pointer;
-        padding: 10px;
         border-bottom: 2px solid transparent;
         &.selected {
             border-bottom-color: #409eff;

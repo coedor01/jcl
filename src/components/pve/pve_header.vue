@@ -68,7 +68,7 @@ const tabList = [
     {
         name: "blame",
         icon: require("@/assets/img/pve/header_compare.svg"),
-        title: "查锅",
+        title: "团员分析",
     },
     {
         name: "time_line",
@@ -78,7 +78,7 @@ const tabList = [
     {
         name: "buff_coverage_main",
         icon: require("@/assets/img/pve/header_compare.svg"),
-        title: "团队增益总览",
+        title: "团队增益",
     },
     {
         name: "video",

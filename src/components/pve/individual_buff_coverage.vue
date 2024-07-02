@@ -2,13 +2,28 @@
     <div class="m-individual-buff-coverage">
         <p class="u-title">个人增益详情</p>
         <div>
-            <el-input
-                v-model="message"
-                placeholder="输入你想添加的增益ID(例：查看飘黄应该输入 20855:1)"
-                style="width: 400px"
+            <el-select
+                v-model="selectedBuff"
+                placeholder="选择一个增益"
+                filterable
+                style="width: 400px; margin-bottom: 5px"
+                value-key="key"
             >
-            </el-input
-            ><el-button @click="submitMessage" style="margin-left: 10px; height: 28px">提交</el-button>
+                <el-option
+                    v-for="buff in filteredBuffs"
+                    :key="buff.id"
+                    :label="`${buff.id} : ${buff.level} - ${buff.name}`"
+                    :value="buff"
+                >
+                    <img
+                        :src="getResourceIcon(buff.key)"
+                        alt=""
+                        style="width: 24px; vertical-align: middle; margin-right: 8px"
+                    />
+                    {{ `${buff.id} - ${buff.level} - ${buff.name}` }}
+                </el-option>
+            </el-select>
+            <el-button @click="submitBuff" style="margin-left: 10px; height: 28px; margin-bottom: 5px">提交</el-button>
         </div>
 
         <el-table
@@ -67,16 +82,23 @@
 import { displayPercent } from "@/utils/commonNoStore";
 import { usePaginate } from "@/utils/uses/usePaginate";
 import { getResourceIcon } from "@/utils/common";
-import { ref, watchPostEffect, toRefs } from "vue";
+import { ref, watchPostEffect, toRefs, computed } from "vue";
 import { buffs_coverage_constants } from "@/assets/data/buff_coverage_constant";
 import { usePve } from "@/store/pve";
+import { useStore } from "@/store";
 import getWorkerResponse from "@/utils/worker";
 
 // 数据
 const loading = ref(false);
 const final_data = ref([]);
-const message = ref(""); // 定义 message
+const selectedBuff = ref(null); // 定义 selectedBuff
 const query_buff_list = buffs_coverage_constants.individual_buffs;
+const store = useStore();
+// 定义字典
+let resource = store.result.resources;
+if (resource == undefined) {
+    resource = {};
+}
 
 const { currentPage, currentData, total } = usePaginate(final_data, ref(10));
 
@@ -96,6 +118,12 @@ const click = (row) => {
 const rowClass = ({ row }) => {
     return individual_selected_buff.value === row.query_key ? "is-focus" : "";
 };
+// 过滤符合条件的增益
+const filteredBuffs = computed(() => {
+    return Object.keys(resource)
+        .filter((key) => key.startsWith("buff") && resource[key].name !== null)
+        .map((key) => ({ ...resource[key], key: key }));
+});
 
 // methods
 const sort = ({ prop, order }) => {
@@ -112,7 +140,6 @@ const updateData = () => {
     loading.value = true;
     getWorkerResponse("get_individual_buff_coverage", { query_buff_list }).then((result) => {
         loading.value = false;
-        console.log(result);
         final_data.value = result;
         sort({ prop: "average_coverage", order: "descending" });
         currentPage.value = 1;
@@ -120,12 +147,12 @@ const updateData = () => {
 };
 // watch
 watchPostEffect(updateData);
-// 监控 message 的变化
-const submitMessage = () => {
-    query_buff_list[parseInt(message.value.split(":")[0])] = parseInt(message.value.split(":")[1]);
-    console.log(message.value.split(":")[0]);
-    console.log(query_buff_list);
-    updateData();
+// 监控 selectedBuff 的变化
+const submitBuff = () => {
+    if (selectedBuff.value) {
+        query_buff_list[selectedBuff.value.id] = selectedBuff.value.level;
+        updateData();
+    }
 };
 </script>
 

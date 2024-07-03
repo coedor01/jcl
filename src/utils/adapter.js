@@ -65,7 +65,7 @@ export class Adapter {
             for (let player of player_list) {
                 tot_stack = 0;
                 tot_duration = 0;
-                if (query_key in buff[player]) {
+                if (buff[player][query_key]) {
                     for (let res of buff[player][query_key]["logs"]) {
                         tot_stack += res.stack;
                         min_stack = Math.min(res.stack, min_stack);
@@ -127,7 +127,7 @@ export class Adapter {
             for (let player of player_list) {
                 tot_stack = 0;
                 tot_duration = 0;
-                if (query_key in buff[player]) {
+                if (buff[player][query_key]) {
                     for (let res of buff[player][query_key]["logs"]) {
                         tot_stack += res.stack;
                         min_stack = Math.min(res.stack, min_stack);
